@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Makoi Motor Shop POS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #f4f5fb;
+      --card: #ffffff;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --border: #e5e7eb;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --danger: #dc2626;
+      --success: #16a34a;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 12px 40px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    header h1 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    header small {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.7rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 10px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+    }
+
+    .card h2 {
+      font-size: 0.95rem;
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .card h3 {
+      font-size: 0.85rem;
+      margin: 0 0 6px;
+    }
+
+    .muted {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .stat-card {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .stat-value.positive { color: var(--success); }
+    .stat-value.negative { color: var(--danger); }
+
+    .field-group {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 6px;
+    }
+
+    label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    input, select, textarea {
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      font-size: 0.75rem;
+      outline: none;
+      width: 100%;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+    }
+
+    textarea {
+      min-height: 52px;
+      resize: vertical;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px dashed var(--border);
+      color: var(--text-muted);
+    }
+
+    .btn-sm {
+      padding: 3px 7px;
+      font-size: 0.7rem;
+    }
+
+    .search-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .search-row input {
+      flex: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.7rem;
+    }
+
+    thead {
+      background: #f3f4f6;
+    }
+
+    th, td {
+      padding: 4px 6px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    th {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+
+    .pill {
+      border-radius: 999px;
+      padding: 1px 6px;
+      font-size: 0.65rem;
+      border: 1px solid var(--border);
+      background: #f9fafb;
+      color: var(--text-muted);
+    }
+
+    .tag-success {
+      background: #ecfdf3;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .tag-danger {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #b91c1c;
+    }
+
+    .section-spacer { margin-top: 10px; }
+
+    .scrollable {
+      max-height: 260px;
+      overflow: auto;
+    }
+
+    .small-note {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    @media print {
+      header, .btn-row, .no-print {
+        display: none !important;
+      }
+      body {
+        background: white;
+      }
+      .card {
+        box-shadow: none;
+        border: 1px solid #e5e7eb;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="no-print">
+      <div>
+        <h1>Makoi Motor Shop POS</h1>
+        <small>Simple offline POS &amp; inventory for your motor shop.</small>
+      </div>
+      <div>
+        <div class="badge">
+          🔐 Local only
+          <span class="muted">Data saved in this device (browser)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <div class="card section-spacer">
+      <h2>
+        Dashboard
+        <button class="btn-secondary btn-sm no-print" onclick="window.print()">🖨 Print page</button>
+      </h2>
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">Total Items</div>
+          <div class="stat-value" id="statTotalItems">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Stock (pcs)</div>
+          <div class="stat-value" id="statTotalStock">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Sales</div>
+          <div class="stat-value positive" id="statTotalSales">₱0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Expenses</div>
+          <div class="stat-value negative" id="statTotalExpenses">₱0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout section-spacer">
+
+      <!-- LEFT: INVENTORY -->
+      <div class="card">
+        <h2>
+          Inventory
+          <span class="muted">Items, prices, stock &amp; storage box</span>
+        </h2>
+
+        <!-- ADD / EDIT ITEM FORM -->
+        <h3>Add / Edit Item</h3>
+        <div class="field-group">
+          <div class="field">
+            <label>Item name / description</label>
+            <input id="itemName" placeholder="e.g. Saiyan Brake Shoe XRM" />
+          </div>
+          <div class="field">
+            <label>Storage box / location</label>
+            <input id="itemStorage" placeholder="e.g. Box A3, Wall rack" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field">
+            <label>Buying price (per pc)</label>
+            <input id="itemBuy" type="number" min="0" step="0.01" placeholder="e.g. 120" />
+          </div>
+          <div class="field">
+            <label>Selling price (per pc)</label>
+            <input id="itemSell" type="number" min="0" step="0.01" placeholder="e.g. 180" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field">
+            <label>Current stock (pcs)</label>
+            <input id="itemStock" type="number" min="0" step="1" placeholder="e.g. 30" />
+          </div>
+          <div class="field">
+            <label>Item code (optional)</label>
+            <input id="itemCode" placeholder="e.g. XRM-BR-01" />
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-primary" onclick="saveItem()">💾 Save item</button>
+          <button class="btn-secondary" onclick="resetItemForm()">↩ Reset</button>
+          <span class="small-note">Tip: use for new item or edit existing item.</span>
+        </div>
+
+        <hr style="margin:10px 0;border:none;border-top:1px solid var(--border);" />
+
+        <!-- SEARCH & TABLE -->
+        <div class="search-row no-print">
+          <input id="searchInput" placeholder="Search item name, code or storage…" oninput="renderItems()" />
+          <button class="btn-ghost btn-sm" onclick="clearSearch()">✖ Clear</button>
+        </div>
+
+        <div class="scrollable">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Storage</th>
+                <th class="text-right">Buy</th>
+                <th class="text-right">Sell</th>
+                <th class="text-right">Stock</th>
+                <th class="text-right">Value</th>
+                <th class="text-center no-print">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="itemsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="small-note">
+          Remaining stock is updated automatically every time you record a sale.
+        </div>
+      </div>
+
+      <!-- RIGHT: SALES & EXPENSES -->
+      <div class="card">
+        <h2>Sales &amp; Expenses</h2>
+
+        <!-- NEW SALE -->
+        <h3>Record Sale</h3>
+        <div class="field">
+          <label>Select item</label>
+          <select id="saleItemSelect"></select>
+        </div>
+
+        <div class="field-group">
+          <div class="field">
+            <label>Quantity (pcs)</label>
+            <input id="saleQty" type="number" min="1" step="1" value="1" />
+          </div>
+          <div class="field">
+            <label>Selling price (auto from item, can edit)</label>
+            <input id="salePrice" type="number" min="0" step="0.01" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field">
+            <label>Total amount</label>
+            <input id="saleTotal" type="number" readonly />
+          </div>
+          <div class="field">
+            <label>Date</label>
+            <input id="saleDate" type="date" />
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-primary" onclick="recordSale()">✅ Save sale</button>
+          <button class="btn-secondary" onclick="resetSaleForm()">↩ Reset</button>
+        </div>
+
+        <hr style="margin:10px 0;border:none;border-top:1px solid var(--border);" />
+
+        <!-- EXPENSES -->
+        <h3>Add Expense</h3>
+        <div class="field">
+          <label>Expense description</label>
+          <input id="expDesc" placeholder="e.g. Kuryente, renta, sweldo" />
+        </div>
+        <div class="field-group">
+          <div class="field">
+            <label>Amount</label>
+            <input id="expAmount" type="number" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label>Date</label>
+            <input id="expDate" type="date" />
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="addExpense()">🧾 Save expense</button>
+          <button class="btn-secondary" onclick="resetExpenseForm()">↩ Reset</button>
+        </div>
+
+        <hr style="margin:10px 0;border:none;border-top:1px solid var(--border);" />
+
+        <!-- LAST SALES & EXPENSES -->
+        <h3>Recent Sales</h3>
+        <div class="scrollable" style="max-height:120px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Item</th>
+                <th class="text-right">Qty</th>
+                <th class="text-right">Total</th>
+              </tr>
+            </thead>
+            <tbody id="salesTableBody"></tbody>
+          </table>
+        </div>
+
+        <h3 class="section-spacer">Recent Expenses</h3>
+        <div class="scrollable" style="max-height:120px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th class="text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="expensesTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="small-note">
+          All data is stored locally in this device using browser storage.
+          To reset everything, clear browser data for this site.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ======== DATA & STORAGE ========
+    let items = [];
+    let sales = [];
+    let expenses = [];
+    let editingItemIndex = -1;
+
+    function loadData() {
+      try {
+        items = JSON.parse(localStorage.getItem('makoi_items') || '[]');
+        sales = JSON.parse(localStorage.getItem('makoi_sales') || '[]');
+        expenses = JSON.parse(localStorage.getItem('makoi_expenses') || '[]');
+      } catch (e) {
+        items = [];
+        sales = [];
+        expenses = [];
+      }
+      renderAll();
+    }
+
+    function saveItems() {
+      localStorage.setItem('makoi_items', JSON.stringify(items));
+    }
+    function saveSales() {
+      localStorage.setItem('makoi_sales', JSON.stringify(sales));
+    }
+    function saveExpenses() {
+      localStorage.setItem('makoi_expenses', JSON.stringify(expenses));
+    }
+
+    // ======== DASHBOARD ========
+    function formatMoney(v) {
+      return '₱' + (v || 0).toLocaleString('en-PH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    }
+
+    function updateDashboard() {
+      const totalItems = items.length;
+      const totalStock = items.reduce((sum, it) => sum + (Number(it.stock) || 0), 0);
+      const totalSales = sales.reduce((sum, s) => sum + (Number(s.total) || 0), 0);
+      const totalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+      document.getElementById('statTotalItems').textContent = totalItems;
+      document.getElementById('statTotalStock').textContent = totalStock;
+      document.getElementById('statTotalSales').textContent = formatMoney(totalSales);
+      document.getElementById('statTotalExpenses').textContent = formatMoney(totalExpenses);
+    }
+
+    // ======== INVENTORY ========
+    function resetItemForm() {
+      editingItemIndex = -1;
+      document.getElementById('itemName').value = '';
+      document.getElementById('itemStorage').value = '';
+      document.getElementById('itemBuy').value = '';
+      document.getElementById('itemSell').value = '';
+      document.getElementById('itemStock').value = '';
+      document.getElementById('itemCode').value = '';
+    }
+
+    function saveItem() {
+      const name = document.getElementById('itemName').value.trim();
+      const storage = document.getElementById('itemStorage').value.trim();
+      const buy = Number(document.getElementById('itemBuy').value || 0);
+      const sell = Number(document.getElementById('itemSell').value || 0);
+      const stock = Number(document.getElementById('itemStock').value || 0);
+      const code = document.getElementById('itemCode').value.trim();
+
+      if (!name) {
+        alert('Please enter item name.');
+        return;
+      }
+
+      const item = { name, storage, buy, sell, stock, code };
+
+      if (editingItemIndex >= 0) {
+        items[editingItemIndex] = item;
+      } else {
+        items.push(item);
+      }
+
+      saveItems();
+      resetItemForm();
+      renderItems();
+      populateSaleSelect();
+      updateDashboard();
+    }
+
+    function editItem(index) {
+      const it = items[index];
+      editingItemIndex = index;
+      document.getElementById('itemName').value = it.name;
+      document.getElementById('itemStorage').value = it.storage || '';
+      document.getElementById('itemBuy').value = it.buy;
+      document.getElementById('itemSell').value = it.sell;
+      document.getElementById('itemStock').value = it.stock;
+      document.getElementById('itemCode').value = it.code || '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteItem(index) {
+      if (!confirm('Delete this item?')) return;
+      items.splice(index, 1);
+      saveItems();
+      renderItems();
+      populateSaleSelect();
+      updateDashboard();
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      renderItems();
+    }
+
+    function renderItems() {
+      const tbody = document.getElementById('itemsTableBody');
+      tbody.innerHTML = '';
+      const search = (document.getElementById('searchInput').value || '').toLowerCase();
+
+      items.forEach((it, index) => {
+        if (search) {
+          const txt = (it.name + ' ' + (it.code || '') + ' ' + (it.storage || '')).toLowerCase();
+          if (!txt.includes(search)) return;
+        }
+
+        const tr = document.createElement('tr');
+
+        const nameTd = document.createElement('td');
+        nameTd.innerHTML = `<strong>${it.name}</strong><br><span class="muted">${it.code || ''}</span>`;
+        tr.appendChild(nameTd);
+
+        const storageTd = document.createElement('td');
+        storageTd.textContent = it.storage || '-';
+        tr.appendChild(storageTd);
+
+        const buyTd = document.createElement('td');
+        buyTd.className = 'text-right';
+        buyTd.textContent = formatMoney(it.buy);
+        tr.appendChild(buyTd);
+
+        const sellTd = document.createElement('td');
+        sellTd.className = 'text-right';
+        sellTd.textContent = formatMoney(it.sell);
+        tr.appendChild(sellTd);
+
+        const stockTd = document.createElement('td');
+        stockTd.className = 'text-right';
+        const stockTag = document.createElement('span');
+        stockTag.className = 'pill ' + (it.stock <= 3 ? 'tag-danger' : it.stock <= 10 ? '' : 'tag-success');
+        stockTag.textContent = it.stock;
+        stockTd.appendChild(stockTag);
+        tr.appendChild(stockTd);
+
+        const valueTd = document.createElement('td');
+        valueTd.className = 'text-right';
+        valueTd.textContent = formatMoney(it.stock * it.sell);
+        tr.appendChild(valueTd);
+
+        const actionsTd = document.createElement('td');
+        actionsTd.className = 'text-center no-print';
+        actionsTd.innerHTML =
+          `<button class="btn-secondary btn-sm" onclick="editItem(${index})">✏ Edit</button>
+           <button class="btn-danger btn-sm" onclick="deleteItem(${index})">🗑</button>`;
+        tr.appendChild(actionsTd);
+
+        tbody.appendChild(tr);
+      });
+
+      updateDashboard();
+    }
+
+    function populateSaleSelect() {
+      const select = document.getElementById('saleItemSelect');
+      select.innerHTML = '';
+      if (items.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'No items yet - add items first';
+        select.appendChild(opt);
+        return;
+      }
+
+      items.forEach((it, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        opt.textContent = `${it.name} (${it.stock} pcs • ${formatMoney(it.sell)})`;
+        select.appendChild(opt);
+      });
+
+      if (items.length > 0) {
+        select.selectedIndex = 0;
+        saleItemChanged();
+      }
+    }
+
+    // ======== SALES ========
+    function saleItemChanged() {
+      const index = Number(document.getElementById('saleItemSelect').value);
+      if (isNaN(index) || index < 0 || !items[index]) return;
+      document.getElementById('salePrice').value = items[index].sell;
+      updateSaleTotal();
+    }
+
+    function updateSaleTotal() {
+      const qty = Number(document.getElementById('saleQty').value || 0);
+      const price = Number(document.getElementById('salePrice').value || 0);
+      document.getElementById('saleTotal').value = (qty * price).toFixed(2);
+    }
+
+    function resetSaleForm() {
+      if (items.length === 0) {
+        document.getElementById('saleItemSelect').innerHTML = '';
+        document.getElementById('saleQty').value = 1;
+        document.getElementById('salePrice').value = '';
+        document.getElementById('saleTotal').value = '';
+        document.getElementById('saleDate').valueAsDate = new Date();
+        return;
+      }
+      document.getElementById('saleQty').value = 1;
+      saleItemChanged();
+      document.getElementById('saleDate').valueAsDate = new Date();
+    }
+
+    function recordSale() {
+      const itemIndex = Number(document.getElementById('saleItemSelect').value);
+      if (isNaN(itemIndex) || itemIndex < 0 || !items[itemIndex]) {
+        alert('Please select an item.');
+        return;
+      }
+      const qty = Number(document.getElementById('saleQty').value || 0);
+      const price = Number(document.getElementById('salePrice').value || 0);
+      const date = document.getElementById('saleDate').value || new Date().toISOString().slice(0, 10);
+
+      if (qty <= 0) {
+        alert('Invalid quantity.');
+        return;
+      }
+
+      if (qty > items[itemIndex].stock) {
+        if (!confirm('Quantity is higher than current stock. Continue?')) return;
+      }
+
+      const total = qty * price;
+
+      const sale = {
+        date,
+        itemName: items[itemIndex].name,
+        qty,
+        price,
+        total
+      };
+
+      sales.unshift(sale); // latest first
+      saveSales();
+
+      // deduct stock
+      items[itemIndex].stock = Math.max(0, (Number(items[itemIndex].stock) || 0) - qty);
+      saveItems();
+
+      renderItems();
+      populateSaleSelect();
+      renderSales();
+      updateDashboard();
+      resetSaleForm();
+    }
+
+    function renderSales() {
+      const tbody = document.getElementById('salesTableBody');
+      tbody.innerHTML = '';
+      sales.slice(0, 30).forEach(s => {
+        const tr = document.createElement('tr');
+
+        const d = document.createElement('td');
+        d.textContent = s.date;
+        tr.appendChild(d);
+
+        const n = document.createElement('td');
+        n.textContent = s.itemName;
+        tr.appendChild(n);
+
+        const q = document.createElement('td');
+        q.className = 'text-right';
+        q.textContent = s.qty;
+        tr.appendChild(q);
+
+        const t = document.createElement('td');
+        t.className = 'text-right';
+        t.textContent = formatMoney(s.total);
+        tr.appendChild(t);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ======== EXPENSES ========
+    function resetExpenseForm() {
+      document.getElementById('expDesc').value = '';
+      document.getElementById('expAmount').value = '';
+      document.getElementById('expDate').valueAsDate = new Date();
+    }
+
+    function addExpense() {
+      const desc = document.getElementById('expDesc').value.trim();
+      const amount = Number(document.getElementById('expAmount').value || 0);
+      const date = document.getElementById('expDate').value || new Date().toISOString().slice(0, 10);
+
+      if (!desc) {
+        alert('Enter expense description.');
+        return;
+      }
+      if (amount <= 0) {
+        alert('Enter valid amount.');
+        return;
+      }
+
+      expenses.unshift({ desc, amount, date });
+      saveExpenses();
+      renderExpenses();
+      updateDashboard();
+      resetExpenseForm();
+    }
+
+    function renderExpenses() {
+      const tbody = document.getElementById('expensesTableBody');
+      tbody.innerHTML = '';
+      expenses.slice(0, 30).forEach(e => {
+        const tr = document.createElement('tr');
+
+        const d = document.createElement('td');
+        d.textContent = e.date;
+        tr.appendChild(d);
+
+        const desc = document.createElement('td');
+        desc.textContent = e.desc;
+        tr.appendChild(desc);
+
+        const a = document.createElement('td');
+        a.className = 'text-right';
+        a.textContent = formatMoney(e.amount);
+        tr.appendChild(a);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ======== INITIALIZE ========
+    document.getElementById('saleQty').addEventListener('input', updateSaleTotal);
+    document.getElementById('salePrice').addEventListener('input', updateSaleTotal);
+    document.getElementById('saleItemSelect').addEventListener('change', saleItemChanged);
+
+    window.addEventListener('load', () => {
+      // Default dates
+      const today = new Date();
+      const dateStr = today.toISOString().slice(0, 10);
+      document.getElementById('saleDate').value = dateStr;
+      document.getElementById('expDate').value = dateStr;
+
+      loadData();
+    });
+
+    function renderAll() {
+      renderItems();
+      populateSaleSelect();
+      renderSales();
+      renderExpenses();
+      updateDashboard();
+      resetSaleForm();
+      resetExpenseForm();
+    }
+  </script>
+</body>
+</html>
