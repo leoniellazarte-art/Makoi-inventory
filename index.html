@@ -19,184 +19,110 @@
 
     * {
       box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
     }
 
     body {
       margin: 0;
+      padding: 0;
       background: var(--bg);
       color: var(--text-main);
     }
 
     .app {
-      max-width: 1200px;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 12px 12px 40px;
+      padding: 12px 12px 32px;
     }
 
     header {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 16px;
     }
 
     header h1 {
-      font-size: 1.2rem;
+      font-size: 20px;
       margin: 0;
     }
 
     header small {
-      display: block;
       color: var(--text-muted);
-      font-size: 0.75rem;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 0.7rem;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
-      gap: 12px;
-    }
-
-    @media (max-width: 800px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
     }
 
     .card {
       background: var(--card);
-      border-radius: 10px;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
       border: 1px solid var(--border);
-      padding: 10px;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
     }
 
     .card h2 {
-      font-size: 0.95rem;
-      margin: 0 0 6px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
+      margin: 0 0 8px;
+      font-size: 16px;
     }
 
     .card h3 {
-      font-size: 0.85rem;
-      margin: 0 0 6px;
-    }
-
-    .muted {
-      color: var(--text-muted);
-      font-size: 0.75rem;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    @media (max-width: 600px) {
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    .stat-card {
-      background: #f9fafb;
-      border-radius: 8px;
-      padding: 6px 8px;
-      border: 1px solid var(--border);
-    }
-
-    .stat-label {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
-
-    .stat-value {
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-top: 2px;
-    }
-
-    .stat-value.positive { color: var(--success); }
-    .stat-value.negative { color: var(--danger); }
-
-    .field-group {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      margin-bottom: 6px;
+      margin: 0 0 8px;
+      font-size: 15px;
     }
 
     label {
-      font-size: 0.7rem;
+      display: block;
+      font-size: 12px;
+      margin-bottom: 2px;
       color: var(--text-muted);
     }
 
-    input, select, textarea {
-      border-radius: 7px;
-      border: 1px solid var(--border);
-      padding: 6px 8px;
-      font-size: 0.75rem;
-      outline: none;
+    input, select {
       width: 100%;
+      padding: 8px 10px;
+      font-size: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      background: #f9fafb;
     }
 
-    input:focus, select:focus, textarea:focus {
+    input:focus, select:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+      background: #fff;
     }
 
-    textarea {
-      min-height: 52px;
-      resize: vertical;
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
     }
 
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
+    .row-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
     }
 
-    button {
-      border-radius: 999px;
+    .btn {
       border: none;
-      padding: 6px 10px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      cursor: pointer;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      cursor: pointer;
+      margin-top: 6px;
     }
 
     .btn-primary {
       background: var(--accent);
-      color: white;
+      color: #fff;
     }
 
     .btn-secondary {
@@ -205,699 +131,847 @@
     }
 
     .btn-danger {
-      background: var(--danger);
-      color: white;
+      background: #fee2e2;
+      color: var(--danger);
     }
 
-    .btn-ghost {
-      background: transparent;
-      border: 1px dashed var(--border);
-      color: var(--text-muted);
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: default;
     }
 
-    .btn-sm {
-      padding: 3px 7px;
-      font-size: 0.7rem;
-    }
-
-    .search-row {
-      display: flex;
+    .pill {
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      margin-bottom: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      margin-left: 4px;
     }
 
-    .search-row input {
-      flex: 1;
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      margin-bottom: 6px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      border: 1px solid transparent;
+      background: #f3f4f6;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.7rem;
-    }
-
-    thead {
-      background: #f3f4f6;
+      font-size: 11px;
     }
 
     th, td {
       padding: 4px 6px;
-      border-bottom: 1px solid var(--border);
       text-align: left;
-    }
-
-    th {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      font-weight: 500;
+      border-bottom: 1px solid #e5e7eb;
       white-space: nowrap;
     }
 
-    tbody tr:hover {
-      background: #f9fafb;
-    }
-
-    .text-right { text-align: right; }
-    .text-center { text-align: center; }
-
-    .pill {
-      border-radius: 999px;
-      padding: 1px 6px;
-      font-size: 0.65rem;
-      border: 1px solid var(--border);
-      background: #f9fafb;
+    th {
+      font-size: 11px;
       color: var(--text-muted);
+      font-weight: 600;
+      background: #f9fafb;
+      position: sticky;
+      top: 0;
+      z-index: 1;
     }
 
-    .tag-success {
-      background: #ecfdf3;
-      border-color: #bbf7d0;
-      color: #166534;
+    tbody tr:nth-child(even) {
+      background: #f9fafb;
     }
 
-    .tag-danger {
-      background: #fef2f2;
-      border-color: #fecaca;
-      color: #b91c1c;
-    }
-
-    .section-spacer { margin-top: 10px; }
-
-    .scrollable {
+    .table-wrapper {
       max-height: 260px;
       overflow: auto;
+      margin-top: 6px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
     }
 
-    .small-note {
-      font-size: 0.65rem;
+    .muted {
+      font-size: 11px;
       color: var(--text-muted);
       margin-top: 4px;
     }
 
-    @media print {
-      header, .btn-row, .no-print {
-        display: none !important;
-      }
-      body {
-        background: white;
-      }
-      .card {
-        box-shadow: none;
-        border: 1px solid #e5e7eb;
+    .badge-profit {
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .summary-box {
+      border-radius: 12px;
+      padding: 8px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      font-size: 12px;
+    }
+
+    .summary-label {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .summary-value {
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .summary-positive {
+      color: var(--success);
+    }
+
+    .summary-negative {
+      color: var(--danger);
+    }
+
+    .profit-info {
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .profit-info strong {
+      color: var(--success);
+    }
+
+    .search-input {
+      margin-top: 6px;
+      margin-bottom: 4px;
+    }
+
+    @media (min-width: 768px) {
+      header h1 {
+        font-size: 22px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header class="no-print">
-      <div>
-        <h1>Makoi Motor Shop POS</h1>
-        <small>Simple offline POS &amp; inventory for your motor shop.</small>
-      </div>
-      <div>
-        <div class="badge">
-          🔐 Local only
-          <span class="muted">Data saved in this device (browser)</span>
-        </div>
-      </div>
-    </header>
+<div class="app">
+  <header>
+    <h1>Makoi Motor Shop POS</h1>
+    <small>Simple inventory + sales tracker with profit and expenses</small>
+  </header>
 
-    <!-- DASHBOARD -->
-    <div class="card section-spacer">
-      <h2>
-        Dashboard
-        <button class="btn-secondary btn-sm no-print" onclick="window.print()">🖨 Print page</button>
-      </h2>
-      <div class="stats">
-        <div class="stat-card">
-          <div class="stat-label">Total Items</div>
-          <div class="stat-value" id="statTotalItems">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Total Stock (pcs)</div>
-          <div class="stat-value" id="statTotalStock">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Total Sales</div>
-          <div class="stat-value positive" id="statTotalSales">₱0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Total Expenses</div>
-          <div class="stat-value negative" id="statTotalExpenses">₱0</div>
-        </div>
+  <!-- INVENTORY -->
+  <section class="card">
+    <h2>Inventory</h2>
+    <h3>Add / Edit Item</h3>
+
+    <div class="row">
+      <div>
+        <label>Item name / description</label>
+        <input id="item-name" placeholder="e.g. Saiyan Rocker Arm TMX155" />
+      </div>
+      <div>
+        <label>Storage box / location</label>
+        <input id="item-storage" placeholder="(iwan mong blank, bro)" />
       </div>
     </div>
 
-    <div class="layout section-spacer">
-
-      <!-- LEFT: INVENTORY -->
-      <div class="card">
-        <h2>
-          Inventory
-          <span class="muted">Items, prices, stock &amp; storage box</span>
-        </h2>
-
-        <!-- ADD / EDIT ITEM FORM -->
-        <h3>Add / Edit Item</h3>
-        <div class="field-group">
-          <div class="field">
-            <label>Item name / description</label>
-            <input id="itemName" placeholder="e.g. Saiyan Brake Shoe XRM" />
-          </div>
-          <div class="field">
-            <label>Storage box / location</label>
-            <input id="itemStorage" placeholder="e.g. Box A3, Wall rack" />
-          </div>
-        </div>
-
-        <div class="field-group">
-          <div class="field">
-            <label>Buying price (per pc)</label>
-            <input id="itemBuy" type="number" min="0" step="0.01" placeholder="e.g. 120" />
-          </div>
-          <div class="field">
-            <label>Selling price (per pc)</label>
-            <input id="itemSell" type="number" min="0" step="0.01" placeholder="e.g. 180" />
-          </div>
-        </div>
-
-        <div class="field-group">
-          <div class="field">
-            <label>Current stock (pcs)</label>
-            <input id="itemStock" type="number" min="0" step="1" placeholder="e.g. 30" />
-          </div>
-          <div class="field">
-            <label>Item code (optional)</label>
-            <input id="itemCode" placeholder="e.g. XRM-BR-01" />
-          </div>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn-primary" onclick="saveItem()">💾 Save item</button>
-          <button class="btn-secondary" onclick="resetItemForm()">↩ Reset</button>
-          <span class="small-note">Tip: use for new item or edit existing item.</span>
-        </div>
-
-        <hr style="margin:10px 0;border:none;border-top:1px solid var(--border);" />
-
-        <!-- SEARCH & TABLE -->
-        <div class="search-row no-print">
-          <input id="searchInput" placeholder="Search item name, code or storage…" oninput="renderItems()" />
-          <button class="btn-ghost btn-sm" onclick="clearSearch()">✖ Clear</button>
-        </div>
-
-        <div class="scrollable">
-          <table>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Storage</th>
-                <th class="text-right">Buy</th>
-                <th class="text-right">Sell</th>
-                <th class="text-right">Stock</th>
-                <th class="text-right">Value</th>
-                <th class="text-center no-print">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="itemsTableBody"></tbody>
-          </table>
-        </div>
-
-        <div class="small-note">
-          Remaining stock is updated automatically every time you record a sale.
-        </div>
+    <div class="row">
+      <div>
+        <label>Buying price (per pc)</label>
+        <input id="item-buy" type="number" min="0" step="0.01" placeholder="e.g. 120" />
       </div>
-
-      <!-- RIGHT: SALES & EXPENSES -->
-      <div class="card">
-        <h2>Sales &amp; Expenses</h2>
-
-        <!-- NEW SALE -->
-        <h3>Record Sale</h3>
-        <div class="field">
-          <label>Select item</label>
-          <select id="saleItemSelect"></select>
-        </div>
-
-        <div class="field-group">
-          <div class="field">
-            <label>Quantity (pcs)</label>
-            <input id="saleQty" type="number" min="1" step="1" value="1" />
-          </div>
-          <div class="field">
-            <label>Selling price (auto from item, can edit)</label>
-            <input id="salePrice" type="number" min="0" step="0.01" />
-          </div>
-        </div>
-
-        <div class="field-group">
-          <div class="field">
-            <label>Total amount</label>
-            <input id="saleTotal" type="number" readonly />
-          </div>
-          <div class="field">
-            <label>Date</label>
-            <input id="saleDate" type="date" />
-          </div>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn-primary" onclick="recordSale()">✅ Save sale</button>
-          <button class="btn-secondary" onclick="resetSaleForm()">↩ Reset</button>
-        </div>
-
-        <hr style="margin:10px 0;border:none;border-top:1px solid var(--border);" />
-
-        <!-- EXPENSES -->
-        <h3>Add Expense</h3>
-        <div class="field">
-          <label>Expense description</label>
-          <input id="expDesc" placeholder="e.g. Kuryente, renta, sweldo" />
-        </div>
-        <div class="field-group">
-          <div class="field">
-            <label>Amount</label>
-            <input id="expAmount" type="number" min="0" step="0.01" />
-          </div>
-          <div class="field">
-            <label>Date</label>
-            <input id="expDate" type="date" />
-          </div>
-        </div>
-        <div class="btn-row">
-          <button class="btn-primary" onclick="addExpense()">🧾 Save expense</button>
-          <button class="btn-secondary" onclick="resetExpenseForm()">↩ Reset</button>
-        </div>
-
-        <hr style="margin:10px 0;border:none;border-top:1px solid var(--border);" />
-
-        <!-- LAST SALES & EXPENSES -->
-        <h3>Recent Sales</h3>
-        <div class="scrollable" style="max-height:120px;">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Item</th>
-                <th class="text-right">Qty</th>
-                <th class="text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody id="salesTableBody"></tbody>
-          </table>
-        </div>
-
-        <h3 class="section-spacer">Recent Expenses</h3>
-        <div class="scrollable" style="max-height:120px;">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th class="text-right">Amount</th>
-              </tr>
-            </thead>
-            <tbody id="expensesTableBody"></tbody>
-          </table>
-        </div>
-
-        <div class="small-note">
-          All data is stored locally in this device using browser storage.
-          To reset everything, clear browser data for this site.
-        </div>
+      <div>
+        <label>Selling price (per pc)</label>
+        <input id="item-sell" type="number" min="0" step="0.01" placeholder="e.g. 180" />
       </div>
     </div>
-  </div>
 
-  <script>
-    // ======== DATA & STORAGE ========
-    let items = [];
-    let sales = [];
-    let expenses = [];
-    let editingItemIndex = -1;
+    <div class="row">
+      <div>
+        <label>Remaining stock (pcs)</label>
+        <input id="item-stock" type="number" min="0" step="1" placeholder="e.g. 30" />
+      </div>
+      <div>
+        <label>Item code (optional)</label>
+        <input id="item-code" placeholder="e.g. XRM-BR-01" />
+      </div>
+    </div>
 
-    function loadData() {
-      try {
-        items = JSON.parse(localStorage.getItem('makoi_items') || '[]');
-        sales = JSON.parse(localStorage.getItem('makoi_sales') || '[]');
-        expenses = JSON.parse(localStorage.getItem('makoi_expenses') || '[]');
-      } catch (e) {
-        items = [];
-        sales = [];
-        expenses = [];
-      }
-      renderAll();
-    }
+    <button class="btn btn-primary" id="save-item-btn">💾 Save item</button>
+    <button class="btn btn-secondary" id="reset-item-btn">↺ Reset</button>
+    <p class="muted">
+      Tip: Kung mag-eedit ka ng lumang item, i-type mo lang ulit ang pangalan,
+      tapos baguhin ang presyo o stock, then <strong>Save item</strong>.
+    </p>
 
-    function saveItems() {
-      localStorage.setItem('makoi_items', JSON.stringify(items));
-    }
-    function saveSales() {
-      localStorage.setItem('makoi_sales', JSON.stringify(sales));
-    }
-    function saveExpenses() {
-      localStorage.setItem('makoi_expenses', JSON.stringify(expenses));
-    }
+    <!-- ITEMS TABLE -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="tab-items">Items</button>
+      <button class="tab-btn" data-tab="tab-stock">Stock & value</button>
+    </div>
 
-    // ======== DASHBOARD ========
-    function formatMoney(v) {
-      return '₱' + (v || 0).toLocaleString('en-PH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-    }
+    <input
+      id="search-items"
+      class="search-input"
+      placeholder="Search item name or storage location..."
+    />
 
-    function updateDashboard() {
-      const totalItems = items.length;
-      const totalStock = items.reduce((sum, it) => sum + (Number(it.stock) || 0), 0);
-      const totalSales = sales.reduce((sum, s) => sum + (Number(s.total) || 0), 0);
-      const totalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+    <div id="tab-items" class="tab-content">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Item</th>
+            <th>Buy</th>
+            <th>Sell</th>
+            <th>Profit / pc</th>
+            <th>Stock</th>
+            <th>Storage</th>
+          </tr>
+          </thead>
+          <tbody id="items-tbody"></tbody>
+        </table>
+      </div>
+    </div>
 
-      document.getElementById('statTotalItems').textContent = totalItems;
-      document.getElementById('statTotalStock').textContent = totalStock;
-      document.getElementById('statTotalSales').textContent = formatMoney(totalSales);
-      document.getElementById('statTotalExpenses').textContent = formatMoney(totalExpenses);
-    }
+    <div id="tab-stock" class="tab-content" style="display:none;">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Item</th>
+            <th>Stock</th>
+            <th>Cost value</th>
+            <th>Potential profit</th>
+          </tr>
+          </thead>
+          <tbody id="stock-tbody"></tbody>
+        </table>
+      </div>
+    </div>
 
-    // ======== INVENTORY ========
-    function resetItemForm() {
-      editingItemIndex = -1;
-      document.getElementById('itemName').value = '';
-      document.getElementById('itemStorage').value = '';
-      document.getElementById('itemBuy').value = '';
-      document.getElementById('itemSell').value = '';
-      document.getElementById('itemStock').value = '';
-      document.getElementById('itemCode').value = '';
-    }
+    <div class="summary-grid">
+      <div class="summary-box">
+        <div class="summary-label">Total items</div>
+        <div class="summary-value" id="summary-total-items">0</div>
+      </div>
+      <div class="summary-box">
+        <div class="summary-label">Inventory cost (buy)</div>
+        <div class="summary-value" id="summary-inventory-cost">₱0</div>
+      </div>
+    </div>
+  </section>
 
-    function saveItem() {
-      const name = document.getElementById('itemName').value.trim();
-      const storage = document.getElementById('itemStorage').value.trim();
-      const buy = Number(document.getElementById('itemBuy').value || 0);
-      const sell = Number(document.getElementById('itemSell').value || 0);
-      const stock = Number(document.getElementById('itemStock').value || 0);
-      const code = document.getElementById('itemCode').value.trim();
+  <!-- SALES & EXPENSES -->
+  <section class="card">
+    <h2>Sales & Expenses</h2>
 
-      if (!name) {
-        alert('Please enter item name.');
-        return;
-      }
+    <h3>Record Sale <span class="pill">auto profit</span></h3>
+    <div>
+      <label>Select item</label>
+      <select id="sale-item-select">
+        <option value="">-- choose item --</option>
+      </select>
+    </div>
 
-      const item = { name, storage, buy, sell, stock, code };
+    <div class="row">
+      <div>
+        <label>Quantity (pcs)</label>
+        <input id="sale-qty" type="number" min="1" step="1" value="1" />
+      </div>
+      <div>
+        <label>Selling price (auto from item, pwede mo baguhin)</label>
+        <input id="sale-price" type="number" min="0" step="0.01" />
+      </div>
+    </div>
 
-      if (editingItemIndex >= 0) {
-        items[editingItemIndex] = item;
-      } else {
-        items.push(item);
-      }
+    <div class="row">
+      <div>
+        <label>Total amount (selling)</label>
+        <input id="sale-total" type="number" readonly />
+      </div>
+      <div>
+        <label>Date</label>
+        <input id="sale-date" type="date" />
+      </div>
+    </div>
 
+    <p class="profit-info" id="sale-profit-info">Profit: ₱0</p>
+
+    <button class="btn btn-primary" id="save-sale-btn">✅ Save sale</button>
+    <button class="btn btn-secondary" id="reset-sale-btn">↺ Reset</button>
+
+    <hr style="margin: 10px 0; border: 0; border-top: 1px dashed #e5e7eb;" />
+
+    <h3>Add Expense</h3>
+    <div>
+      <label>Expense description</label>
+      <input id="exp-desc" placeholder="e.g. Kuryente, renta, sweldo" />
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Amount</label>
+        <input id="exp-amount" type="number" min="0" step="0.01" />
+      </div>
+      <div>
+        <label>Date</label>
+        <input id="exp-date" type="date" />
+      </div>
+    </div>
+
+    <button class="btn btn-secondary" id="save-exp-btn">💸 Save expense</button>
+    <button class="btn btn-danger" id="reset-all-btn">🧨 Reset all data</button>
+
+    <div class="summary-grid">
+      <div class="summary-box">
+        <div class="summary-label">Total sales</div>
+        <div class="summary-value" id="summary-sales">₱0</div>
+      </div>
+      <div class="summary-box">
+        <div class="summary-label">Total profit</div>
+        <div class="summary-value summary-positive" id="summary-profit">₱0</div>
+      </div>
+      <div class="summary-box">
+        <div class="summary-label">Total expenses</div>
+        <div class="summary-value summary-negative" id="summary-expenses">₱0</div>
+      </div>
+      <div class="summary-box">
+        <div class="summary-label">Net income (profit - expenses)</div>
+        <div class="summary-value" id="summary-net">₱0</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:10px;">Recent Sales</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+        <tr>
+          <th>Date</th>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Total</th>
+          <th>Profit</th>
+        </tr>
+        </thead>
+        <tbody id="sales-tbody"></tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:10px;">Recent Expenses</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Amount</th>
+        </tr>
+        </thead>
+        <tbody id="expenses-tbody"></tbody>
+      </table>
+    </div>
+
+    <p class="muted">
+      Lahat ng data ay naka-save lang sa phone / browser mo gamit
+      <strong>local storage</strong>. Kapag nag-clear ka ng browser data, mawawala rin.
+    </p>
+  </section>
+</div>
+
+<script>
+  // ---------- INITIAL DATA TEMPLATE ----------
+  // BRO: DITO MO ILALAGAY LAHAT NG ITEMS MO.
+  //
+  // FORMAT NG BAWAT ITEM:
+  // { name: "ITEM NAME", buy: 0, sell: 0, stock: 0, storage: "" }
+  //
+  // Gamitin mo 'yung mga pcs sa notebook mo bilang stock.
+  // Palitan mo lang ang sample sa baba.
+
+  const PRELOADED_ITEMS = [
+    // ===== SAMPLE LANG ITO. PALITAN MO NG TUNAY NA DATA MO. =====
+    { name: "Saiyan Rocker Arm TMX155 Upper", buy: 420, sell: 480, stock: 3, storage: "" },
+    { name: "Saiyan Rocker Arm TMX155 Cam Follower", buy: 280, sell: 345, stock: 3, storage: "" },
+    { name: "OD Battery 12NSL", buy: 900, sell: 1200, stock: 8, storage: "" },
+    { name: "Zeno Brake Pad Click150", buy: 120, sell: 210, stock: 3, storage: "" },
+    { name: "Saiyan Engine Valve XRM110", buy: 150, sell: 250, stock: 3, storage: "" },
+    // ===== DITO MO IDARAGDAG LAHAT NG ITEMS MO =====
+  ];
+
+  const STORAGE_KEYS = {
+    ITEMS: "makoi_items_v2",
+    SALES: "makoi_sales_v2",
+    EXPENSES: "makoi_expenses_v2",
+  };
+
+  const el = (id) => document.getElementById(id);
+
+  let items = [];
+  let sales = [];
+  let expenses = [];
+
+  function formatMoney(v) {
+    if (isNaN(v) || v === null) return "₱0";
+    return "₱" + Number(v).toLocaleString("en-PH", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  function todayStr() {
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function loadData() {
+    const itemsRaw = localStorage.getItem(STORAGE_KEYS.ITEMS);
+    const salesRaw = localStorage.getItem(STORAGE_KEYS.SALES);
+    const expRaw = localStorage.getItem(STORAGE_KEYS.EXPENSES);
+
+    if (itemsRaw) {
+      items = JSON.parse(itemsRaw);
+    } else {
+      // first time: load preloaded
+      items = PRELOADED_ITEMS.map((it, index) => ({
+        id: index + 1,
+        code: "",
+        ...it,
+      }));
       saveItems();
-      resetItemForm();
-      renderItems();
-      populateSaleSelect();
-      updateDashboard();
     }
 
-    function editItem(index) {
-      const it = items[index];
-      editingItemIndex = index;
-      document.getElementById('itemName').value = it.name;
-      document.getElementById('itemStorage').value = it.storage || '';
-      document.getElementById('itemBuy').value = it.buy;
-      document.getElementById('itemSell').value = it.sell;
-      document.getElementById('itemStock').value = it.stock;
-      document.getElementById('itemCode').value = it.code || '';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    sales = salesRaw ? JSON.parse(salesRaw) : [];
+    expenses = expRaw ? JSON.parse(expRaw) : [];
+  }
 
-    function deleteItem(index) {
-      if (!confirm('Delete this item?')) return;
-      items.splice(index, 1);
-      saveItems();
-      renderItems();
-      populateSaleSelect();
-      updateDashboard();
-    }
+  function saveItems() {
+    localStorage.setItem(STORAGE_KEYS.ITEMS, JSON.stringify(items));
+  }
 
-    function clearSearch() {
-      document.getElementById('searchInput').value = '';
-      renderItems();
-    }
+  function saveSales() {
+    localStorage.setItem(STORAGE_KEYS.SALES, JSON.stringify(sales));
+  }
 
-    function renderItems() {
-      const tbody = document.getElementById('itemsTableBody');
-      tbody.innerHTML = '';
-      const search = (document.getElementById('searchInput').value || '').toLowerCase();
+  function saveExpenses() {
+    localStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(expenses));
+  }
 
-      items.forEach((it, index) => {
-        if (search) {
-          const txt = (it.name + ' ' + (it.code || '') + ' ' + (it.storage || '')).toLowerCase();
-          if (!txt.includes(search)) return;
-        }
+  function renderItemsTable(filterText = "") {
+    const tbody = el("items-tbody");
+    tbody.innerHTML = "";
 
-        const tr = document.createElement('tr');
+    const ft = filterText.toLowerCase();
 
-        const nameTd = document.createElement('td');
-        nameTd.innerHTML = `<strong>${it.name}</strong><br><span class="muted">${it.code || ''}</span>`;
-        tr.appendChild(nameTd);
-
-        const storageTd = document.createElement('td');
-        storageTd.textContent = it.storage || '-';
-        tr.appendChild(storageTd);
-
-        const buyTd = document.createElement('td');
-        buyTd.className = 'text-right';
-        buyTd.textContent = formatMoney(it.buy);
-        tr.appendChild(buyTd);
-
-        const sellTd = document.createElement('td');
-        sellTd.className = 'text-right';
-        sellTd.textContent = formatMoney(it.sell);
-        tr.appendChild(sellTd);
-
-        const stockTd = document.createElement('td');
-        stockTd.className = 'text-right';
-        const stockTag = document.createElement('span');
-        stockTag.className = 'pill ' + (it.stock <= 3 ? 'tag-danger' : it.stock <= 10 ? '' : 'tag-success');
-        stockTag.textContent = it.stock;
-        stockTd.appendChild(stockTag);
-        tr.appendChild(stockTd);
-
-        const valueTd = document.createElement('td');
-        valueTd.className = 'text-right';
-        valueTd.textContent = formatMoney(it.stock * it.sell);
-        tr.appendChild(valueTd);
-
-        const actionsTd = document.createElement('td');
-        actionsTd.className = 'text-center no-print';
-        actionsTd.innerHTML =
-          `<button class="btn-secondary btn-sm" onclick="editItem(${index})">✏ Edit</button>
-           <button class="btn-danger btn-sm" onclick="deleteItem(${index})">🗑</button>`;
-        tr.appendChild(actionsTd);
-
+    items
+      .filter((it) => {
+        if (!ft) return true;
+        return (
+          it.name.toLowerCase().includes(ft) ||
+          (it.storage || "").toLowerCase().includes(ft)
+        );
+      })
+      .forEach((it, idx) => {
+        const profitPc = (it.sell || 0) - (it.buy || 0);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${it.name}</td>
+          <td>${formatMoney(it.buy)}</td>
+          <td>${formatMoney(it.sell)}</td>
+          <td class="badge-profit">${formatMoney(profitPc)}</td>
+          <td>${it.stock ?? 0}</td>
+          <td>${it.storage || ""}</td>
+        `;
+        tr.onclick = () => fillItemForm(it);
         tbody.appendChild(tr);
       });
 
-      updateDashboard();
-    }
+    // stock tab
+    const stockBody = el("stock-tbody");
+    stockBody.innerHTML = "";
+    let totalItems = 0;
+    let inventoryCost = 0;
 
-    function populateSaleSelect() {
-      const select = document.getElementById('saleItemSelect');
-      select.innerHTML = '';
-      if (items.length === 0) {
-        const opt = document.createElement('option');
-        opt.value = '';
-        opt.textContent = 'No items yet - add items first';
-        select.appendChild(opt);
-        return;
-      }
+    items.forEach((it, idx) => {
+      const stock = it.stock ?? 0;
+      totalItems += stock;
+      const costValue = stock * (it.buy || 0);
+      const potentialProfit = stock * ((it.sell || 0) - (it.buy || 0));
+      inventoryCost += costValue;
 
-      items.forEach((it, index) => {
-        const opt = document.createElement('option');
-        opt.value = index;
-        opt.textContent = `${it.name} (${it.stock} pcs • ${formatMoney(it.sell)})`;
-        select.appendChild(opt);
-      });
-
-      if (items.length > 0) {
-        select.selectedIndex = 0;
-        saleItemChanged();
-      }
-    }
-
-    // ======== SALES ========
-    function saleItemChanged() {
-      const index = Number(document.getElementById('saleItemSelect').value);
-      if (isNaN(index) || index < 0 || !items[index]) return;
-      document.getElementById('salePrice').value = items[index].sell;
-      updateSaleTotal();
-    }
-
-    function updateSaleTotal() {
-      const qty = Number(document.getElementById('saleQty').value || 0);
-      const price = Number(document.getElementById('salePrice').value || 0);
-      document.getElementById('saleTotal').value = (qty * price).toFixed(2);
-    }
-
-    function resetSaleForm() {
-      if (items.length === 0) {
-        document.getElementById('saleItemSelect').innerHTML = '';
-        document.getElementById('saleQty').value = 1;
-        document.getElementById('salePrice').value = '';
-        document.getElementById('saleTotal').value = '';
-        document.getElementById('saleDate').valueAsDate = new Date();
-        return;
-      }
-      document.getElementById('saleQty').value = 1;
-      saleItemChanged();
-      document.getElementById('saleDate').valueAsDate = new Date();
-    }
-
-    function recordSale() {
-      const itemIndex = Number(document.getElementById('saleItemSelect').value);
-      if (isNaN(itemIndex) || itemIndex < 0 || !items[itemIndex]) {
-        alert('Please select an item.');
-        return;
-      }
-      const qty = Number(document.getElementById('saleQty').value || 0);
-      const price = Number(document.getElementById('salePrice').value || 0);
-      const date = document.getElementById('saleDate').value || new Date().toISOString().slice(0, 10);
-
-      if (qty <= 0) {
-        alert('Invalid quantity.');
-        return;
-      }
-
-      if (qty > items[itemIndex].stock) {
-        if (!confirm('Quantity is higher than current stock. Continue?')) return;
-      }
-
-      const total = qty * price;
-
-      const sale = {
-        date,
-        itemName: items[itemIndex].name,
-        qty,
-        price,
-        total
-      };
-
-      sales.unshift(sale); // latest first
-      saveSales();
-
-      // deduct stock
-      items[itemIndex].stock = Math.max(0, (Number(items[itemIndex].stock) || 0) - qty);
-      saveItems();
-
-      renderItems();
-      populateSaleSelect();
-      renderSales();
-      updateDashboard();
-      resetSaleForm();
-    }
-
-    function renderSales() {
-      const tbody = document.getElementById('salesTableBody');
-      tbody.innerHTML = '';
-      sales.slice(0, 30).forEach(s => {
-        const tr = document.createElement('tr');
-
-        const d = document.createElement('td');
-        d.textContent = s.date;
-        tr.appendChild(d);
-
-        const n = document.createElement('td');
-        n.textContent = s.itemName;
-        tr.appendChild(n);
-
-        const q = document.createElement('td');
-        q.className = 'text-right';
-        q.textContent = s.qty;
-        tr.appendChild(q);
-
-        const t = document.createElement('td');
-        t.className = 'text-right';
-        t.textContent = formatMoney(s.total);
-        tr.appendChild(t);
-
-        tbody.appendChild(tr);
-      });
-    }
-
-    // ======== EXPENSES ========
-    function resetExpenseForm() {
-      document.getElementById('expDesc').value = '';
-      document.getElementById('expAmount').value = '';
-      document.getElementById('expDate').valueAsDate = new Date();
-    }
-
-    function addExpense() {
-      const desc = document.getElementById('expDesc').value.trim();
-      const amount = Number(document.getElementById('expAmount').value || 0);
-      const date = document.getElementById('expDate').value || new Date().toISOString().slice(0, 10);
-
-      if (!desc) {
-        alert('Enter expense description.');
-        return;
-      }
-      if (amount <= 0) {
-        alert('Enter valid amount.');
-        return;
-      }
-
-      expenses.unshift({ desc, amount, date });
-      saveExpenses();
-      renderExpenses();
-      updateDashboard();
-      resetExpenseForm();
-    }
-
-    function renderExpenses() {
-      const tbody = document.getElementById('expensesTableBody');
-      tbody.innerHTML = '';
-      expenses.slice(0, 30).forEach(e => {
-        const tr = document.createElement('tr');
-
-        const d = document.createElement('td');
-        d.textContent = e.date;
-        tr.appendChild(d);
-
-        const desc = document.createElement('td');
-        desc.textContent = e.desc;
-        tr.appendChild(desc);
-
-        const a = document.createElement('td');
-        a.className = 'text-right';
-        a.textContent = formatMoney(e.amount);
-        tr.appendChild(a);
-
-        tbody.appendChild(tr);
-      });
-    }
-
-    // ======== INITIALIZE ========
-    document.getElementById('saleQty').addEventListener('input', updateSaleTotal);
-    document.getElementById('salePrice').addEventListener('input', updateSaleTotal);
-    document.getElementById('saleItemSelect').addEventListener('change', saleItemChanged);
-
-    window.addEventListener('load', () => {
-      // Default dates
-      const today = new Date();
-      const dateStr = today.toISOString().slice(0, 10);
-      document.getElementById('saleDate').value = dateStr;
-      document.getElementById('expDate').value = dateStr;
-
-      loadData();
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td>${it.name}</td>
+        <td>${stock}</td>
+        <td>${formatMoney(costValue)}</td>
+        <td class="badge-profit">${formatMoney(potentialProfit)}</td>
+      `;
+      stockBody.appendChild(tr);
     });
 
-    function renderAll() {
-      renderItems();
-      populateSaleSelect();
-      renderSales();
-      renderExpenses();
-      updateDashboard();
-      resetSaleForm();
-      resetExpenseForm();
+    el("summary-total-items").textContent = totalItems;
+    el("summary-inventory-cost").textContent = formatMoney(inventoryCost);
+
+    renderItemSelect();
+    updateSummary();
+  }
+
+  function renderItemSelect() {
+    const select = el("sale-item-select");
+    const current = select.value;
+    select.innerHTML = '<option value="">-- choose item --</option>';
+
+    items.forEach((it) => {
+      const opt = document.createElement("option");
+      opt.value = String(it.id);
+      opt.textContent = it.name + (it.storage ? ` [${it.storage}]` : "");
+      select.appendChild(opt);
+    });
+
+    if (current) select.value = current;
+  }
+
+  function fillItemForm(it) {
+    el("item-name").value = it.name;
+    el("item-storage").value = it.storage || "";
+    el("item-buy").value = it.buy ?? "";
+    el("item-sell").value = it.sell ?? "";
+    el("item-stock").value = it.stock ?? "";
+    el("item-code").value = it.code || "";
+  }
+
+  function clearItemForm() {
+    el("item-name").value = "";
+    el("item-storage").value = "";
+    el("item-buy").value = "";
+    el("item-sell").value = "";
+    el("item-stock").value = "";
+    el("item-code").value = "";
+  }
+
+  function handleSaveItem() {
+    const name = el("item-name").value.trim();
+    if (!name) {
+      alert("Bro, kailangan may item name.");
+      return;
     }
-  </script>
+    const storage = el("item-storage").value.trim();
+    const buy = parseFloat(el("item-buy").value) || 0;
+    const sell = parseFloat(el("item-sell").value) || 0;
+    const stock = parseInt(el("item-stock").value || "0", 10);
+    const code = el("item-code").value.trim();
+
+    let existing = items.find(
+      (it) => it.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (existing) {
+      existing.storage = storage;
+      existing.buy = buy;
+      existing.sell = sell;
+      existing.stock = stock;
+      existing.code = code;
+    } else {
+      const newId = items.length ? Math.max(...items.map((i) => i.id)) + 1 : 1;
+      items.push({
+        id: newId,
+        name,
+        storage,
+        buy,
+        sell,
+        stock,
+        code,
+      });
+    }
+
+    saveItems();
+    renderItemsTable(el("search-items").value);
+    alert("Na-save na ang item, bro.");
+  }
+
+  // ---- SALES ----
+  function clearSaleForm() {
+    el("sale-item-select").value = "";
+    el("sale-qty").value = 1;
+    el("sale-price").value = "";
+    el("sale-total").value = "";
+    el("sale-date").value = todayStr();
+    el("sale-profit-info").textContent = "Profit: ₱0";
+  }
+
+  function updateSaleTotals() {
+    const itemId = parseInt(el("sale-item-select").value || "0", 10);
+    const qty = parseInt(el("sale-qty").value || "0", 10);
+    const price = parseFloat(el("sale-price").value || "0");
+    const item = items.find((it) => it.id === itemId);
+    const buy = item ? item.buy || 0 : 0;
+
+    const total = qty * price;
+    const profit = qty * (price - buy);
+
+    el("sale-total").value = total ? total.toFixed(2) : "";
+    el("sale-profit-info").textContent = "Profit: " + formatMoney(profit);
+  }
+
+  function handleSaleItemChange() {
+    const itemId = parseInt(el("sale-item-select").value || "0", 10);
+    const item = items.find((it) => it.id === itemId);
+    if (!item) return;
+    el("sale-price").value = item.sell ?? "";
+    el("sale-qty").value = 1;
+    updateSaleTotals();
+  }
+
+  function handleSaveSale() {
+    const itemId = parseInt(el("sale-item-select").value || "0", 10);
+    const item = items.find((it) => it.id === itemId);
+    if (!item) {
+      alert("Pili ka muna ng item, bro.");
+      return;
+    }
+
+    const qty = parseInt(el("sale-qty").value || "0", 10);
+    if (!qty || qty <= 0) {
+      alert("Ilalagay natin ilang piraso ang nabenta.");
+      return;
+    }
+
+    const price = parseFloat(el("sale-price").value || "0");
+    if (!price || price <= 0) {
+      alert("Kailangan may selling price.");
+      return;
+    }
+
+    if ((item.stock ?? 0) < qty) {
+      if (!confirm("Mas mataas ang quantity kaysa sa stock. Itutuloy pa rin?")) {
+        return;
+      }
+    }
+
+    const date = el("sale-date").value || todayStr();
+    const total = qty * price;
+    const profit = qty * (price - (item.buy || 0));
+
+    // update stock
+    item.stock = (item.stock ?? 0) - qty;
+    if (item.stock < 0) item.stock = 0;
+    saveItems();
+
+    sales.push({
+      id: sales.length ? sales[sales.length - 1].id + 1 : 1,
+      itemId,
+      itemName: item.name,
+      qty,
+      price,
+      total,
+      profit,
+      date,
+    });
+    saveSales();
+
+    renderItemsTable(el("search-items").value);
+    renderSalesTable();
+    updateSummary();
+
+    alert("Na-save na ang sale.");
+    clearSaleForm();
+  }
+
+  function renderSalesTable() {
+    const tbody = el("sales-tbody");
+    tbody.innerHTML = "";
+
+    const sorted = [...sales].sort((a, b) => (a.date > b.date ? -1 : 1));
+
+    sorted.forEach((s) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${s.date}</td>
+        <td>${s.itemName}</td>
+        <td>${s.qty}</td>
+        <td>${formatMoney(s.total)}</td>
+        <td class="badge-profit">${formatMoney(s.profit)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ---- EXPENSES ----
+  function clearExpenseForm() {
+    el("exp-desc").value = "";
+    el("exp-amount").value = "";
+    el("exp-date").value = todayStr();
+  }
+
+  function handleSaveExpense() {
+    const desc = el("exp-desc").value.trim();
+    const amount = parseFloat(el("exp-amount").value || "0");
+    const date = el("exp-date").value || todayStr();
+
+    if (!desc) {
+      alert("Lagyan natin ng description ang expense, bro.");
+      return;
+    }
+    if (!amount || amount <= 0) {
+      alert("Kailangan may amount ang expense.");
+      return;
+    }
+
+    expenses.push({
+      id: expenses.length ? expenses[expenses.length - 1].id + 1 : 1,
+      desc,
+      amount,
+      date,
+    });
+    saveExpenses();
+    renderExpensesTable();
+    updateSummary();
+    alert("Na-save na ang expense.");
+    clearExpenseForm();
+  }
+
+  function renderExpensesTable() {
+    const tbody = el("expenses-tbody");
+    tbody.innerHTML = "";
+
+    const sorted = [...expenses].sort((a, b) => (a.date > b.date ? -1 : 1));
+
+    sorted.forEach((e) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${e.date}</td>
+        <td>${e.desc}</td>
+        <td>${formatMoney(e.amount)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ---- SUMMARY ----
+  function updateSummary() {
+    const totalSales = sales.reduce((sum, s) => sum + (s.total || 0), 0);
+    const totalProfit = sales.reduce((sum, s) => sum + (s.profit || 0), 0);
+    const totalExpenses = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const net = totalProfit - totalExpenses;
+
+    el("summary-sales").textContent = formatMoney(totalSales);
+    el("summary-profit").textContent = formatMoney(totalProfit);
+    el("summary-expenses").textContent = formatMoney(totalExpenses);
+
+    const netEl = el("summary-net");
+    netEl.textContent = formatMoney(net);
+    netEl.classList.remove("summary-positive", "summary-negative");
+    if (net > 0) netEl.classList.add("summary-positive");
+    if (net < 0) netEl.classList.add("summary-negative");
+  }
+
+  // ---- RESET ALL ----
+  function handleResetAll() {
+    if (
+      !confirm(
+        "Bro, sure ka? Buburahin nito lahat ng items, sales at expenses na naka-save sa device na ito."
+      )
+    ) {
+      return;
+    }
+    localStorage.removeItem(STORAGE_KEYS.ITEMS);
+    localStorage.removeItem(STORAGE_KEYS.SALES);
+    localStorage.removeItem(STORAGE_KEYS.EXPENSES);
+    loadData();
+    renderItemsTable();
+    renderSalesTable();
+    renderExpensesTable();
+    clearItemForm();
+    clearSaleForm();
+    clearExpenseForm();
+    alert("Na-reset na lahat ng data sa device na ito.");
+  }
+
+  // ---- TABS ----
+  function initTabs() {
+    const buttons = document.querySelectorAll(".tab-btn");
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        buttons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const tabId = btn.getAttribute("data-tab");
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((c) => (c.style.display = "none"));
+        document.getElementById(tabId).style.display = "block";
+      });
+    });
+  }
+
+  // ---- INIT ----
+  function init() {
+    loadData();
+    renderItemsTable();
+    renderSalesTable();
+    renderExpensesTable();
+
+    el("sale-date").value = todayStr();
+    el("exp-date").value = todayStr();
+
+    // events
+    el("save-item-btn").onclick = handleSaveItem;
+    el("reset-item-btn").onclick = clearItemForm;
+
+    el("sale-item-select").onchange = () => {
+      handleSaleItemChange();
+      updateSaleTotals();
+    };
+    el("sale-qty").oninput = updateSaleTotals;
+    el("sale-price").oninput = updateSaleTotals;
+    el("save-sale-btn").onclick = handleSaveSale;
+    el("reset-sale-btn").onclick = clearSaleForm;
+
+    el("save-exp-btn").onclick = handleSaveExpense;
+    el("reset-all-btn").onclick = handleResetAll;
+
+    el("search-items").oninput = (e) => {
+      renderItemsTable(e.target.value);
+    };
+
+    initTabs();
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+</script>
 </body>
 </html>
