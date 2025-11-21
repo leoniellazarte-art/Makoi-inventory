@@ -333,6 +333,57 @@
       text-decoration: underline;
       cursor: pointer;
     }
+
+    /* for sales search suggestion dropdown */
+    .hidden {
+      display: none;
+    }
+    .sale-suggestions {
+      position: relative;
+      margin-top: 4px;
+    }
+    .sale-suggestions-list {
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      margin-top: 2px;
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      max-height: 180px;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.18);
+      display: none;
+    }
+    .sale-suggestion-item {
+      padding: 6px 9px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sale-suggestion-item:nth-child(even) {
+      background: #f9fafb;
+    }
+    .sale-suggestion-item:hover {
+      background: #eff6ff;
+    }
+    .sale-suggestion-name {
+      font-weight: 500;
+    }
+    .sale-suggestion-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .sale-suggestion-empty {
+      cursor: default;
+      text-align: center;
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -450,9 +501,14 @@
 
         <!-- RECORD SALE -->
         <div class="mt-1">
-          <label for="saleItem">Select item</label>
-          <select id="saleItem">
-            <option value="">-- choose item --</option>
+          <label for="saleSearch">Search item (name)</label>
+          <input id="saleSearch" placeholder="Type item name… e.g. sprocket, bearing, oil" autocomplete="off" />
+          <div class="sale-suggestions">
+            <div id="saleSuggestionsList" class="sale-suggestions-list"></div>
+          </div>
+          <!-- Hidden select used internally by JS -->
+          <select id="saleItem" class="hidden">
+            <option value="">-- internal --</option>
           </select>
         </div>
 
@@ -589,8 +645,7 @@
     </div>
   </div>
 
-  <script>
-    // ===== BASIC HELPERS =====
+  <script>// ===== BASIC HELPERS =====
     const formatMoney = (n) =>
       "₱" +
       (Number(n) || 0).toLocaleString("en-PH", {
@@ -1012,9 +1067,7 @@
       { name: "RS8 Brake Pad", buyPrice: 100, sellPrice: 280, stock: 1, storage: "" },
       { name: "OKM Brake Pad", buyPrice: 60, sellPrice: 180, stock: 2, storage: "" },
       { name: "Cylinder Block Mio1", buyPrice: 900, sellPrice: 1600, stock: 1, storage: "" }
-    ];
-
-    // ===== STATE =====
+    ];// ===== STATE =====
     let items = [];
     let sales = [];
     let expenses = [];
@@ -1187,6 +1240,10 @@
     const tabAllBtn = document.getElementById("tabAll");
     const clearSalesLink = document.getElementById("clearSalesLink");
 
+    // LIVE SEARCH INPUT + SUGGESTIONS
+    const saleSearchInput = document.getElementById("saleSearch");
+    const saleSuggestionsList = document.getElementById("saleSuggestionsList");
+
     function renderSaleItemOptions() {
       const currentValue = saleItemSelect.value;
       saleItemSelect.innerHTML = '<option value="">-- choose item --</option>';
@@ -1221,13 +1278,88 @@
       const profit = qty * (sell - buy);
       saleTotalInput.value = total ? formatMoney(total) : "";
       saleProfitInput.value = profit ? formatMoney(profit) : "";
+    }// LIVE SEARCH SUGGESTIONS
+    function showSaleSuggestions() {
+      if (!saleSearchInput) return;
+
+      const q = saleSearchInput.value.trim().toLowerCase();
+      if (!q) {
+        saleSuggestionsList.innerHTML = "";
+        saleSuggestionsList.style.display = "none";
+        return;
+      }
+
+      const matches = items
+        .filter((it) => it.name.toLowerCase().includes(q))
+        .slice(0, 20);
+
+      if (!matches.length) {
+        saleSuggestionsList.innerHTML =
+          '<div class="sale-suggestion-item sale-suggestion-empty">No matching item</div>';
+        saleSuggestionsList.style.display = "block";
+        return;
+      }
+
+      saleSuggestionsList.innerHTML = matches
+        .map(
+          (it) => `
+        <div class="sale-suggestion-item" data-id="${it.id}">
+          <div class="sale-suggestion-name">${it.name}</div>
+          <div class="sale-suggestion-meta">
+            <span>${formatMoney(it.sellPrice || 0)} / pc</span>
+            <span>Stock: ${it.stock}</span>
+          </div>
+        </div>`
+        )
+        .join("");
+
+      saleSuggestionsList.style.display = "block";
+    }
+
+    if (saleSuggestionsList) {
+      saleSuggestionsList.addEventListener("click", (e) => {
+        const row = e.target.closest(".sale-suggestion-item[data-id]");
+        if (!row) return;
+        const id = Number(row.getAttribute("data-id"));
+        const item = items.find((it) => it.id === id);
+        if (!item) return;
+
+        // set hidden select
+        saleItemSelect.value = String(id);
+        onChangeSaleItem();
+
+        // set search text
+        saleSearchInput.value = item.name;
+
+        // default qty = 1
+        saleQtyInput.value = 1;
+
+        if (!saleSellPriceInput.value || Number(saleSellPriceInput.value) === 0) {
+          saleSellPriceInput.value = item.sellPrice || 0;
+        }
+
+        calcSaleTotals();
+
+        saleSuggestionsList.innerHTML = "";
+        saleSuggestionsList.style.display = "none";
+      });
+    }
+
+    if (saleSearchInput) {
+      saleSearchInput.addEventListener("input", showSaleSuggestions);
+      saleSearchInput.addEventListener("focus", showSaleSuggestions);
+      saleSearchInput.addEventListener("blur", () => {
+        setTimeout(() => {
+          saleSuggestionsList.style.display = "none";
+        }, 200);
+      });
     }
 
     function onSaveSale() {
       const id = Number(saleItemSelect.value);
       const item = items.find((it) => it.id === id);
       if (!item) {
-        alert("Pumili muna ng item sa taas.");
+        alert("Pumili o mag-search muna ng item.");
         return;
       }
       const qty = Number(saleQtyInput.value || 0);
@@ -1276,6 +1408,13 @@
 
     function clearSaleForm() {
       saleItemSelect.value = "";
+      if (saleSearchInput) {
+        saleSearchInput.value = "";
+      }
+      if (saleSuggestionsList) {
+        saleSuggestionsList.innerHTML = "";
+        saleSuggestionsList.style.display = "none";
+      }
       saleQtyInput.value = 1;
       saleSellPriceInput.value = "";
       saleBuyPriceInput.value = "";
@@ -1452,4 +1591,4 @@
     document.addEventListener("DOMContentLoaded", init);
   </script>
 </body>
-  </html>
+</html>
