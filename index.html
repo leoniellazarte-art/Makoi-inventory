@@ -274,7 +274,13 @@
         </div>
       </div>
     </div>
-/********** STORAGE KEY **********/
+
+    <div style="height:20px"></div>
+    <div class="muted">Notes: CSV import expects simple comma-separated values without headers. Backup is full JSON of POS state.</div>
+  </div>
+
+  <script>
+    // PART 2 will continue here (core JS functions and app logic)/********** STORAGE KEY **********/
     const STORAGE_KEY = 'makoi_inventory_v3';
 
     /********** PLACEHOLDER FOR SEED ITEMS **********/
@@ -843,13 +849,7 @@
       }
       res.push(cur);
       return res.map(s=>s.trim());
-    }
-    <div style="height:20px"></div>
-    <div class="muted">Notes: CSV import expects simple comma-separated values without headers. Backup is full JSON of POS state.</div>
-  </div>
-
-  <script>
-    // PART 2 will continue here (core JS functions and app logic)/********** PART 3: SEED ITEMS (361 items) **********/
+        }/********** PART 3: SEED ITEMS (361 items) **********/
     const seedItems = [
 { id:1, name:"YK Horn Relay Socket Universal 5 Pin", stock:3, buy:62, sell:"", storage:"" },
 { id:2, name:"SMOK S3 3LED Night Breaker", stock:3, buy:240, sell:300, storage:"" },
@@ -1255,4 +1255,4 @@
     window._makoi_state = state;
   </script>
 </body>
-</html>
+      </html>
