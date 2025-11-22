@@ -1,1564 +1,1258 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Makoi Motor Shop POS</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Makoi Motor Shop — SUPER POS (FULL)</title>
   <style>
-    :root {
-      --bg: #f4f5fb;
-      --card: #ffffff;
-      --accent: #2563eb;
-      --accent-soft: #dbeafe;
-      --border: #e5e7eb;
-      --text-main: #111827;
-      --text-muted: #6b7280;
-      --danger: #dc2626;
-      --success: #16a34a;
+    :root{
+      --bg:#f4f5fb; --card:#fff; --accent:#2563eb; --border:#e5e7eb;
+      --text:#111827; --muted:#6b7280; --success:#16a34a; font-size:14px;
     }
-
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-    }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text-main);
-    }
-
-    .app {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 16px 12px 40px;
-    }
-
-    header {
-      margin-bottom: 16px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    header p {
-      margin: 4px 0 0;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-      gap: 12px;
-    }
-
-    @media (max-width: 800px) {
-      .grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: 14px;
-      padding: 12px;
-      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
-      border: 1px solid rgba(148, 163, 184, 0.3);
-    }
-
-    .card h2 {
-      margin: 0 0 6px;
-      font-size: 16px;
-    }
-
-    .card small {
-      color: var(--text-muted);
-      font-size: 12px;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-
-    .badge {
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-weight: 500;
-    }
-
-    label {
-      display: block;
-      font-size: 12px;
-      margin-bottom: 2px;
-      color: var(--text-muted);
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 7px 9px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      font-size: 13px;
-      outline: none;
-      background: #f9fafb;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: var(--accent);
-      background: #ffffff;
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.1);
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .row-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .mt-1 {
-      margin-top: 4px;
-    }
-
-    .mt-2 {
-      margin-top: 8px;
-    }
-
-    .mt-3 {
-      margin-top: 12px;
-    }
-
-    .btn {
-      padding: 7px 9px;
-      border-radius: 999px;
-      border: none;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-
-    .btn-danger {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: default;
-    }
-
-    .btn-icon {
-      font-size: 14px;
-    }
-
-    .btn-group {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
-
-    .pill-tabs {
-      display: inline-flex;
-      background: #f3f4f6;
-      border-radius: 999px;
-      padding: 3px;
-      margin-top: 8px;
-      gap: 2px;
-    }
-
-    .pill-tab {
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 11px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-    }
-
-    .pill-tab.active {
-      background: #fff;
-      color: var(--accent);
-      font-weight: 600;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      font-size: 11px;
-    }
-
-    th,
-    td {
-      padding: 6px 6px;
-      text-align: left;
-      border-bottom: 1px solid #eef0f4;
-    }
-
-    th {
-      background: #f9fafb;
-      font-size: 11px;
-      color: var(--text-muted);
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-
-    tbody tr:nth-child(even) {
-      background: #f9fafb;
-    }
-
-    .table-wrapper {
-      max-height: 210px;
-      overflow: auto;
-      border-radius: 10px;
-      border: 1px solid #e5e7eb;
-      background: #fff;
-      margin-top: 6px;
-    }
-
-    .text-right {
-      text-align: right;
-    }
-
-    .text-center {
-      text-align: center;
-    }
-
-    .text-muted {
-      color: var(--text-muted);
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    @media (max-width: 800px) {
-      .summary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    .summary-card {
-      padding: 8px;
-      border-radius: 12px;
-      border: 1px solid #e5e7eb;
-      background: #f9fafb;
-    }
-
-    .summary-label {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .summary-value {
-      font-size: 14px;
-      font-weight: 700;
-      margin-top: 2px;
-    }
-
-    .summary-sub {
-      font-size: 11px;
-      margin-top: 1px;
-      color: var(--text-muted);
-    }
-
-    .search-box {
-      margin-top: 8px;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .search-box input {
-      flex: 1;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      padding: 2px 6px;
-      font-size: 10px;
-      border-radius: 999px;
-      background: #eef2ff;
-      color: #4338ca;
-      margin-left: 4px;
-    }
-
-    .footer-note {
-      margin-top: 8px;
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    .link {
-      font-size: 11px;
-      color: var(--accent);
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    /* for sales search suggestion dropdown */
-    .hidden {
-      display: none;
-    }
-    .sale-suggestions {
-      position: relative;
-      margin-top: 4px;
-    }
-    .sale-suggestions-list {
-      position: absolute;
-      left: 0;
-      right: 0;
-      z-index: 20;
-      margin-top: 2px;
-      background: #ffffff;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      max-height: 180px;
-      overflow-y: auto;
-      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.18);
-      display: none;
-    }
-    .sale-suggestion-item {
-      padding: 6px 9px;
-      font-size: 12px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .sale-suggestion-item:nth-child(even) {
-      background: #f9fafb;
-    }
-    .sale-suggestion-item:hover {
-      background: #eff6ff;
-    }
-    .sale-suggestion-name {
-      font-weight: 500;
-    }
-    .sale-suggestion-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .sale-suggestion-empty {
-      cursor: default;
-      text-align: center;
-      color: var(--text-muted);
+    *{box-sizing:border-box;font-family:system-ui,Arial,sans-serif}
+    body{margin:0;background:var(--bg);color:var(--text);padding:16px}
+    .container{max-width:1100px;margin:0 auto}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;box-shadow:0 6px 18px rgba(2,6,23,0.04);margin-bottom:14px}
+    h1{margin:0 0 10px;font-size:20px}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .col{flex:1;min-width:180px}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input[type="text"], input[type="number"], input[type="date"], select, textarea{
+      width:100%;padding:8px;border-radius:8px;border:1px solid var(--border)}
+    button{padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:white;cursor:pointer}
+    .muted{color:var(--muted);font-size:13px}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:8px;border-bottom:1px solid #f1f1f1;text-align:left;font-size:13px}
+    .text-center{text-align:center}.text-right{text-align:right}
+    .summary{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+    .summary .box{flex:1;min-width:140px;background:#fff;padding:8px;border-radius:8px;border:1px solid var(--border)}
+    .suggestions{position:relative}
+    .suggestions-list{position:absolute;left:0;right:0;top:44px;background:#fff;border:1px solid var(--border);border-radius:8px;max-height:240px;overflow:auto;z-index:50;box-shadow:0 6px 18px rgba(2,6,23,0.06)}
+    .suggestion{padding:8px;border-bottom:1px solid #f3f3f3;cursor:pointer}
+    .suggestion:last-child{border-bottom:0}
+    .flex-between{display:flex;justify-content:space-between;align-items:center}
+    .small{font-size:13px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:#fff}
+    .tabs{display:flex;gap:8px;margin-top:8px}
+    .tab{padding:6px 10px;border-radius:8px;border:1px solid var(--border);cursor:pointer;background:#fff}
+    .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .no-print{display:inline-block}
+    .badge{background:#efefef;padding:4px 8px;border-radius:6px;font-size:12px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    @media print{
+      body{padding:0}
+      .no-print{display:none}
+      .card{box-shadow:none;border:none}
+      @page { size: A4; margin: 12mm; }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <h1>Makoi Motor Shop POS</h1>
-      <p>Online POS (inventory + sales + profit) for Makoi Motor Shop.</p>
-    </header>
+  <div class="container">
+    <h1>Makoi Motor Shop — SUPER POS (FULL)</h1>
 
-    <div class="grid">
-      <!-- INVENTORY -->
-      <section class="card">
-        <div class="section-title">
-          <div>
-            <h2>Inventory</h2>
-            <small>No. of items, item name, buying price, stock & storage.</small>
-          </div>
-          <span class="badge">Step 1: Manage items</span>
-        </div>
-
-        <div class="mt-2">
-          <label for="itemName">Item name / description</label>
-          <input id="itemName" placeholder="e.g. Saiyan Rocker Arm TMX155 Upper" autocomplete="off" />
-        </div>
-
-        <div class="row mt-2">
-          <div>
-            <label for="itemBuy">Buying price (per pc)</label>
-            <input id="itemBuy" type="number" min="0" step="1" />
-          </div>
-          <div>
-            <label for="itemSell">Selling price (per pc)</label>
-            <input id="itemSell" type="number" min="0" step="1" />
+    <!-- TOP CONTROLS -->
+    <div class="card no-print">
+      <div class="row">
+        <div class="col">
+          <label>Quick action</label>
+          <div class="controls">
+            <button id="btnExportItems">Export items CSV</button>
+            <button id="btnExportSales">Export sales CSV</button>
+            <input id="importItemsFile" type="file" accept=".csv" class="small">
+            <input id="importSalesFile" type="file" accept=".csv" class="small">
+            <button id="btnDownloadBackup" class="small" style="background:#fff;color:var(--text);border:1px solid var(--border)">Download backup</button>
+            <input id="backupUpload" type="file" accept="application/json" class="small">
+            <button id="btnClearAll" class="small" style="background:#fff;color:#a00;border:1px solid #fcc">Clear ALL (reset)</button>
           </div>
         </div>
-
-        <div class="row mt-2">
+        <div class="col">
+          <label>Data status</label>
           <div>
-            <label for="itemStock">Remaining stock (pcs)</label>
-            <input id="itemStock" type="number" min="0" step="1" />
-          </div>
-          <div>
-            <label for="itemStorage">Storage box / location</label>
-            <input id="itemStorage" placeholder="(blank muna, ikaw maglalagay)" />
+            <span class="badge">Storage key: <strong>makoi_inventory_v3</strong></span>
+            <span class="badge" id="itemsCountBadge">Items: 0</span>
+            <span class="badge" id="salesCountBadge">Sales: 0</span>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="btn-group">
-          <button id="saveItemBtn" class="btn btn-primary">
-            <span class="btn-icon">💾</span> Save item
-          </button>
-          <button id="resetItemBtn" class="btn btn-secondary">
-            ⟳ Reset fields
-          </button>
-          <button id="clearAllBtn" class="btn btn-danger">
-            🗑 Clear all data (device)
-          </button>
+    <!-- INVENTORY: Add / Edit (search-only view enabled) -->
+    <div class="card">
+      <div class="flex-between">
+        <strong>Inventory — Add / Edit</strong>
+        <div class="muted">Search-only mode: inventory list appears only when you type in the Search box below.</div>
+      </div>
+
+      <div style="height:8px"></div>
+
+      <div class="row">
+        <div class="col">
+          <label>Item name / description</label>
+          <input id="itemNameInput" type="text" placeholder="e.g. Sprocket">
         </div>
-
-        <div class="search-box">
-          <input id="searchInput" placeholder="Search item name or storage location…" />
-          <span class="tag">Inventory list</span>
+        <div class="col">
+          <label>Quantity (pcs)</label>
+          <input id="itemStockInput" type="number" min="0" value="1">
         </div>
+        <div class="col">
+          <label>Buying price (per pc)</label>
+          <input id="itemBuyInput" type="number" min="0" step="0.01">
+        </div>
+        <div class="col">
+          <label>Selling price (per pc)</label>
+          <input id="itemSellInput" type="number" min="0" step="0.01">
+        </div>
+      </div>
 
-        <div class="table-wrapper" id="itemsTableWrapper">
-          <table>
-            <thead>
-              <tr>
-                <th class="text-center">#</th>
-                <th>Item</th>
-                <th class="text-right">Buy</th>
-                <th class="text-right">Sell</th>
-                <th class="text-center">Stock</th>
-                <th>Storage</th>
-                <th class="text-right">Value</th>
-              </tr>
-            </thead>
-            <tbody id="itemsTbody"></tbody>
+      <div style="height:10px"></div>
+      <div class="row">
+        <div class="col">
+          <label>Storage box / location (leave blank)</label>
+          <input id="itemStorageInput" type="text" placeholder="Fill later in UI">
+        </div>
+        <div style="align-self:end">
+          <button id="saveItemBtn">Save item</button>
+          <button id="resetItemBtn" class="small" style="background:#fff;color:var(--text);border:1px solid var(--border)">Reset</button>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="row">
+        <div class="col suggestions">
+          <label>Inventory Search (type to show matching items — list hidden if empty)</label>
+          <input id="inventorySearchInput" type="text" placeholder="Type item name or storage...">
+          <div id="inventoryResults" class="suggestions-list" style="display:none"></div>
+        </div>
+        <div class="col">
+          <label>Bulk paste items (CSV rows: name,stock,buy,sell,storage)</label>
+          <textarea id="bulkPaste" rows="3" placeholder="Paste CSV rows and click Import"></textarea>
+          <div style="height:8px"></div>
+          <button id="btnBulkImport" class="small" style="background:#fff;color:var(--text);border:1px solid var(--border)">Import pasted items</button>
+        </div>
+        <div class="col">
+          <label>Find by ID (quick)</label>
+          <input id="findByIdInput" type="number" placeholder="Item ID">
+          <div style="height:8px"></div>
+          <button id="btnFindById" class="small" style="background:#fff;color:var(--text);border:1px solid var(--border)">Find</button>
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <div id="inventoryListWrap" class="card" style="padding:8px;display:none">
+        <div style="max-height:340px;overflow:auto">
+          <table id="itemsTable">
+            <thead><tr><th>#</th><th>ID</th><th>Item</th><th>Buy</th><th>Sell</th><th>Stock</th><th>Storage</th><th class="no-print">Actions</th></tr></thead>
+            <tbody></tbody>
           </table>
         </div>
-
-        <div class="summary-grid mt-2">
-          <div class="summary-card">
-            <div class="summary-label">Total items</div>
-            <div id="totalItems" class="summary-value">0</div>
-            <div class="summary-sub">Unique item names</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Inventory cost (buy)</div>
-            <div id="inventoryCost" class="summary-value">₱0</div>
-            <div class="summary-sub">Sum of buy × stock</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Inventory value (sell)</div>
-            <div id="inventoryValue" class="summary-value">₱0</div>
-            <div class="summary-sub">Sum of sell × stock</div>
-          </div>
-        </div>
-
-        <p class="footer-note">
-          Tip: para mag-edit ng lumang item, i-click ang row o i-type ulit ang
-          pangalan, palitan presyo/stock, tapos click <b>Save item</b>.
-        </p>
-      </section>
-
-      <!-- SALES & SUMMARY -->
-      <section class="card">
-        <div class="section-title">
-          <div>
-            <h2>Sales & Profit</h2>
-            <small>Record sales, auto profit & daily / all-time summary.</small>
-          </div>
-          <span class="badge">Step 2: Record sales</span>
-        </div>
-
-        <!-- RECORD SALE -->
-        <div class="mt-1">
-          <label for="saleSearch">Search item (name)</label>
-          <input id="saleSearch" placeholder="Type item name… e.g. sprocket, bearing, oil" autocomplete="off" />
-          <div class="sale-suggestions">
-            <div id="saleSuggestionsList" class="sale-suggestions-list"></div>
-          </div>
-          <!-- Hidden select used internally by JS -->
-          <select id="saleItem" class="hidden">
-            <option value="">-- internal --</option>
-          </select>
-        </div>
-
-        <div class="row mt-2">
-          <div>
-            <label for="saleQty">Quantity (pcs)</label>
-            <input id="saleQty" type="number" min="1" value="1" />
-          </div>
-          <div>
-            <label for="saleSellPrice">Selling price (per pc)</label>
-            <input id="saleSellPrice" type="number" min="0" step="1" />
-          </div>
-        </div>
-
-        <div class="row mt-2">
-          <div>
-            <label>Buying price (per pc)</label>
-            <input id="saleBuyPrice" type="number" disabled />
-          </div>
-          <div>
-            <label>Profit for this sale</label>
-            <input id="saleProfit" type="text" disabled />
-          </div>
-        </div>
-
-        <div class="row mt-2">
-          <div>
-            <label for="saleTotal">Total amount</label>
-            <input id="saleTotal" type="text" disabled />
-          </div>
-          <div>
-            <label for="saleDate">Date</label>
-            <input id="saleDate" type="date" />
-          </div>
-        </div>
-
-        <div class="btn-group">
-          <button id="saveSaleBtn" class="btn btn-primary">✅ Save sale</button>
-          <button id="resetSaleBtn" class="btn btn-secondary">⟳ Reset sale</button>
-        </div>
-
-        <!-- DAILY SUMMARY -->
-        <div class="pill-tabs">
-          <button id="tabToday" class="pill-tab active">Today</button>
-          <button id="tabAll" class="pill-tab">All time</button>
-        </div>
-
-        <div class="summary-grid mt-2">
-          <div class="summary-card">
-            <div class="summary-label">
-              <span id="summaryLabel">Today sales</span>
-            </div>
-            <div id="summarySales" class="summary-value">₱0</div>
-            <div class="summary-sub" id="summarySalesSub">Total amount of sales</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">
-              <span id="summaryProfitLabel">Today profit</span>
-            </div>
-            <div id="summaryProfit" class="summary-value">₱0</div>
-            <div class="summary-sub">Sales – cost (buy)</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Recorded expenses</div>
-            <div id="summaryExpenses" class="summary-value">₱0</div>
-            <div class="summary-sub">For net profit computation</div>
-          </div>
-        </div>
-
-        <div class="mt-3">
-          <span class="summary-label">Recent sales</span>
-          <span class="link" id="clearSalesLink">clear all sales</span>
-          <div class="table-wrapper" style="max-height: 150px">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Item</th>
-                  <th class="text-center">Qty</th>
-                  <th class="text-right">Total</th>
-                  <th class="text-right">Profit</th>
-                </tr>
-              </thead>
-              <tbody id="salesTbody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- EXPENSES -->
-        <div class="mt-3">
-          <span class="summary-label">Add expense</span>
-          <div class="row mt-1">
-            <div>
-              <label for="expDesc">Description</label>
-              <input id="expDesc" placeholder="e.g. kuryente, renta, sweldo" />
-            </div>
-            <div>
-              <label for="expAmount">Amount</label>
-              <input id="expAmount" type="number" min="0" step="1" />
-            </div>
-          </div>
-          <div class="row mt-1">
-            <div>
-              <label for="expDate">Date</label>
-              <input id="expDate" type="date" />
-            </div>
-            <div style="display:flex;align-items:flex-end;gap:6px">
-              <button id="saveExpBtn" class="btn btn-primary" style="width:100%">
-                💸 Save expense
-              </button>
-            </div>
-          </div>
-
-          <div class="table-wrapper" style="max-height: 120px; margin-top: 8px">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th class="text-right">Amount</th>
-                </tr>
-              </thead>
-              <tbody id="expensesTbody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <p class="footer-note">
-          Lahat ng data naka-save sa browser ng device na gamit mo. Kapag nagbago
-          ka ng phone / nag-clear ng data, mawawala rin (pero pwede mo ulit
-          i-load gamit encoded items sa code).
-        </p>
-      </section>
+      </div>
     </div>
-  </div>
 
-  <script>// ===== BASIC HELPERS =====
-    const formatMoney = (n) =>
-      "₱" +
-      (Number(n) || 0).toLocaleString("en-PH", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      });
+    <!-- SALES & EXPENSES -->
+    <div class="card">
+      <div class="flex-between">
+        <strong>Sales &amp; Expenses</strong>
+        <div>
+          <button id="printBtn" class="small no-print">Print sales</button>
+        </div>
+      </div>
 
-    const todayISO = () => new Date().toISOString().slice(0, 10);
+      <div style="height:10px"></div>
 
-    // ===== STORAGE KEYS =====
-    const STORAGE_ITEMS = "makoi_pos_items_v3";
-    const STORAGE_SALES = "makoi_pos_sales_v3";
-    const STORAGE_EXPENSES = "makoi_pos_expenses_v3";
+      <div class="row">
+        <div class="col suggestions">
+          <label>Barcode / Quick-scan (scan or paste code, press Enter)</label>
+          <input id="barcodeInput" type="text" placeholder="Scan barcode OR type item id OR exact name">
+        </div>
+        <div class="col suggestions">
+          <label>Search / choose item (type to search)</label>
+          <input id="saleSearchInput" type="text" placeholder="Type item name...">
+          <div id="saleSuggestions" class="suggestions-list" style="display:none"></div>
+        </div>
 
-    // ===== FULL ITEM DATABASE (11 PAGES) =====
-    //  stock = no. of items
-    //  buyPrice = buying price
-    //  sellPrice = selling price
-    //  storage = "" (ikaw maglalagay sa POS)
-    const seedItems = [
-      /* PAGE 1 */
-      { name: "YK Horn Relay Socket Universal 5 Pin", buyPrice: 62, sellPrice: 0, stock: 3, storage: "" },
-      { name: "SMOK S3 3LED Night Breaker", buyPrice: 240, sellPrice: 300, stock: 3, storage: "" },
-      { name: "SMOK S6 6LED Night Breaker", buyPrice: 250, sellPrice: 350, stock: 3, storage: "" },
-      { name: "DRX C06", buyPrice: 250, sellPrice: 370, stock: 3, storage: "" },
-      { name: "DVS SD35 MDL Small Steel Gun", buyPrice: 75, sellPrice: 0, stock: 3, storage: "" },
-      { name: "Battery Terminal Assorted", buyPrice: 2, sellPrice: 0, stock: 100, storage: "" },
-      { name: "Otaka Bosch Relay Socket", buyPrice: 23, sellPrice: 0, stock: 3, storage: "" },
-      { name: "Male and Female Socket", buyPrice: 6, sellPrice: 0, stock: 3, storage: "" },
-      { name: "Otaka Tail Light Socket Universal", buyPrice: 13, sellPrice: 0, stock: 10, storage: "" },
-      { name: "Otaka Fuse Box Housing", buyPrice: 23, sellPrice: 0, stock: 10, storage: "" },
-      { name: "Otaka Air Filter Aerox155 V1", buyPrice: 135, sellPrice: 0, stock: 3, storage: "" },
-      { name: "Saiyan Mini Horn 10s", buyPrice: 34, sellPrice: 0, stock: 3, storage: "" },
-      { name: "BANDO Belt Aerox V1/2/Nmax V2", buyPrice: 595, sellPrice: 1785, stock: 3, storage: "" },
-      { name: "Fuse Glass 10A", buyPrice: 1.5, sellPrice: 0, stock: 100, storage: "" },
-      { name: "Fuse Glass 25A", buyPrice: 1.5, sellPrice: 0, stock: 100, storage: "" },
-      { name: "Hella Spark Plug C10N-7 Long Tip", buyPrice: 48, sellPrice: 200, stock: 1, storage: "" },
-      { name: "Beast Tire 70×90×14", buyPrice: 960, sellPrice: 1450, stock: 4, storage: "" },
-      { name: "Beast Tire 80×90×14", buyPrice: 1040, sellPrice: 1480, stock: 4, storage: "" },
-      { name: "Beast Tire 90×90×14", buyPrice: 1180, sellPrice: 1380, stock: 4, storage: "" },
-      { name: "Beast Tire 100×80×14", buyPrice: 1500, sellPrice: 1850, stock: 4, storage: "" },
-      { name: "TOP UP 200mL", buyPrice: 48, sellPrice: 65, stock: 1, storage: "" },
-      { name: "Zeno Clutch Excel 20W50 1L", buyPrice: 157, sellPrice: 0, stock: 12, storage: "" },
-      { name: "Zeno Scooter Pro 10W40 1L", buyPrice: 168, sellPrice: 0, stock: 12, storage: "" },
-      { name: "Malubade Gear Oil 100mL", buyPrice: 23, sellPrice: 30, stock: 12, storage: "" },
-      { name: "Saiyan Tire Sealant 500mL", buyPrice: 48, sellPrice: 120, stock: 12, storage: "" },
-      { name: "YK Single Denso Wire Black", buyPrice: 220, sellPrice: 0, stock: 1, storage: "" },
-      { name: "YK Single Denso Wire Blue", buyPrice: 220, sellPrice: 0, stock: 1, storage: "" },
-      { name: "Otaka Chain 428H 110L", buyPrice: 180, sellPrice: 0, stock: 3, storage: "" },
-      { name: "Otaka Chain 428H 120L", buyPrice: 190, sellPrice: 0, stock: 3, storage: "" },
-      { name: "Otaka Chain 428H 132L", buyPrice: 220, sellPrice: 0, stock: 3, storage: "" },
-      { name: "Petron ZR 200mL", buyPrice: 36, sellPrice: 70, stock: 1, storage: "" },
-      { name: "DVS Optics Side Mirror Black", buyPrice: 200, sellPrice: 300, stock: 3, storage: "" },
+        <div class="col">
+          <label>Quantity (pcs)</label>
+          <input id="saleQtyInput" type="number" min="1" value="1">
+        </div>
 
-      /* PAGE 2 */
-      { name: "Orig Vbelt Click125 K35", buyPrice: 352, sellPrice: 709, stock: 4, storage: "" },
-      { name: "Saiyan Brake Master Kit XRM", buyPrice: 171, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Saiyan Brake Master Kit Click", buyPrice: 171, sellPrice: 150, stock: 5, storage: "" },
-      { name: "Saiyan Brake Master Kit Mio", buyPrice: 171, sellPrice: 150, stock: 5, storage: "" },
-      { name: "Saiyan Brake Master Kit MMAX", buyPrice: 171, sellPrice: 150, stock: 5, storage: "" },
-      { name: "Saiyan Brake Master Kit Wave125", buyPrice: 171, sellPrice: 150, stock: 5, storage: "" },
-      { name: "Saiyan Brake Master Kit Sniper135", buyPrice: 171, sellPrice: 160, stock: 5, storage: "" },
-      { name: "Saiyan SS3 Mini Driving Light", buyPrice: 350, sellPrice: 650, stock: 3, storage: "" },
-      { name: "Saiyan SS4 Mini Driving Light", buyPrice: 250, sellPrice: 900, stock: 5, storage: "" },
-      { name: "SMOK P45 T15 Yellow", buyPrice: 35, sellPrice: 200, stock: 5, storage: "" },
-      { name: "SMOK P45 T15 Red", buyPrice: 35, sellPrice: 200, stock: 5, storage: "" },
-      { name: "SMOK P45 T15 White", buyPrice: 35, sellPrice: 200, stock: 5, storage: "" },
-      { name: "SMOK P45 T15 Blue", buyPrice: 35, sellPrice: 200, stock: 5, storage: "" },
-      { name: "SMOK V3 Mini Driving Light", buyPrice: 75, sellPrice: 150, stock: 3, storage: "" },
-      { name: "SMOK Lightened Disc MMAX", buyPrice: 600, sellPrice: 1200, stock: 3, storage: "" },
-      { name: "Shihfa Tire 300×17", buyPrice: 375, sellPrice: 750, stock: 3, storage: "" },
-      { name: "Shihfa Tire 250×17", buyPrice: 425, sellPrice: 850, stock: 3, storage: "" },
-      { name: "Shihfa Tire 80×80×17", buyPrice: 395, sellPrice: 620, stock: 3, storage: "" },
-      { name: "Shihfa Tire 100×80×17", buyPrice: 340, sellPrice: 680, stock: 3, storage: "" },
-      { name: "Beast Tire 70×90×14", buyPrice: 620, sellPrice: 880, stock: 3, storage: "" },
-      { name: "Beast Tire 80×90×14", buyPrice: 740, sellPrice: 1080, stock: 3, storage: "" },
-      { name: "Beast Tire 90×90×14", buyPrice: 825, sellPrice: 1200, stock: 3, storage: "" },
-      { name: "Beast Tire 100×80×14", buyPrice: 1100, sellPrice: 1650, stock: 3, storage: "" },
-      { name: "BUU Tube 175×17", buyPrice: 90, sellPrice: 170, stock: 3, storage: "" },
-      { name: "BUU Tube 300×17", buyPrice: 100, sellPrice: 180, stock: 3, storage: "" },
-      { name: "Gripper Tube 225×17", buyPrice: 90, sellPrice: 170, stock: 3, storage: "" },
-      { name: "BUU Tube 250×17", buyPrice: 90, sellPrice: 170, stock: 3, storage: "" },
-      { name: "BUU Tube 275×17", buyPrice: 100, sellPrice: 180, stock: 3, storage: "" },
-      { name: "Orig Vbelt Mio 125 M3", buyPrice: 340, sellPrice: 680, stock: 3, storage: "" },
-      { name: "Saiyan Handle Switch Honeywell", buyPrice: 176, sellPrice: 580, stock: 3, storage: "" },
-      { name: "Bosch Horn Evolution", buyPrice: 230, sellPrice: 580, stock: 3, storage: "" },
-      { name: "Saiyan Rubber Dumper Trinity", buyPrice: 50, sellPrice: 80, stock: 3, storage: "" },
-      { name: "Saiyan Clutch Lining R150", buyPrice: 59, sellPrice: 130, stock: 3, storage: "" },
-      { name: "Otaka Oil Seal XRM110", buyPrice: 75, sellPrice: 150, stock: 3, storage: "" },
-      { name: "Otaka Oil Seal TMX155", buyPrice: 75, sellPrice: 150, stock: 3, storage: "" },
-      { name: "Saiyan Handle Switch Mio", buyPrice: 200, sellPrice: 360, stock: 3, storage: "" },
-      { name: "Saiyan Fuel Cock XRM110", buyPrice: 40, sellPrice: 80, stock: 3, storage: "" },
-      { name: "Otaka Brake Shoe XRM", buyPrice: 40, sellPrice: 80, stock: 3, storage: "" },
-      { name: "Halo Horn", buyPrice: 17, sellPrice: 50, stock: 3, storage: "" },
-      { name: "Saiyan FRZA Horn", buyPrice: 109, sellPrice: 350, stock: 3, storage: "" },
-      { name: "Saiyan Handle Switch R150", buyPrice: 109, sellPrice: 300, stock: 3, storage: "" },
-      { name: "Saiyan Handle Switch XRM110", buyPrice: 89, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Piston Kit Wave125 STD", buyPrice: 106, sellPrice: 230, stock: 3, storage: "" },
-      { name: "Otaka Sprocket XRM/Wave125 36T", buyPrice: 56, sellPrice: 120, stock: 3, storage: "" },
-      { name: "Otaka Sprocket XRM/Wave125 38T", buyPrice: 56, sellPrice: 120, stock: 3, storage: "" },
-      { name: "Saiyan Fuel Filter Raider150 FI", buyPrice: 16, sellPrice: 100, stock: 5, storage: "" },
+        <div class="col">
+          <label>Selling price (can edit)</label>
+          <input id="saleSellInput" type="number" min="0" step="0.01">
+        </div>
 
-      /* PAGE 3 */
-      { name: "DVS CP47 2835 Dual Lamp Y/W", buyPrice: 25, sellPrice: 340, stock: 3, storage: "" },
-      { name: "DVS CP47 2835 Dual Lamp Y/B", buyPrice: 25, sellPrice: 340, stock: 3, storage: "" },
-      { name: "Saiyan Handgrip 82 Yellow", buyPrice: 138, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Carbon Brush Mio", buyPrice: 13, sellPrice: 30, stock: 3, storage: "" },
-      { name: "Saiyan Carbon Brush Raider150", buyPrice: 13, sellPrice: 30, stock: 3, storage: "" },
-      { name: "DVS Optics Side Mirror Black (470)", buyPrice: 470, sellPrice: 800, stock: 3, storage: "" },
-      { name: "SMOK Headlight H4 Y/W", buyPrice: 170, sellPrice: 340, stock: 3, storage: "" },
-      { name: "Otaka High/Low Switch Copper", buyPrice: 11, sellPrice: 25, stock: 3, storage: "" },
-      { name: "Otaka Muffler Gasket Mio", buyPrice: 4, sellPrice: 10, stock: 25, storage: "" },
-      { name: "Circlip Small", buyPrice: 5, sellPrice: 10, stock: 20, storage: "" },
-      { name: "Fuel Filter Ordinary", buyPrice: 32, sellPrice: 50, stock: 20, storage: "" },
-      { name: "Otaka Front Axle Mio", buyPrice: 38, sellPrice: 80, stock: 3, storage: "" },
-      { name: "Otaka Front Axle Raider150", buyPrice: 38, sellPrice: 114, stock: 3, storage: "" },
-      { name: "Cable Tie 4×100", buyPrice: 2, sellPrice: 4, stock: 4, storage: "" },
-      { name: "Cable Tie 4×150", buyPrice: 3, sellPrice: 5, stock: 4, storage: "" },
-      { name: "Saiyan Caliper Repair Kit R150 Rear", buyPrice: 46, sellPrice: 138, stock: 3, storage: "" },
-      { name: "Saiyan Caliper Repair Kit R150 Front", buyPrice: 46, sellPrice: 138, stock: 3, storage: "" },
-      { name: "Saiyan Caliper Repair Kit Mio", buyPrice: 46, sellPrice: 138, stock: 3, storage: "" },
-      { name: "Saiyan Tappet Cap Sniper135", buyPrice: 41, sellPrice: 150, stock: 3, storage: "" },
-      { name: "Saiyan Hydraulic Switch Rear", buyPrice: 46, sellPrice: 138, stock: 3, storage: "" },
-      { name: "Otaka Horn Relay 5 Pin", buyPrice: 70, sellPrice: 130, stock: 3, storage: "" },
-      { name: "Otaka Regulator Socket 4 Pin", buyPrice: 19, sellPrice: 60, stock: 3, storage: "" },
-      { name: "Otaka Shock Bushing Small", buyPrice: 5, sellPrice: 10, stock: 3, storage: "" },
-      { name: "Speed Thai Silicon Gasket", buyPrice: 19, sellPrice: 75, stock: 3, storage: "" },
-      { name: "Stoplight Switch Front", buyPrice: 32, sellPrice: 70, stock: 3, storage: "" },
-      { name: "Saiyan Overhauling Gasket Mio", buyPrice: 77, sellPrice: 300, stock: 3, storage: "" },
-      { name: "Saiyan Overhauling Gasket Raider150", buyPrice: 77, sellPrice: 300, stock: 3, storage: "" },
-      { name: "Saiyan Starter Relay M3", buyPrice: 92, sellPrice: 180, stock: 3, storage: "" },
-      { name: "Saiyan Starter Relay Click 4 Pin", buyPrice: 92, sellPrice: 250, stock: 3, storage: "" },
-      { name: "Saiyan Starter Relay Raider150", buyPrice: 92, sellPrice: 250, stock: 3, storage: "" },
-      { name: "Saiyan Carb Repair Kit Raider150", buyPrice: 84, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Carb Repair Kit XRM110", buyPrice: 84, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Carb Repair Kit Sniper", buyPrice: 84, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Chain Adjuster TMX", buyPrice: 32, sellPrice: 70, stock: 3, storage: "" },
-      { name: "SMOK Dual Contact LED Y/B", buyPrice: 60, sellPrice: 120, stock: 3, storage: "" },
-      { name: "SMOK Dual Contact LED Y/W", buyPrice: 60, sellPrice: 120, stock: 3, storage: "" },
-      { name: "SMOK Dual Contact LED Y/R", buyPrice: 60, sellPrice: 120, stock: 3, storage: "" },
-      { name: "Throttle Pipe White", buyPrice: 28, sellPrice: 70, stock: 3, storage: "" },
-      { name: "Saiyan Caliper Repair Kit XRM", buyPrice: 46, sellPrice: 138, stock: 3, storage: "" },
-      { name: "Saiyan Caliper Repair Kit Trinity", buyPrice: 23, sellPrice: 69, stock: 3, storage: "" },
-      { name: "Saiyan Tappet Cap XRM", buyPrice: 23, sellPrice: 50, stock: 3, storage: "" },
-      { name: "Saiyan Tappet Cap Wave125", buyPrice: 23, sellPrice: 50, stock: 3, storage: "" },
-      { name: "Daytona Handgrip w/ Bar End", buyPrice: 75, sellPrice: 250, stock: 3, storage: "" },
-      { name: "Saiyan Chain Adjuster Raider150", buyPrice: 38, sellPrice: 180, stock: 3, storage: "" },
-      { name: "Otaka Flasher XRM (TMX) White", buyPrice: 55, sellPrice: 180, stock: 3, storage: "" },
+        <div class="col">
+          <label>Buying price (per pc)</label>
+          <input id="saleBuyInput" type="number" min="0" step="0.01">
+        </div>
+      </div>
 
-      /* PAGE 4 */
-      { name: "Osaki Throttle Cable Aerox155", buyPrice: 352, sellPrice: 700, stock: 5, storage: "" },
-      { name: "Osaki Speed Cable XRM110", buyPrice: 180, sellPrice: 300, stock: 5, storage: "" },
-      { name: "Osaki Speed Cable TMX155", buyPrice: 180, sellPrice: 300, stock: 5, storage: "" },
-      { name: "Otaka Speed Cable Beat", buyPrice: 132, sellPrice: 300, stock: 5, storage: "" },
-      { name: "Otaka Speed Cable Mio", buyPrice: 123, sellPrice: 300, stock: 5, storage: "" },
-      { name: "Saiyan Handgrip 418 Blue", buyPrice: 350, sellPrice: 800, stock: 10, storage: "" },
-      { name: "Pro Side Mirror Yamaha", buyPrice: 75, sellPrice: 280, stock: 10, storage: "" },
-      { name: "Pro Side Mirror Honda", buyPrice: 75, sellPrice: 280, stock: 10, storage: "" },
-      { name: "T19 Bulb", buyPrice: 6, sellPrice: 20, stock: 5, storage: "" },
-      { name: "T20 Bulb", buyPrice: 6, sellPrice: 20, stock: 5, storage: "" },
-      { name: "B35 Bulb", buyPrice: 6, sellPrice: 40, stock: 5, storage: "" },
-      { name: "B8.5 Bulb", buyPrice: 3, sellPrice: 20, stock: 10, storage: "" },
-      { name: "TRC 7117 Headlight White", buyPrice: 100, sellPrice: 200, stock: 5, storage: "" },
-      { name: "TRC 7115 Headlight Blue", buyPrice: 100, sellPrice: 200, stock: 5, storage: "" },
-      { name: "TRC 8105 12LED Headlight", buyPrice: 100, sellPrice: 150, stock: 5, storage: "" },
-      { name: "TRC 8110 H4 Hi/Lo", buyPrice: 150, sellPrice: 250, stock: 5, storage: "" },
-      { name: "Oil Filter Kawasaki", buyPrice: 80, sellPrice: 120, stock: 5, storage: "" },
-      { name: "Oil Filter Bajaj", buyPrice: 80, sellPrice: 120, stock: 5, storage: "" },
-      { name: "Oil Filter Yamaha", buyPrice: 147, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Fuel Hose Gray", buyPrice: 25, sellPrice: 0, stock: 3, storage: "" },
-      { name: "JVT Center Spring Aerox 1000", buyPrice: 380, sellPrice: 700, stock: 3, storage: "" },
-      { name: "JVT Center Spring Aerox 1200", buyPrice: 380, sellPrice: 800, stock: 3, storage: "" },
-      { name: "JVT Center Spring Mio 1000", buyPrice: 180, sellPrice: 650, stock: 3, storage: "" },
-      { name: "JVT Center Spring Mio 1200", buyPrice: 230, sellPrice: 700, stock: 3, storage: "" },
-      { name: "JVT Pulley Set Mio", buyPrice: 355, sellPrice: 2400, stock: 5, storage: "" },
-      { name: "Saiyan Flyball Click 10G", buyPrice: 99, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Flyball Click 16G", buyPrice: 99, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Flyball M3 9G", buyPrice: 99, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Flyball Click 17G", buyPrice: 99, sellPrice: 300, stock: 3, storage: "" },
-      { name: "Saiyan Pulley Slider Mio", buyPrice: 80, sellPrice: 180, stock: 3, storage: "" },
-      { name: "Saiyan Pulley Slider Beat", buyPrice: 80, sellPrice: 180, stock: 3, storage: "" },
-      { name: "Saiyan Engine Valve Click", buyPrice: 50, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Engine Valve Raider150", buyPrice: 50, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Pulley Slider Aerox", buyPrice: 418, sellPrice: 650, stock: 3, storage: "" },
-      { name: "Saiyan CDI Mio Sporty", buyPrice: 75, sellPrice: 150, stock: 3, storage: "" },
-      { name: "Saiyan CDI Beat", buyPrice: 75, sellPrice: 150, stock: 3, storage: "" },
-      { name: "Saiyan CDI Mio Soul", buyPrice: 75, sellPrice: 150, stock: 3, storage: "" },
-      { name: "Saiyan CDI Mio 125 MX", buyPrice: 109, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Fuel Filter Click150", buyPrice: 16, sellPrice: 100, stock: 5, storage: "" },
-      { name: "Saiyan Handle Switch TMX", buyPrice: 87, sellPrice: 300, stock: 3, storage: "" },
-      { name: "SMOK Mini Driving Light V1", buyPrice: 214, sellPrice: 850, stock: 3, storage: "" },
-      { name: "Saiyan Piston Kit XRM110 STD", buyPrice: 92, sellPrice: 360, stock: 3, storage: "" },
-      { name: "Saiyan Flasher Relay w/ Adjuster", buyPrice: 92, sellPrice: 180, stock: 3, storage: "" },
-      { name: "Saiyan Piston Ring TMX155 STD", buyPrice: 218, sellPrice: 380, stock: 10, storage: "" },
-      { name: "Saiyan Piston Kit Mio STD", buyPrice: 218, sellPrice: 380, stock: 3, storage: "" },
+      <div style="height:10px"></div>
+      <div class="row">
+        <div class="col">
+          <label>Profit for this sale</label>
+          <input id="saleProfitInput" type="number" step="0.01" placeholder="Auto calculated" readonly>
+        </div>
+        <div class="col">
+          <label>Total amount</label>
+          <input id="saleTotalInput" type="number" step="0.01" placeholder="Qty * Sell" readonly>
+        </div>
+        <div class="col">
+          <label>Date</label>
+          <input id="saleDateInput" type="date">
+        </div>
+        <div style="align-self:end">
+          <button id="saveSaleBtn">Save sale</button>
+          <button id="resetSaleBtn" class="small" style="background:#fff;border:1px solid var(--border);color:var(--text)">Reset sale</button>
+        </div>
+      </div>
 
-      /* PAGE 5 */
-      { name: "Pito Tubeless Silver", buyPrice: 20, sellPrice: 35, stock: 20, storage: "" },
-      { name: "Saiyan Knuckle Bearing Mio", buyPrice: 70, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Saiyan Knuckle Bearing R150", buyPrice: 70, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Saiyan Piston Kit TMX155 STD", buyPrice: 226, sellPrice: 350, stock: 5, storage: "" },
-      { name: "Saiyan Piston Kit Click125 STD", buyPrice: 225, sellPrice: 350, stock: 5, storage: "" },
-      { name: "Saiyan Piston Kit Wave110 STD", buyPrice: 214, sellPrice: 350, stock: 5, storage: "" },
-      { name: "JVT Center Spring Click 1000", buyPrice: 160, sellPrice: 250, stock: 3, storage: "" },
-      { name: "Otaka Brake Shoe TMX155 Rear", buyPrice: 93, sellPrice: 180, stock: 5, storage: "" },
-      { name: "ZIC M9 10W40 1L", buyPrice: 277, sellPrice: 380, stock: 12, storage: "" },
-      { name: "ZIC M9 10W40 800mL", buyPrice: 243, sellPrice: 330, stock: 12, storage: "" },
-      { name: "ZIC M7 10W40 1L", buyPrice: 263, sellPrice: 280, stock: 12, storage: "" },
-      { name: "ZIC M7 10W40 800mL", buyPrice: 220, sellPrice: 263, stock: 12, storage: "" },
-      { name: "Castrol Activ 20W40 800mL", buyPrice: 138, sellPrice: 200, stock: 10, storage: "" },
-      { name: "Shell AX7 10W40 1L", buyPrice: 260, sellPrice: 350, stock: 10, storage: "" },
-      { name: "Shell AX7 Scooter 800mL", buyPrice: 150, sellPrice: 200, stock: 6, storage: "" },
-      { name: "Yamalube Blue Auto 20W40 800mL", buyPrice: 180, sellPrice: 250, stock: 6, storage: "" },
-      { name: "Yamalube Blue Core 10W40 1L", buyPrice: 200, sellPrice: 280, stock: 6, storage: "" },
-      { name: "Havoline Ezy 20W40 800mL", buyPrice: 160, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Petron Sprint 1L", buyPrice: 168, sellPrice: 250, stock: 5, storage: "" },
-      { name: "Petron Sprint 2T", buyPrice: 45, sellPrice: 75, stock: 5, storage: "" },
-      { name: "TOP UP 200mL (33)", buyPrice: 33, sellPrice: 100, stock: 5, storage: "" },
-      { name: "Amalie Gear Oil 80W90 120mL", buyPrice: 45, sellPrice: 100, stock: 5, storage: "" },
-      { name: "Zeno Gear Oil 80W90 120mL", buyPrice: 45, sellPrice: 100, stock: 5, storage: "" },
-      { name: "Koby Coolant Blue 1L", buyPrice: 160, sellPrice: 200, stock: 4, storage: "" },
-      { name: "Koby Coolant Green 1L", buyPrice: 160, sellPrice: 200, stock: 4, storage: "" },
-      { name: "Koby Coolant Pink 1L", buyPrice: 160, sellPrice: 200, stock: 4, storage: "" },
-      { name: "Brake Fluid Surebrake 150mL", buyPrice: 38, sellPrice: 150, stock: 5, storage: "" },
-      { name: "Saiyan Tire Sealant 500mL (set 2)", buyPrice: 48, sellPrice: 120, stock: 5, storage: "" },
-      { name: "Saiyan Tire Black", buyPrice: 103, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Koby CVT Cleaner 450mL", buyPrice: 88, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Volga Fork Oil 200mL", buyPrice: 33, sellPrice: 150, stock: 5, storage: "" },
-      { name: "OD Battery 12N6.5L", buyPrice: 950, sellPrice: 1100, stock: 3, storage: "" },
-      { name: "OD Battery YB3L", buyPrice: 770, sellPrice: 890, stock: 3, storage: "" },
-      { name: "OD Battery YTX5L", buyPrice: 850, sellPrice: 890, stock: 3, storage: "" },
-      { name: "Koby Hi-Temp Grease 10G", buyPrice: 10, sellPrice: 20, stock: 30, storage: "" },
-      { name: "Saiyan Protectant Spray", buyPrice: 20, sellPrice: 30, stock: 30, storage: "" },
-      { name: "FRZA Spark Plug C7HSA", buyPrice: 53, sellPrice: 120, stock: 10, storage: "" },
-      { name: "FRZA Spark Plug CR8E", buyPrice: 53, sellPrice: 120, stock: 10, storage: "" },
-      { name: "FRZA Spark Plug D8EA", buyPrice: 53, sellPrice: 120, stock: 10, storage: "" },
-      { name: "FRZA Spark Plug CPR8EA-9", buyPrice: 55, sellPrice: 120, stock: 10, storage: "" },
-      { name: "FRZA Spark Plug BP7HS", buyPrice: 58, sellPrice: 120, stock: 10, storage: "" },
-      { name: "Otaka Throttle Cable Mio", buyPrice: 43, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Otaka Throttle Cable TMX155", buyPrice: 43, sellPrice: 180, stock: 5, storage: "" },
-      { name: "Otaka Clutch Cable TMX155", buyPrice: 53, sellPrice: 180, stock: 5, storage: "" },
-      { name: "Otaka Clutch Cable Raider150", buyPrice: 53, sellPrice: 200, stock: 5, storage: "" },
+      <div class="tabs no-print">
+        <div id="tabToday" class="tab active">Today</div>
+        <div id="tabAll" class="tab">All time</div>
+      </div>
 
-      /* PAGE 6 */
-      { name: "Saiyan Rocker Arm TMX Cam Follower", buyPrice: 115, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Rocker Arm TMX Upper", buyPrice: 218, sellPrice: 420, stock: 3, storage: "" },
-      { name: "Saiyan Rocker Arm Wave125", buyPrice: 245, sellPrice: 450, stock: 3, storage: "" },
-      { name: "OD Battery 12NSL (585)", buyPrice: 585, sellPrice: 900, stock: 3, storage: "" },
-      { name: "OD Battery YTX4L", buyPrice: 755, sellPrice: 800, stock: 3, storage: "" },
-      { name: "OD Battery YTZ7S", buyPrice: 755, sellPrice: 1150, stock: 3, storage: "" },
-      { name: "ZIC M5 1L 20W50", buyPrice: 109, sellPrice: 200, stock: 10, storage: "" },
-      { name: "Havoline EZY 4T 1L", buyPrice: 209, sellPrice: 280, stock: 10, storage: "" },
-      { name: "Havoline SF 1L", buyPrice: 208, sellPrice: 280, stock: 10, storage: "" },
-      { name: "Castrol Activ 20W40 1L", buyPrice: 230, sellPrice: 300, stock: 10, storage: "" },
-      { name: "Zeno Brake Pad Mio", buyPrice: 70, sellPrice: 120, stock: 3, storage: "" },
-      { name: "Zeno Brake Pad Click150", buyPrice: 70, sellPrice: 120, stock: 3, storage: "" },
-      { name: "Zeno Brake Pad XRM Trinity", buyPrice: 70, sellPrice: 120, stock: 3, storage: "" },
-      { name: "Saiyan Engine Valve XRM110 (32)", buyPrice: 32, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Engine Valve Aerox155", buyPrice: 130, sellPrice: 350, stock: 3, storage: "" },
-      { name: "Otaka Air Filter Aerox155", buyPrice: 130, sellPrice: 350, stock: 3, storage: "" },
-      { name: "Saiyan Air Filter Beat", buyPrice: 80, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Air Filter Beat FI", buyPrice: 134, sellPrice: 250, stock: 3, storage: "" },
-      { name: "Saiyan Air Filter Raider150", buyPrice: 134, sellPrice: 250, stock: 3, storage: "" },
-      { name: "Saiyan Air Filter TMX Supremo", buyPrice: 180, sellPrice: 350, stock: 3, storage: "" },
-      { name: "Saiyan Air Filter Mio Soul", buyPrice: 115, sellPrice: 250, stock: 3, storage: "" },
-      { name: "Saiyan Air Filter Mio/ADV160", buyPrice: 115, sellPrice: 250, stock: 3, storage: "" },
-      { name: "Saiyan Fuel Cock Soul", buyPrice: 80, sellPrice: 230, stock: 3, storage: "" },
-      { name: "Saiyan Fuel Cock Raider150", buyPrice: 80, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Fuel Cock Universal", buyPrice: 80, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Piston Ring Mio", buyPrice: 77, sellPrice: 180, stock: 10, storage: "" },
-      { name: "Saiyan Piston Ring XRM110", buyPrice: 77, sellPrice: 180, stock: 10, storage: "" },
-      { name: "Saiyan Piston Ring Click125", buyPrice: 84, sellPrice: 200, stock: 10, storage: "" },
-      { name: "Saiyan Piston Ring TMX155", buyPrice: 84, sellPrice: 200, stock: 10, storage: "" },
-      { name: "Otaka Brake Shoe Beat", buyPrice: 95, sellPrice: 280, stock: 10, storage: "" },
-      { name: "Zeno Flyball Click125 12G", buyPrice: 263, sellPrice: 400, stock: 5, storage: "" },
-      { name: "Zeno Flyball 14G", buyPrice: 313, sellPrice: 400, stock: 5, storage: "" },
-      { name: "Zeno Flyball Mio 7G", buyPrice: 173, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Zeno Flyball Mio 9G", buyPrice: 173, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Zeno Flyball Mio 10G", buyPrice: 173, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Zeno Flyball Mio 8G", buyPrice: 173, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Otaka Bearing 6205", buyPrice: 32, sellPrice: 100, stock: 10, storage: "" },
-      { name: "Saiyan Bearing 6203", buyPrice: 19, sellPrice: 100, stock: 10, storage: "" },
-      { name: "Saiyan Bearing 6201", buyPrice: 19, sellPrice: 100, stock: 10, storage: "" },
-      { name: "Saiyan Bearing 6300", buyPrice: 22, sellPrice: 100, stock: 10, storage: "" },
-      { name: "Saiyan Bearing 6202", buyPrice: 22, sellPrice: 100, stock: 10, storage: "" },
-      { name: "Saiyan Ball Race Aerox", buyPrice: 69, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Saiyan Ball Race Beat", buyPrice: 69, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Saiyan Ball Race Click", buyPrice: 69, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Saiyan Ball Race Mio", buyPrice: 69, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Saiyan Ball Race Nmax", buyPrice: 69, sellPrice: 200, stock: 5, storage: "" },
-      { name: "Saiyan Ball Race Raider150", buyPrice: 69, sellPrice: 200, stock: 5, storage: "" },
+      <div class="summary">
+        <div class="box">
+          <div class="muted">Selected sales period</div>
+          <div style="font-weight:700">₱<span id="summarySales">0</span></div>
+        </div>
+        <div class="box">
+          <div class="muted">Selected profit</div>
+          <div style="font-weight:700">₱<span id="summaryProfit">0</span></div>
+        </div>
+        <div class="box">
+          <div class="muted">Recorded expenses</div>
+          <div style="font-weight:700">₱<span id="summaryExpenses">0</span></div>
+        </div>
+      </div>
 
-      /* PAGE 7 */
-      { name: "Saiyan Sprocket TMX 53T", buyPrice: 184, sellPrice: 350, stock: 3, storage: "" },
-      { name: "Saiyan Sprocket TMX 32T", buyPrice: 103, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Sprocket TMX 48T", buyPrice: 161, sellPrice: 340, stock: 3, storage: "" },
-      { name: "Saiyan Sprocket TMX 51T", buyPrice: 225, sellPrice: 340, stock: 3, storage: "" },
-      { name: "Otaka Sprocket TMX155 34T", buyPrice: 110, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Otaka Sprocket TMX155 36T", buyPrice: 110, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Otaka Sprocket XRM/Wave125 34T", buyPrice: 113, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Otaka Sprocket TMX155 42T", buyPrice: 170, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Sprocket TMX 45T", buyPrice: 109, sellPrice: 300, stock: 3, storage: "" },
-      { name: "Saiyan Engine Sprocket TMX 13T", buyPrice: 32, sellPrice: 80, stock: 3, storage: "" },
-      { name: "Saiyan Engine Sprocket TMX 14T", buyPrice: 32, sellPrice: 80, stock: 3, storage: "" },
-      { name: "Saiyan Engine Sprocket XRM 13T", buyPrice: 32, sellPrice: 80, stock: 3, storage: "" },
-      { name: "Saiyan Engine Sprocket XRM 14T", buyPrice: 32, sellPrice: 80, stock: 3, storage: "" },
-      { name: "Otaka Brake Pad Mio125", buyPrice: 96, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Otaka Brake Pad XRM", buyPrice: 96, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Manifold TMX Supremo", buyPrice: 122, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Manifold XRM110", buyPrice: 99, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Air Filter TMX155 Foam", buyPrice: 38, sellPrice: 150, stock: 3, storage: "" },
-      { name: "Saiyan Air Filter Wave100", buyPrice: 38, sellPrice: 150, stock: 3, storage: "" },
-      { name: "Saiyan Air Filter Wave Dash", buyPrice: 75, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Air Filter XRM125 FI", buyPrice: 75, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan CDI TMX Supremo", buyPrice: 109, sellPrice: 780, stock: 3, storage: "" },
-      { name: "Saiyan CDI TMX155", buyPrice: 109, sellPrice: 780, stock: 3, storage: "" },
-      { name: "Saiyan CDI XRM110", buyPrice: 109, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Main Switch TMX125 Alpha", buyPrice: 145, sellPrice: 290, stock: 3, storage: "" },
-      { name: "Saiyan Main Switch XRM110", buyPrice: 92, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Main Switch Wave125", buyPrice: 92, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Saiyan Brake Pedal TMX", buyPrice: 92, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Saiyan Brake Pedal XRM", buyPrice: 92, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Domino Seat Cover Carbon", buyPrice: 200, sellPrice: 280, stock: 3, storage: "" },
-      { name: "Zeno Seat Cover", buyPrice: 200, sellPrice: 280, stock: 3, storage: "" },
+      <div style="height:10px"></div>
 
-      /* PAGE 8 */
-      { name: "Signal Light Aerox", buyPrice: 120, sellPrice: 280, stock: 2, storage: "" },
-      { name: "Front Fork Oil Seal Bana", buyPrice: 150, sellPrice: 200, stock: 3, storage: "" },
-      { name: "Regulator TMX Alpha", buyPrice: 250, sellPrice: 350, stock: 1, storage: "" },
-      { name: "Fuel Cock TMX", buyPrice: 75, sellPrice: 150, stock: 1, storage: "" },
-      { name: "Throttle Universal", buyPrice: 250, sellPrice: 300, stock: 1, storage: "" },
-      { name: "Clutch Dumper", buyPrice: 100, sellPrice: 280, stock: 1, storage: "" },
-      { name: "Ball Race Click/Beat", buyPrice: 150, sellPrice: 250, stock: 2, storage: "" },
-      { name: "Air Filter Universal", buyPrice: 70, sellPrice: 150, stock: 1, storage: "" },
-      { name: "COI Socket XRM", buyPrice: 20, sellPrice: 50, stock: 2, storage: "" },
-      { name: "Mirror Holder Universal", buyPrice: 25, sellPrice: 50, stock: 4, storage: "" },
-      { name: "Horn Relay Universal", buyPrice: 15, sellPrice: 35, stock: 2, storage: "" },
-      { name: "Halogen Bulb", buyPrice: 35, sellPrice: 95, stock: 2, storage: "" },
-      { name: "Tank Cap", buyPrice: 135, sellPrice: 320, stock: 1, storage: "" },
-      { name: "Carbon Brush", buyPrice: 70, sellPrice: 180, stock: 3, storage: "" },
-      { name: "Additives", buyPrice: 215, sellPrice: 285, stock: 12, storage: "" },
-      { name: "Head Lamp Big KWS", buyPrice: 25, sellPrice: 45, stock: 6, storage: "" },
-      { name: "Head Lamp Small KWS", buyPrice: 10, sellPrice: 30, stock: 3, storage: "" },
-      { name: "Fuse Tube", buyPrice: 3, sellPrice: 15, stock: 6, storage: "" },
-      { name: "Fuse Flat", buyPrice: 5, sellPrice: 15, stock: 6, storage: "" },
-      { name: "Chain Lock", buyPrice: 10, sellPrice: 25, stock: 10, storage: "" },
+      <div class="card" style="padding:8px">
+        <div class="flex-between no-print" style="margin-bottom:8px">
+          <div class="muted">Recent sales</div>
+          <div><a href="#" id="clearAllSales">clear all sales</a></div>
+        </div>
+        <div style="max-height:220px;overflow:auto">
+          <table>
+            <thead><tr><th>Date</th><th>Item</th><th class="text-center">Qty</th><th class="text-right">Total</th><th class="text-right">Profit</th></tr></thead>
+            <tbody id="salesTbody"></tbody>
+          </table>
+        </div>
+      </div>
 
-      /* PAGE 9 */
-      { name: "Engine Sprocket TMX AT", buyPrice: 40, sellPrice: 100, stock: 1, storage: "" },
-      { name: "Handle Switch Rubí TC125", buyPrice: 120, sellPrice: 300, stock: 2, storage: "" },
-      { name: "Fuel Filter", buyPrice: 5, sellPrice: 30, stock: 2, storage: "" },
-      { name: "Exhaust Gasket", buyPrice: 5, sellPrice: 30, stock: 1, storage: "" },
-      { name: "Switch On/Off", buyPrice: 20, sellPrice: 35, stock: 7, storage: "" },
-      { name: "Brake Rod Universal", buyPrice: 180, sellPrice: 195, stock: 1, storage: "" },
-      { name: "Tail Light Wave125", buyPrice: 280, sellPrice: 285, stock: 1, storage: "" },
-      { name: "Light Outer Tube", buyPrice: 780, sellPrice: 980, stock: 1, storage: "" },
-      { name: "Fender Clip Universal", buyPrice: 75, sellPrice: 110, stock: 2, storage: "" },
-      { name: "Hydraulic Brake Light Switch", buyPrice: 120, sellPrice: 180, stock: 2, storage: "" },
-      { name: "Throttle Pipe", buyPrice: 15, sellPrice: 40, stock: 1, storage: "" },
-      { name: "Brake Light Switch", buyPrice: 35, sellPrice: 80, stock: 4, storage: "" },
-      { name: "Slider Pulley", buyPrice: 100, sellPrice: 200, stock: 2, storage: "" },
-      { name: "Caliper Repair Kit", buyPrice: 65, sellPrice: 150, stock: 4, storage: "" },
-      { name: "Carburetor Repair Kit", buyPrice: 65, sellPrice: 150, stock: 1, storage: "" },
-      { name: "Cam Chain Kit", buyPrice: 350, sellPrice: 750, stock: 3, storage: "" },
-      { name: "Flyball Chicken Mox", buyPrice: 120, sellPrice: 350, stock: 5, storage: "" },
-      { name: "Signal Light Big", buyPrice: 50, sellPrice: 150, stock: 3, storage: "" },
-      { name: "Handle Grip RCB", buyPrice: 115, sellPrice: 250, stock: 2, storage: "" },
-      { name: "Genuine Flyball Universal", buyPrice: 220, sellPrice: 480, stock: 4, storage: "" },
-      { name: "Fan Belt", buyPrice: 180, sellPrice: 380, stock: 3, storage: "" },
-      { name: "Fuel Filter FI", buyPrice: 50, sellPrice: 200, stock: 2, storage: "" },
-      { name: "Timing Chain Set XRM110", buyPrice: 230, sellPrice: 450, stock: 3, storage: "" },
+      <div style="height:12px"></div>
 
-      /* PAGE 10 */
-      { name: "Cylinder Block WMM", buyPrice: 2180, sellPrice: 3080, stock: 1, storage: "" },
-      { name: "Tire Hero Rider 110", buyPrice: 685, sellPrice: 1010, stock: 1, storage: "" },
-      { name: "Oil Filter Yamaha (37)", buyPrice: 37, sellPrice: 100, stock: 15, storage: "" },
-      { name: "Side Mirror Yamaha", buyPrice: 71, sellPrice: 180, stock: 2, storage: "" },
-      { name: "Domino Side Mirror", buyPrice: 100, sellPrice: 260, stock: 1, storage: "" },
-      { name: "Bar End Side Mirror", buyPrice: 200, sellPrice: 400, stock: 1, storage: "" },
-      { name: "Oil Seat Set Mio", buyPrice: 75, sellPrice: 180, stock: 1, storage: "" },
-      { name: "Center Spring", buyPrice: 226, sellPrice: 350, stock: 3, storage: "" },
-      { name: "LED Module Light", buyPrice: 15, sellPrice: 30, stock: 20, storage: "" },
-      { name: "Kargador TMX/Rusi", buyPrice: 15, sellPrice: 30, stock: 2, storage: "" },
-      { name: "Rubber Foot Rest", buyPrice: 30, sellPrice: 60, stock: 2, storage: "" },
-      { name: "Throttle Cable Mio", buyPrice: 80, sellPrice: 160, stock: 2, storage: "" },
-      { name: "Throttle Cable Rusi", buyPrice: 80, sellPrice: 160, stock: 2, storage: "" },
-      { name: "Brake Cable Yamaha", buyPrice: 77, sellPrice: 120, stock: 1, storage: "" },
-      { name: "Clutch Cable Rider", buyPrice: 77, sellPrice: 120, stock: 1, storage: "" },
-      { name: "Rubber Dumper", buyPrice: 40, sellPrice: 100, stock: 2, storage: "" },
-      { name: "Rear Axle XRM", buyPrice: 85, sellPrice: 200, stock: 4, storage: "" },
-      { name: "Swing Arm Bushing XRM", buyPrice: 85, sellPrice: 200, stock: 6, storage: "" },
-      { name: "Brake Cam TMX", buyPrice: 85, sellPrice: 200, stock: 4, storage: "" },
-      { name: "Kick Starter XRM110", buyPrice: 110, sellPrice: 120, stock: 1, storage: "" },
-      { name: "Rear Sprocket 4T", buyPrice: 180, sellPrice: 220, stock: 2, storage: "" },
-      { name: "Rear Sprocket 40T", buyPrice: 175, sellPrice: 225, stock: 4, storage: "" },
-      { name: "Harness Wire Assorted", buyPrice: 87, sellPrice: 800, stock: 8, storage: "" },
+      <div class="card" style="padding:8px">
+        <div class="muted">Add expense</div>
+        <div class="row" style="margin-top:8px">
+          <div class="col">
+            <label>Description</label>
+            <input id="expDescInput" type="text" placeholder="e.g. kuryente, renta, sweldo">
+          </div>
+          <div class="col">
+            <label>Amount</label>
+            <input id="expAmountInput" type="number" min="0" step="0.01">
+          </div>
+          <div class="col">
+            <label>Date</label>
+            <input id="expDateInput" type="date">
+          </div>
+          <div style="align-self:end">
+            <button id="saveExpenseBtn">Save expense</button>
+          </div>
+        </div>
 
-      /* PAGE 11 */
-      { name: "XRM Trinity Front Fender", buyPrice: 150, sellPrice: 300, stock: 5, storage: "" },
-      { name: "Universal Front Fender", buyPrice: 100, sellPrice: 220, stock: 7, storage: "" },
-      { name: "Popsop Music", buyPrice: 200, sellPrice: 350, stock: 3, storage: "" },
-      { name: "TMX155 Makoto Brake Shoe", buyPrice: 110, sellPrice: 280, stock: 9, storage: "" },
-      { name: "CT100 Brake Shoe", buyPrice: 50, sellPrice: 180, stock: 3, storage: "" },
-      { name: "Piston Rings", buyPrice: 175, sellPrice: 300, stock: 26, storage: "" },
-      { name: "Spark Plug (87)", buyPrice: 87, sellPrice: 120, stock: 37, storage: "" },
-      { name: "6303 Koyo Bearing", buyPrice: 81, sellPrice: 180, stock: 9, storage: "" },
-      { name: "6300 Koyo Bearing", buyPrice: 81, sellPrice: 160, stock: 9, storage: "" },
-      { name: "6004 Koyo Bearing", buyPrice: 55, sellPrice: 120, stock: 2, storage: "" },
-      { name: "6302 Koyo Bearing", buyPrice: 57, sellPrice: 120, stock: 4, storage: "" },
-      { name: "6202 Koyo Bearing", buyPrice: 41, sellPrice: 110, stock: 1, storage: "" },
-      { name: "Stator Coil", buyPrice: 375, sellPrice: 780, stock: 3, storage: "" },
-      { name: "FBE Ignition Switch", buyPrice: 187, sellPrice: 380, stock: 1, storage: "" },
-      { name: "Iridium Spark Plug", buyPrice: 100, sellPrice: 280, stock: 8, storage: "" },
-      { name: "Center Stand Spring", buyPrice: 15, sellPrice: 35, stock: 10, storage: "" },
-      { name: "Pulley Set", buyPrice: 480, sellPrice: 1100, stock: 4, storage: "" },
-      { name: "Ignition Switch", buyPrice: 75, sellPrice: 160, stock: 3, storage: "" },
-      { name: "Plunger Hub C100", buyPrice: 150, sellPrice: 380, stock: 1, storage: "" },
-      { name: "Brake Pad (generic)", buyPrice: 30, sellPrice: 120, stock: 23, storage: "" },
-      { name: "RS8 Brake Pad", buyPrice: 100, sellPrice: 280, stock: 1, storage: "" },
-      { name: "OKM Brake Pad", buyPrice: 60, sellPrice: 180, stock: 2, storage: "" },
-      { name: "Cylinder Block Mio1", buyPrice: 900, sellPrice: 1600, stock: 1, storage: "" }
-    ];// ===== STATE =====
-    let items = [];
-    let sales = [];
-    let expenses = [];
-    let currentTab = "today";
+        <div style="height:10px"></div>
+        <div style="max-height:160px;overflow:auto">
+          <table>
+            <thead><tr><th>Date</th><th>Description</th><th class="text-right">Amount</th></tr></thead>
+            <tbody id="expensesTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+/********** STORAGE KEY **********/
+    const STORAGE_KEY = 'makoi_inventory_v3';
 
-    // ===== LOAD / SAVE =====
-    function loadState() {
-      try {
-        const itemsRaw = localStorage.getItem(STORAGE_ITEMS);
-        const salesRaw = localStorage.getItem(STORAGE_SALES);
-        const expRaw = localStorage.getItem(STORAGE_EXPENSES);
+    /********** PLACEHOLDER FOR SEED ITEMS **********/
+    // Part 3 will define: const seedItems = [ ...361 items... ];
 
-        if (!itemsRaw) {
-          items = seedItems.map((it, idx) => ({ id: idx + 1, ...it }));
-          saveItems();
-        } else {
-          items = JSON.parse(itemsRaw) || [];
+    /********** APP STATE **********/
+    let state = { items: [], sales: [], expenses: [] };
+
+    /********** HELPERS **********/
+    function saveState(){
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); updateBadges(); }
+      catch(e){ alert('Error saving data to localStorage'); }
+    }
+    function loadState(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        try{
+          const parsed = JSON.parse(raw);
+          state.items = Array.isArray(parsed.items) ? parsed.items : [];
+          state.sales = Array.isArray(parsed.sales) ? parsed.sales : [];
+          state.expenses = Array.isArray(parsed.expenses) ? parsed.expenses : [];
+          return;
+        }catch(e){
+          console.warn('Failed to parse saved state, seeding with defaults.');
         }
-
-        sales = salesRaw ? JSON.parse(salesRaw) : [];
-        expenses = expRaw ? JSON.parse(expRaw) : [];
-      } catch (e) {
-        console.error("Error loading state", e);
-        items = seedItems.map((it, idx) => ({ id: idx + 1, ...it }));
-        sales = [];
-        expenses = [];
-        saveItems();
-        saveSales();
-        saveExpenses();
       }
+      // seed
+      state.items = seedItems.map(it => ({ ...it }));
+      state.sales = [];
+      state.expenses = [];
+      saveState();
+    }
+    function formatMoney(n){ return Number(n || 0).toLocaleString(); }
+    function todayISO(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+
+    /********** ELEMENTS **********/
+    const itemNameInput = document.getElementById('itemNameInput');
+    const itemStockInput = document.getElementById('itemStockInput');
+    const itemBuyInput = document.getElementById('itemBuyInput');
+    const itemSellInput = document.getElementById('itemSellInput');
+    const itemStorageInput = document.getElementById('itemStorageInput');
+    const saveItemBtn = document.getElementById('saveItemBtn');
+    const resetItemBtn = document.getElementById('resetItemBtn');
+    const inventorySearchInput = document.getElementById('inventorySearchInput');
+    const inventoryResults = document.getElementById('inventoryResults');
+    const inventoryListWrap = document.getElementById('inventoryListWrap');
+    const itemsTableBody = document.querySelector('#itemsTable tbody');
+    const itemsCountBadge = document.getElementById('itemsCountBadge');
+
+    const barcodeInput = document.getElementById('barcodeInput');
+    const saleSearchInput = document.getElementById('saleSearchInput');
+    const saleSuggestions = document.getElementById('saleSuggestions');
+    const saleQtyInput = document.getElementById('saleQtyInput');
+    const saleSellInput = document.getElementById('saleSellInput');
+    const saleBuyInput = document.getElementById('saleBuyInput');
+    const saleProfitInput = document.getElementById('saleProfitInput');
+    const saleTotalInput = document.getElementById('saleTotalInput');
+    const saleDateInput = document.getElementById('saleDateInput');
+    const saveSaleBtn = document.getElementById('saveSaleBtn');
+    const resetSaleBtn = document.getElementById('resetSaleBtn');
+    const tabToday = document.getElementById('tabToday');
+    const tabAll = document.getElementById('tabAll');
+    const summarySalesEl = document.getElementById('summarySales');
+    const summaryProfitEl = document.getElementById('summaryProfit');
+    const summaryExpensesEl = document.getElementById('summaryExpenses');
+    const salesTbody = document.getElementById('salesTbody');
+    const salesCountBadge = document.getElementById('salesCountBadge');
+    const clearAllSalesLink = document.getElementById('clearAllSales');
+    const printBtn = document.getElementById('printBtn');
+
+    const expDescInput = document.getElementById('expDescInput');
+    const expAmountInput = document.getElementById('expAmountInput');
+    const expDateInput = document.getElementById('expDateInput');
+    const saveExpenseBtn = document.getElementById('saveExpenseBtn');
+    const expensesTbody = document.getElementById('expensesTbody');
+
+    const btnExportItems = document.getElementById('btnExportItems');
+    const btnExportSales = document.getElementById('btnExportSales');
+    const importItemsFile = document.getElementById('importItemsFile');
+    const importSalesFile = document.getElementById('importSalesFile');
+    const btnDownloadBackup = document.getElementById('btnDownloadBackup');
+    const backupUpload = document.getElementById('backupUpload');
+    const btnClearAll = document.getElementById('btnClearAll');
+    const btnBulkImport = document.getElementById('btnBulkImport');
+    const bulkPaste = document.getElementById('bulkPaste');
+    const findByIdInput = document.getElementById('findByIdInput');
+    const btnFindById = document.getElementById('btnFindById');
+
+    /********** UI RENDER **********/
+    function updateBadges(){
+      itemsCountBadge.textContent = 'Items: ' + (state.items.length || 0);
+      salesCountBadge.textContent = 'Sales: ' + (state.sales.length || 0);
     }
 
-    function saveItems() {
-      localStorage.setItem(STORAGE_ITEMS, JSON.stringify(items));
-    }
-
-    function saveSales() {
-      localStorage.setItem(STORAGE_SALES, JSON.stringify(sales));
-    }
-
-    function saveExpenses() {
-      localStorage.setItem(STORAGE_EXPENSES, JSON.stringify(expenses));
-    }
-
-    // ===== INVENTORY =====
-    const itemNameInput = document.getElementById("itemName");
-    const itemBuyInput = document.getElementById("itemBuy");
-    const itemSellInput = document.getElementById("itemSell");
-    const itemStockInput = document.getElementById("itemStock");
-    const itemStorageInput = document.getElementById("itemStorage");
-    const itemsTbody = document.getElementById("itemsTbody");
-    const totalItemsEl = document.getElementById("totalItems");
-    const inventoryCostEl = document.getElementById("inventoryCost");
-    const inventoryValueEl = document.getElementById("inventoryValue");
-    const searchInput = document.getElementById("searchInput");
-
-    function renderItems() {
-      const q = (searchInput.value || "").toLowerCase();
-      let rows = "";
-      let totalCost = 0;
-      let totalValue = 0;
-
-      const filtered = items.filter((it) => {
-        if (!q) return true;
-        return (
-          it.name.toLowerCase().includes(q) ||
-          (it.storage || "").toLowerCase().includes(q)
-        );
+    function renderInventoryResults(q){
+      const ql = String(q||'').trim().toLowerCase();
+      if(!ql){ inventoryResults.style.display='none'; inventoryListWrap.style.display='none'; return; }
+      const list = state.items.filter(it => (it.name||'').toLowerCase().includes(ql) || String(it.id)===ql || (String(it.storage||'')).toLowerCase().includes(ql));
+      if(list.length===0){
+        inventoryResults.innerHTML = `<div class="suggestion">No items found</div>`; inventoryResults.style.display='block'; inventoryListWrap.style.display='none'; return;
+      }
+      inventoryResults.innerHTML = list.map(it=>`<div class="suggestion" data-id="${it.id}"><strong>[${it.id}] ${it.name}</strong> <div class="muted">₱${formatMoney(it.sell)} • stock ${it.stock} • ${it.storage||''}</div></div>`).join('');
+      inventoryResults.style.display='block';
+      inventoryListWrap.style.display='block';
+      // fill table with results (for quick view)
+      itemsTableBody.innerHTML = '';
+      list.forEach((it, idx)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${idx+1}</td><td>${it.id}</td><td>${it.name}</td><td>₱${formatMoney(it.buy)}</td><td>₱${formatMoney(it.sell)}</td><td>${it.stock}</td><td>${it.storage||''}</td>
+          <td class="no-print">
+            <button class="small" data-edit="${it.id}">Edit</button>
+            <button class="small" data-del="${it.id}" style="background:#fff;color:var(--text);border:1px solid var(--border)">Delete</button>
+          </td>`;
+        itemsTableBody.appendChild(tr);
       });
-
-      filtered.forEach((it, idx) => {
-        const cost = (Number(it.buyPrice) || 0) * (Number(it.stock) || 0);
-        const value = (Number(it.sellPrice) || 0) * (Number(it.stock) || 0);
-        totalCost += cost;
-        totalValue += value;
-
-        rows += `
-          <tr data-id="${it.id}">
-            <td class="text-center">${idx + 1}</td>
-            <td>${it.name}</td>
-            <td class="text-right">${formatMoney(it.buyPrice)}</td>
-            <td class="text-right">${formatMoney(it.sellPrice)}</td>
-            <td class="text-center">${it.stock}</td>
-            <td>${it.storage || ""}</td>
-            <td class="text-right">${formatMoney(value)}</td>
-          </tr>
-        `;
+      // attach listeners
+      document.querySelectorAll('#itemsTable [data-edit]').forEach(btn=>{
+        btn.onclick = () => {
+          const id = Number(btn.dataset.edit);
+          startEditItemById(id);
+        };
       });
-
-      itemsTbody.innerHTML =
-        rows ||
-        `<tr><td colspan="7" class="text-center text-muted">No items found.</td></tr>`;
-
-      totalItemsEl.textContent = items.length;
-      inventoryCostEl.textContent = formatMoney(totalCost);
-      inventoryValueEl.textContent = formatMoney(totalValue);
-
-      renderSaleItemOptions();
+      document.querySelectorAll('#itemsTable [data-del]').forEach(btn=>{
+        btn.onclick = () => {
+          const id = Number(btn.dataset.del);
+          if(!confirm('Delete this item?')) return;
+          state.items = state.items.filter(x=>x.id!==id);
+          saveState(); renderInventoryResults(inventorySearchInput.value); renderSales();
+        };
+      });
+      // click suggestions to autofill edit form
+      inventoryResults.querySelectorAll('.suggestion[data-id]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          const id = Number(el.dataset.id);
+          startEditItemById(id);
+          inventoryResults.style.display='none';
+        });
+      });
     }
 
-    function clearItemForm() {
-      itemNameInput.value = "";
-      itemBuyInput.value = "";
-      itemSellInput.value = "";
-      itemStockInput.value = "";
-      itemStorageInput.value = "";
-      itemNameInput.focus();
+    function renderAllItemsTable(){
+      itemsTableBody.innerHTML = '';
+      state.items.forEach((it, idx)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${idx+1}</td><td>${it.id}</td><td>${it.name}</td><td>₱${formatMoney(it.buy)}</td><td>₱${formatMoney(it.sell)}</td><td>${it.stock}</td><td>${it.storage||''}</td>
+          <td class="no-print">
+            <button class="small" data-edit="${it.id}">Edit</button>
+            <button class="small" data-del="${it.id}" style="background:#fff;color:var(--text);border:1px solid var(--border)">Delete</button>
+          </td>`;
+        itemsTableBody.appendChild(tr);
+      });
+      document.querySelectorAll('#itemsTable [data-edit]').forEach(btn=>{
+        btn.onclick = () => startEditItemById(Number(btn.dataset.edit));
+      });
+      document.querySelectorAll('#itemsTable [data-del]').forEach(btn=>{
+        btn.onclick = () => {
+          const id = Number(btn.dataset.del);
+          if(!confirm('Delete this item?')) return;
+          state.items = state.items.filter(x=>x.id!==id);
+          saveState(); renderAllItemsTable(); renderSales();
+        };
+      });
     }
 
-    function onSaveItem() {
+    let currentTab = 'today';
+    function setTab(tab){
+      currentTab = tab;
+      tabToday.classList.toggle('active', tab==='today');
+      tabAll.classList.toggle('active', tab==='all');
+      renderSales();
+    }
+
+    function renderSales(){
+      const today = todayISO();
+      let filtered = state.sales.slice();
+      if(currentTab==='today') filtered = filtered.filter(s=>s.date===today);
+      let totalSales=0, totalProfit=0;
+      salesTbody.innerHTML = '';
+      filtered.slice().reverse().forEach(s=>{
+        totalSales += Number(s.total||0);
+        totalProfit += Number(s.profit||0);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${s.date}</td><td>${s.itemName}</td><td class="text-center">${s.qty}</td><td class="text-right">₱${formatMoney(s.total)}</td><td class="text-right">₱${formatMoney(s.profit)}</td>`;
+        salesTbody.appendChild(tr);
+      });
+      summarySalesEl.textContent = formatMoney(totalSales);
+      summaryProfitEl.textContent = formatMoney(totalProfit);
+      // expenses for period
+      let expTotal=0;
+      let expFiltered = state.expenses.slice();
+      if(currentTab==='today') expFiltered = expFiltered.filter(e=>e.date===today);
+      expFiltered.forEach(e=>expTotal += Number(e.amount||0));
+      summaryExpensesEl.textContent = formatMoney(expTotal);
+    }
+
+    function renderExpenses(){
+      expensesTbody.innerHTML = '';
+      state.expenses.slice().reverse().forEach(e=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${e.date}</td><td>${e.desc}</td><td class="text-right">₱${formatMoney(e.amount)}</td>`;
+        expensesTbody.appendChild(tr);
+      });
+    }
+
+    /********** SUGGESTIONS & SEARCH **********/
+    function showSaleSuggestions(query){
+      const q = String(query||'').trim().toLowerCase();
+      if(!q){ saleSuggestions.style.display='none'; return; }
+      const list = state.items.filter(it => it.name.toLowerCase().includes(q) || String(it.id)===q);
+      if(list.length===0){ saleSuggestions.innerHTML = `<div class="suggestion">No items found</div>`; saleSuggestions.style.display='block'; return; }
+      saleSuggestions.innerHTML = list.map(it=>`<div class="suggestion" data-id="${it.id}"><strong>[${it.id}] ${it.name}</strong><div class="muted">₱${formatMoney(it.sell)} • stock ${it.stock}</div></div>`).join('');
+      saleSuggestions.style.display='block';
+      saleSuggestions.querySelectorAll('.suggestion[data-id]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          const id = Number(el.dataset.id);
+          const it = state.items.find(x=>x.id===id);
+          if(!it) return;
+          fillSaleFromItem(it);
+          saleSuggestions.style.display='none';
+        });
+      });
+    }
+
+    function fillSaleFromItem(it){
+      saleSearchInput.value = it.name;
+      saleSellInput.value = it.sell || '';
+      saleBuyInput.value = it.buy || '';
+      saleQtyInput.value = 1;
+      recalcSaleFields();
+    }
+
+    /********** EDIT MODE (fixed) **********/
+    // we will edit by item id to avoid duplicates
+    function startEditItemById(id){
+      const it = state.items.find(x=>x.id===id);
+      if(!it) return alert('Item not found');
+      itemNameInput.value = it.name;
+      itemStockInput.value = it.stock;
+      itemBuyInput.value = it.buy;
+      itemSellInput.value = it.sell;
+      itemStorageInput.value = it.storage || '';
+      saveItemBtn.dataset.editId = id;
+      saveItemBtn.textContent = 'Update item';
+      saveItemBtn.dataset.originalName = it.name;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /********** EVENTS **********/
+    saveItemBtn.onclick = ()=>{
       const name = itemNameInput.value.trim();
+      const stock = Number(itemStockInput.value || 0);
       const buy = Number(itemBuyInput.value || 0);
       const sell = Number(itemSellInput.value || 0);
-      const stock = Number(itemStockInput.value || 0);
       const storage = itemStorageInput.value.trim();
+      if(!name){ alert('Please enter item name'); return; }
+      if(stock < 0){ alert('Stock must be >=0'); return; }
 
-      if (!name) {
-        alert("Lagyan natin ng item name muna, bro.");
-        return;
-      }
-
-      let item = items.find((it) => it.name.toLowerCase() === name.toLowerCase());
-      if (item) {
-        item.buyPrice = buy;
-        item.sellPrice = sell;
-        item.stock = stock;
-        item.storage = storage;
+      if(saveItemBtn.dataset.editId){
+        // EDIT existing by id (no duplicate creation)
+        const id = Number(saveItemBtn.dataset.editId);
+        const idx = state.items.findIndex(x=>x.id===id);
+        if(idx >= 0){
+          state.items[idx] = { ...state.items[idx], name, stock, buy, sell, storage };
+          delete saveItemBtn.dataset.editId;
+          delete saveItemBtn.dataset.originalName;
+          saveItemBtn.textContent = 'Save item';
+        }
       } else {
-        const id = items.length ? Math.max(...items.map((i) => i.id)) + 1 : 1;
-        items.push({ id, name, buyPrice: buy, sellPrice: sell, stock, storage });
+        // create new item (ensure unique id)
+        const id = (state.items.length ? Math.max(...state.items.map(i=>i.id)) : 0) + 1;
+        state.items.push({ id, name, stock, buy, sell, storage });
       }
-
-      saveItems();
-      renderItems();
+      saveState(); updateBadges();
+      renderInventoryResults(inventorySearchInput.value);
       clearItemForm();
+    };
+
+    resetItemBtn.onclick = ()=>{
+      clearItemForm();
+      delete saveItemBtn.dataset.editId;
+      saveItemBtn.textContent = 'Save item';
+    };
+
+    function clearItemForm(){
+      itemNameInput.value = '';
+      itemStockInput.value = 1;
+      itemBuyInput.value = '';
+      itemSellInput.value = '';
+      itemStorageInput.value = '';
     }
 
-    // click row to edit
-    itemsTbody.addEventListener("click", (e) => {
-      const tr = e.target.closest("tr[data-id]");
-      if (!tr) return;
-      const id = Number(tr.getAttribute("data-id"));
-      const item = items.find((it) => it.id === id);
-      if (!item) return;
-      itemNameInput.value = item.name;
-      itemBuyInput.value = item.buyPrice;
-      itemSellInput.value = item.sellPrice;
-      itemStockInput.value = item.stock;
-      itemStorageInput.value = item.storage || "";
-      itemNameInput.scrollIntoView({ behavior: "smooth", block: "center" });
+    inventorySearchInput.addEventListener('input', (e)=> renderInventoryResults(e.target.value));
+    btnFindById.onclick = ()=>{
+      const id = Number(findByIdInput.value || 0);
+      if(!id){ alert('Enter ID'); return; }
+      const it = state.items.find(x=>x.id===id);
+      if(!it){ alert('Not found'); return; }
+      startEditItemById(id);
+      inventoryResults.style.display='none';
+      inventoryListWrap.style.display='block';
+      renderAllItemsTable();
+    };
+
+    // Bulk paste import (simple CSV rows)
+    btnBulkImport.onclick = ()=>{
+      const txt = bulkPaste.value.trim();
+      if(!txt){ alert('Paste rows first'); return; }
+      const lines = txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+      let added = 0;
+      lines.forEach(l=>{
+        const parts = l.split(',').map(p=>p.trim());
+        const name = parts[0] || '';
+        const stock = Number(parts[1] || 0);
+        const buy = Number(parts[2] || 0);
+        const sell = parts[3] ? Number(parts[3]) : '';
+        const storage = parts[4] || '';
+        if(!name) return;
+        const id = (state.items.length ? Math.max(...state.items.map(i=>i.id)) : 0) + 1;
+        state.items.push({ id, name, stock, buy, sell, storage });
+        added++;
+      });
+      saveState(); updateBadges();
+      alert(`Imported ${added} items`);
+      bulkPaste.value = '';
+    };
+
+    /********** SALES HANDLING **********/
+    function recalcSaleFields(){
+      const qty = Number(saleQtyInput.value || 0);
+      const sell = Number(saleSellInput.value || 0);
+      const buy = Number(saleBuyInput.value || 0);
+      saleTotalInput.value = (qty * sell) || '';
+      saleProfitInput.value = ((sell - buy) * qty) || '';
+    }
+
+    saleSearchInput.addEventListener('input', (e)=> showSaleSuggestions(e.target.value));
+    saleSearchInput.addEventListener('focus', (e)=> showSaleSuggestions(e.target.value));
+    document.addEventListener('click', (ev)=> { if(!ev.target.closest('.suggestions')) saleSuggestions.style.display='none'; });
+
+    saleQtyInput.addEventListener('input', recalcSaleFields);
+    saleSellInput.addEventListener('input', recalcSaleFields);
+    saleBuyInput.addEventListener('input', recalcSaleFields);
+
+    // barcode input: accept ID or exact name
+    barcodeInput.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){
+        const v = barcodeInput.value.trim();
+        if(!v) return;
+        let it = null;
+        if(/^\d+$/.test(v)){
+          it = state.items.find(x=>x.id === Number(v));
+        }
+        if(!it) it = state.items.find(x => x.name.toLowerCase() === v.toLowerCase());
+        if(it){
+          fillSaleFromItem(it);
+          saleQtyInput.value = 1;
+          recalcSaleFields();
+          barcodeInput.value = '';
+          saleSellInput.focus();
+        } else {
+          alert('Item not found for barcode/search value');
+        }
+      }
     });
 
-    // ===== SALES =====
-    const saleItemSelect = document.getElementById("saleItem");
-    const saleQtyInput = document.getElementById("saleQty");
-    const saleSellPriceInput = document.getElementById("saleSellPrice");
-    const saleBuyPriceInput = document.getElementById("saleBuyPrice");
-    const saleProfitInput = document.getElementById("saleProfit");
-    const saleTotalInput = document.getElementById("saleTotal");
-    const saleDateInput = document.getElementById("saleDate");
-    const salesTbody = document.getElementById("salesTbody");
-
-    const summarySalesEl = document.getElementById("summarySales");
-    const summaryProfitEl = document.getElementById("summaryProfit");
-    const summaryExpensesEl = document.getElementById("summaryExpenses");
-    const summaryLabelEl = document.getElementById("summaryLabel");
-    const summaryProfitLabelEl = document.getElementById("summaryProfitLabel");
-
-    const tabTodayBtn = document.getElementById("tabToday");
-    const tabAllBtn = document.getElementById("tabAll");
-    const clearSalesLink = document.getElementById("clearSalesLink");
-
-    // LIVE SEARCH INPUT + SUGGESTIONS
-    const saleSearchInput = document.getElementById("saleSearch");
-    const saleSuggestionsList = document.getElementById("saleSuggestionsList");
-
-    function renderSaleItemOptions() {
-      const currentValue = saleItemSelect.value;
-      saleItemSelect.innerHTML = '<option value="">-- choose item --</option>';
-      items.forEach((it) => {
-        const opt = document.createElement("option");
-        opt.value = String(it.id);
-        opt.textContent = it.name;
-        saleItemSelect.appendChild(opt);
-      });
-      if (currentValue) saleItemSelect.value = currentValue;
-    }
-
-    function onChangeSaleItem() {
-      const id = Number(saleItemSelect.value);
-      const item = items.find((it) => it.id === id);
-      if (!item) {
-        saleBuyPriceInput.value = "";
-        saleSellPriceInput.value = "";
-        calcSaleTotals();
-        return;
-      }
-      saleBuyPriceInput.value = item.buyPrice;
-      saleSellPriceInput.value = item.sellPrice;
-      calcSaleTotals();
-    }
-
-    function calcSaleTotals() {
+    // save sale
+    saveSaleBtn.onclick = ()=>{
+      const name = saleSearchInput.value.trim();
+      if(!name){ alert('Choose an item'); return; }
       const qty = Number(saleQtyInput.value || 0);
-      const sell = Number(saleSellPriceInput.value || 0);
-      const buy = Number(saleBuyPriceInput.value || 0);
+      if(qty <= 0){ alert('Quantity must be > 0'); return; }
+      const sell = Number(saleSellInput.value || 0);
+      const buy = Number(saleBuyInput.value || 0);
       const total = qty * sell;
-      const profit = qty * (sell - buy);
-      saleTotalInput.value = total ? formatMoney(total) : "";
-      saleProfitInput.value = profit ? formatMoney(profit) : "";
-    }// LIVE SEARCH SUGGESTIONS
-    function showSaleSuggestions() {
-      if (!saleSearchInput) return;
-
-      const q = saleSearchInput.value.trim().toLowerCase();
-      if (!q) {
-        saleSuggestionsList.innerHTML = "";
-        saleSuggestionsList.style.display = "none";
-        return;
-      }
-
-      const matches = items
-        .filter((it) => it.name.toLowerCase().includes(q))
-        .slice(0, 20);
-
-      if (!matches.length) {
-        saleSuggestionsList.innerHTML =
-          '<div class="sale-suggestion-item sale-suggestion-empty">No matching item</div>';
-        saleSuggestionsList.style.display = "block";
-        return;
-      }
-
-      saleSuggestionsList.innerHTML = matches
-        .map(
-          (it) => `
-        <div class="sale-suggestion-item" data-id="${it.id}">
-          <div class="sale-suggestion-name">${it.name}</div>
-          <div class="sale-suggestion-meta">
-            <span>${formatMoney(it.sellPrice || 0)} / pc</span>
-            <span>Stock: ${it.stock}</span>
-          </div>
-        </div>`
-        )
-        .join("");
-
-      saleSuggestionsList.style.display = "block";
-    }
-
-    if (saleSuggestionsList) {
-      saleSuggestionsList.addEventListener("click", (e) => {
-        const row = e.target.closest(".sale-suggestion-item[data-id]");
-        if (!row) return;
-        const id = Number(row.getAttribute("data-id"));
-        const item = items.find((it) => it.id === id);
-        if (!item) return;
-
-        // set hidden select
-        saleItemSelect.value = String(id);
-        onChangeSaleItem();
-
-        // set search text
-        saleSearchInput.value = item.name;
-
-        // default qty = 1
-        saleQtyInput.value = 1;
-
-        if (!saleSellPriceInput.value || Number(saleSellPriceInput.value) === 0) {
-          saleSellPriceInput.value = item.sellPrice || 0;
-        }
-
-        calcSaleTotals();
-
-        saleSuggestionsList.innerHTML = "";
-        saleSuggestionsList.style.display = "none";
-      });
-    }
-
-    if (saleSearchInput) {
-      saleSearchInput.addEventListener("input", showSaleSuggestions);
-      saleSearchInput.addEventListener("focus", showSaleSuggestions);
-      saleSearchInput.addEventListener("blur", () => {
-        setTimeout(() => {
-          saleSuggestionsList.style.display = "none";
-        }, 200);
-      });
-    }
-
-    function onSaveSale() {
-      const id = Number(saleItemSelect.value);
-      const item = items.find((it) => it.id === id);
-      if (!item) {
-        alert("Pumili o mag-search muna ng item.");
-        return;
-      }
-      const qty = Number(saleQtyInput.value || 0);
-      const sell = Number(saleSellPriceInput.value || 0);
-      const buy = Number(saleBuyPriceInput.value || 0);
-      if (!qty || qty <= 0) {
-        alert("Lagyan natin ng quantity.");
-        return;
-      }
-      if (!sell || sell <= 0) {
-        alert("Lagyan natin ng selling price.");
-        return;
-      }
-      if (qty > Number(item.stock)) {
-        if (!confirm(`Stock: ${item.stock}. Itutuloy pa rin ang sale na ${qty} pcs?`)) {
-          return;
-        }
-      }
-
+      const profit = (sell - buy) * qty;
       const date = saleDateInput.value || todayISO();
-      const total = qty * sell;
-      const profit = qty * (sell - buy);
 
-      const sale = {
-        id: sales.length ? Math.max(...sales.map((s) => s.id)) + 1 : 1,
-        itemId: item.id,
-        itemName: item.name,
-        qty,
-        sellPrice: sell,
-        buyPrice: buy,
-        total,
-        profit,
-        date
-      };
-      sales.push(sale);
-      saveSales();
+      // find item by exact name (case-insensitive) or by id
+      let item = state.items.find(it => it.name.toLowerCase() === name.toLowerCase());
+      if(!item && /^\d+$/.test(name)) item = state.items.find(it => it.id === Number(name));
 
-      item.stock = Number(item.stock) - qty;
-      if (item.stock < 0) item.stock = 0;
-      saveItems();
+      if(!item){
+        if(!confirm('Item not found in inventory. Save sale anyway?')) return;
+      } else {
+        // adjust stock by id (prevent duplicate creation)
+        item.stock = Math.max(0, (Number(item.stock||0) - qty));
+      }
 
-      renderItems();
-      renderSales();
+      const id = state.sales.length ? Math.max(...state.sales.map(s=>s.id)) + 1 : 1;
+      state.sales.push({ id, itemName: name, qty, sell, buy, total, profit, date });
+      saveState(); renderSales(); renderExpenses(); renderInventoryResults(inventorySearchInput.value);
       clearSaleForm();
-    }
-function renderSales() {
-    let filteredSales = sales;
-    const today = todayISO();
+      alert('Sale saved');
+    };
 
-    // Filter depende sa tab
-    if (currentTab === "today") {
-        filteredSales = sales.filter((s) => s.date === today);
-        summaryLabelEl.textContent = "Today sales";
-        summaryProfitLabelEl.textContent = "Today profit";
-    } else {
-        summaryLabelEl.textContent = "All-time sales";
-        summaryProfitLabelEl.textContent = "All-time profit";
-    }
-
-    // Compute totals
-    let totalSales = 0;
-    let totalProfit = 0;
-    let rows = "";
-
-    filteredSales
-        .slice()
-        .reverse()
-        .forEach((s) => {
-            totalSales += s.total;
-            totalProfit += s.profit;
-
-            rows += `
-            <tr>
-                <td>${s.date}</td>
-                <td>${s.itemName}</td>
-                <td class="text-center">${s.qty}</td>
-                <td class="text-right">${formatMoney(s.total)}</td>
-                <td class="text-right">${formatMoney(s.profit)}</td>
-            </tr>`;
-        });
-
-    salesTbody.innerHTML = rows;
-
-    summarySalesEl.textContent = formatMoney(totalSales);
-    function clearSaleForm() {
-      saleItemSelect.value = "";
-      if (saleSearchInput) {
-        saleSearchInput.value = "";
-      }
-      if (saleSuggestionsList) {
-        saleSuggestionsList.innerHTML = "";
-        saleSuggestionsList.style.display = "none";
-      }
+    resetSaleBtn.onclick = clearSaleForm;
+    function clearSaleForm(){
+      saleSearchInput.value = '';
       saleQtyInput.value = 1;
-      saleSellPriceInput.value = "";
-      saleBuyPriceInput.value = "";
-      saleTotalInput.value = "";
-      saleProfitInput.value = "";
+      saleSellInput.value = '';
+      saleBuyInput.value = '';
+      saleProfitInput.value = '';
+      saleTotalInput.value = '';
       saleDateInput.value = todayISO();
+      saleSuggestions.style.display='none';
     }
 
-   
+    tabToday.onclick = ()=> setTab('today');
+    tabAll.onclick = ()=> setTab('all');
+    clearAllSalesLink.onclick = (ev)=>{ ev.preventDefault(); if(!confirm('Delete ALL recorded sales?')) return; state.sales=[]; saveState(); renderSales(); };
 
-    function onSaveExpense() {
+    /********** EXPENSES **********/
+    saveExpenseBtn.onclick = ()=>{
       const desc = expDescInput.value.trim();
       const amount = Number(expAmountInput.value || 0);
       const date = expDateInput.value || todayISO();
-      if (!desc || !amount) {
-        alert("Lagyan ng description at amount ang expense.");
-        return;
-      }
-      const exp = {
-        id: expenses.length ? Math.max(...expenses.map((e) => e.id)) + 1 : 1,
-        desc,
-        amount,
-        date
+      if(!desc || !amount){ alert('Enter description and amount'); return; }
+      const id = state.expenses.length ? Math.max(...state.expenses.map(e=>e.id)) + 1 : 1;
+      state.expenses.push({ id, desc, amount, date });
+      saveState(); renderExpenses(); renderSales();
+      expDescInput.value=''; expAmountInput.value=''; expDateInput.value = todayISO();
+    };
+
+    /********** PRINT **********/
+    printBtn.onclick = ()=>{
+      const toPrint = currentTab === 'today' ? 'today' : 'all';
+      let filtered = state.sales.slice();
+      const today = todayISO();
+      if(toPrint === 'today') filtered = filtered.filter(s=>s.date===today);
+      const totalSales = filtered.reduce((a,b)=>a+Number(b.total||0),0);
+      const totalProfit = filtered.reduce((a,b)=>a+Number(b.profit||0),0);
+      const totalExpenses = (toPrint==='today' ? state.expenses.filter(e=>e.date===today) : state.expenses).reduce((a,b)=>a+Number(b.amount||0),0);
+
+      const html = `<html><head><title>Sales Report</title><style>
+        body{font-family:Arial;padding:18px;color:#111} table{width:100%;border-collapse:collapse;margin-top:12px} th,td{padding:8px;border:1px solid #ddd} .text-right{text-align:right}
+        @media print{@page{size:A4;margin:12mm}}
+      </style></head><body>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><h2>Makoi Motor Shop</h2><div>${toPrint==='today' ? 'Date: '+todayISO() : 'All time'}</div></div>
+          <div><div><strong>Total sales:</strong> ₱${formatMoney(totalSales)}</div><div><strong>Total profit:</strong> ₱${formatMoney(totalProfit)}</div><div><strong>Expenses:</strong> ₱${formatMoney(totalExpenses)}</div></div>
+        </div>
+        <table><thead><tr><th>Date</th><th>Item</th><th>Qty</th><th class="text-right">Total</th><th class="text-right">Profit</th></tr></thead><tbody>
+        ${filtered.map(s=>`<tr><td>${s.date}</td><td>${s.itemName}</td><td>${s.qty}</td><td class="text-right">₱${formatMoney(s.total)}</td><td class="text-right">₱${formatMoney(s.profit)}</td></tr>`).join('')}
+        </tbody></table>
+        <script>window.onload=()=>window.print();</script></body></html>`;
+      const w = window.open('','_blank'); w.document.open(); w.document.write(html); w.document.close();
+    };
+
+    /********** CSV EXPORT / IMPORT & BACKUP **********/
+    function arrayToCsv(rows){
+      return rows.map(r => r.map(c => {
+        if (c === null || c === undefined) return '';
+        const s = String(c).replace(/"/g,'""');
+        return /[,"\n]/.test(s) ? `"${s}"` : s;
+      }).join(',')).join('\n');
+    }
+
+    btnExportItems.onclick = ()=>{
+      const rows = [['id','name','stock','buy','sell','storage']];
+      state.items.forEach(it => rows.push([it.id, it.name, it.stock, it.buy, it.sell, it.storage || '']));
+      const csv = arrayToCsv(rows);
+      downloadText(csv, 'makoi_items.csv', 'text/csv');
+    };
+
+    btnExportSales.onclick = ()=>{
+      const rows = [['id','date','itemName','qty','buy','sell','total','profit']];
+      state.sales.forEach(s => rows.push([s.id, s.date, s.itemName, s.qty, s.buy, s.sell, s.total, s.profit]));
+      const csv = arrayToCsv(rows);
+      downloadText(csv, 'makoi_sales.csv', 'text/csv');
+    };
+
+    importItemsFile.addEventListener('change', (e)=>{
+      const f = e.target.files[0];
+      if(!f) return;
+      const reader = new FileReader();
+      reader.onload = ()=> {
+        const text = reader.result;
+        const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+        for(let i=0;i<lines.length;i++){
+          const cols = parseCsvLine(lines[i]);
+          if(i===0 && /name/i.test(cols.join(' '))) continue; // skip header
+          const name = cols[1] || cols[0];
+          const stock = Number(cols[2] || 0);
+          const buy = Number(cols[3] || 0);
+          const sell = Number(cols[4] || '');
+          const storage = cols[5] || '';
+          const id = (state.items.length ? Math.max(...state.items.map(x=>x.id)) : 0) + 1;
+          state.items.push({ id, name, stock, buy, sell, storage });
+        }
+        saveState(); updateBadges(); alert('Imported items from CSV');
+        importItemsFile.value = '';
       };
-      expenses.push(exp);
-      saveExpenses();
-      renderExpenses();
-      expDescInput.value = "";
-      expAmountInput.value = "";
-      expDateInput.value = todayISO();
+      reader.readAsText(f);
+    });
+
+    importSalesFile.addEventListener('change', (e)=>{
+      const f = e.target.files[0];
+      if(!f) return;
+      const reader = new FileReader();
+      reader.onload = ()=> {
+        const text = reader.result;
+        const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+        for(let i=0;i<lines.length;i++){
+          const cols = parseCsvLine(lines[i]);
+          if(i===0 && /date/i.test(cols.join(' '))) continue;
+          const id = (state.sales.length ? Math.max(...state.sales.map(x=>x.id)) : 0) + 1;
+          const date = cols[1] || todayISO();
+          const itemName = cols[2] || cols[1] || '';
+          const qty = Number(cols[3] || 1);
+          const buy = Number(cols[4] || 0);
+          const sell = Number(cols[5] || 0);
+          const total = Number(cols[6] || (qty*sell));
+          const profit = Number(cols[7] || (qty*(sell-buy)));
+          state.sales.push({ id, date, itemName, qty, buy, sell, total, profit });
+        }
+        saveState(); renderSales(); alert('Imported sales from CSV');
+        importSalesFile.value = '';
+      };
+      reader.readAsText(f);
+    });
+
+    btnDownloadBackup.onclick = ()=>{
+      const json = JSON.stringify(state, null, 2);
+      downloadText(json, `makoi_backup_${new Date().toISOString().slice(0,10)}.json`, 'application/json');
+    };
+
+    backupUpload.addEventListener('change', (e)=>{
+      const f = e.target.files[0];
+      if(!f) return;
+      if(!confirm('Restore backup? This will replace current data in browser.')) { backupUpload.value=''; return; }
+      const reader = new FileReader();
+      reader.onload = ()=> {
+        try{
+          const parsed = JSON.parse(reader.result);
+          if(!parsed.items || !parsed.sales || !parsed.expenses) return alert('Invalid backup file');
+          state = { items: parsed.items, sales: parsed.sales, expenses: parsed.expenses };
+          saveState(); renderInventoryResults(inventorySearchInput.value); renderSales(); renderExpenses(); updateBadges();
+          alert('Backup restored');
+        }catch(err){ alert('Failed to parse backup'); }
+        backupUpload.value = '';
+      };
+      reader.readAsText(f);
+    });
+
+    btnClearAll.onclick = ()=>{
+      if(!confirm('This will remove all data and reset to seed. Continue?')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      loadState(); renderInventoryResults(''); renderSales(); renderExpenses(); updateBadges(); alert('Reset done');
+    };
+
+    function downloadText(text, filename, mime){
+      const blob = new Blob([text], { type: mime || 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+      a.remove(); URL.revokeObjectURL(url);
     }
 
-    // ===== CLEAR ALL =====
-    function clearAllData() {
-      if (
-        !confirm(
-          "Sigurado ka? Buburahin lahat ng items, sales at expenses na naka-save sa device na ito."
-        )
-      ) {
-        return;
+    function parseCsvLine(line){
+      const res = []; let cur=''; let inQuotes=false;
+      for(let i=0;i<line.length;i++){
+        const ch=line[i];
+        if(ch==='\"'){ if(inQuotes && line[i+1]==='\"'){ cur+='"'; i++; } else inQuotes=!inQuotes; continue; }
+        if(ch===',' && !inQuotes){ res.push(cur); cur=''; continue; }
+        cur+=ch;
       }
-      items = seedItems.map((it, idx) => ({ id: idx + 1, ...it }));
-      sales = [];
-      expenses = [];
-      saveItems();
-      saveSales();
-      saveExpenses();
-      renderItems();
-      renderSales();
-      renderExpenses();
-      renderSaleItemOptions();
-      alert("Na-reset at ni-load ulit ang default items.");
+      res.push(cur);
+      return res.map(s=>s.trim());
     }
+    <div style="height:20px"></div>
+    <div class="muted">Notes: CSV import expects simple comma-separated values without headers. Backup is full JSON of POS state.</div>
+  </div>
 
-    function clearAllSales() {
-      if (!sales.length) return;
-      if (!confirm("Burahin lahat ng sales record?")) return;
-      sales = [];
-      saveSales();
-      renderSales();
-    }
+  <script>
+    // PART 2 will continue here (core JS functions and app logic)/********** PART 3: SEED ITEMS (361 items) **********/
+    const seedItems = [
+{ id:1, name:"YK Horn Relay Socket Universal 5 Pin", stock:3, buy:62, sell:"", storage:"" },
+{ id:2, name:"SMOK S3 3LED Night Breaker", stock:3, buy:240, sell:300, storage:"" },
+{ id:3, name:"SMOK S6 6LED Night Breaker", stock:3, buy:250, sell:350, storage:"" },
+{ id:4, name:"DRX C06", stock:3, buy:250, sell:370, storage:"" },
+{ id:5, name:"DVS SD35 MDL Small Steel Gun", stock:3, buy:75, sell:"", storage:"" },
+{ id:6, name:"Battery Terminal Assorted", stock:100, buy:2, sell:"", storage:"" },
+{ id:7, name:"Otaka Bosch Relay Socket", stock:3, buy:23, sell:"", storage:"" },
+{ id:8, name:"Male and Female Socket", stock:3, buy:6, sell:"", storage:"" },
+{ id:9, name:"Otaka Tail Light Socket Universal", stock:10, buy:13, sell:"", storage:"" },
+{ id:10, name:"Otaka Fuse Box Housing", stock:10, buy:23, sell:"", storage:"" },
+{ id:11, name:"Otaka Air Filter Aerox155 V1", stock:3, buy:135, sell:"", storage:"" },
+{ id:12, name:"Saiyan Mini Horn 10s", stock:3, buy:34, sell:"", storage:"" },
+{ id:13, name:"BANDO Belt Aerox V1/2/Nmax V2", stock:3, buy:595, sell:1785, storage:"" },
+{ id:14, name:"Fuse Glass 10A", stock:100, buy:1.5, sell:"", storage:"" },
+{ id:15, name:"Fuse Glass 25A", stock:100, buy:1.5, sell:"", storage:"" },
+{ id:16, name:"Hella Spark Plug C10N-7 Long Tip", stock:1, buy:48, sell:200, storage:"" },
+{ id:17, name:"Beast Tire 70×90×14", stock:4, buy:960, sell:1450, storage:"" },
+{ id:18, name:"Beast Tire 80×90×14", stock:4, buy:1040, sell:1480, storage:"" },
+{ id:19, name:"Beast Tire 90×90×14", stock:4, buy:1180, sell:1380, storage:"" },
+{ id:20, name:"Beast Tire 100×80×14", stock:4, buy:1500, sell:1850, storage:"" },
+{ id:21, name:"TOP UP 200mL", stock:1, buy:48, sell:65, storage:"" },
+{ id:22, name:"Zeno Clutch Excel 20W50 1L", stock:12, buy:157, sell:"", storage:"" },
+{ id:23, name:"Zeno Scooter Pro 10W40 1L", stock:12, buy:168, sell:"", storage:"" },
+{ id:24, name:"Malubade Gear Oil 100mL", stock:12, buy:23, sell:30, storage:"" },
+{ id:25, name:"Saiyan Tire Sealant 500mL", stock:12, buy:48, sell:120, storage:"" },
+{ id:26, name:"YK Single Denso Wire Black", stock:1, buy:220, sell:"", storage:"" },
+{ id:27, name:"YK Single Denso Wire Blue", stock:1, buy:220, sell:"", storage:"" },
+{ id:28, name:"Otaka Chain 428H 110L", stock:3, buy:180, sell:"", storage:"" },
+{ id:29, name:"Otaka Chain 428H 120L", stock:3, buy:190, sell:"", storage:"" },
+{ id:30, name:"Otaka Chain 428H 132L", stock:3, buy:220, sell:"", storage:"" },
+{ id:31, name:"Petron ZR 200mL", stock:1, buy:36, sell:70, storage:"" },
+{ id:32, name:"DVS Optics Side Mirror Black", stock:3, buy:200, sell:300, storage:"" },
 
-    // ===== INIT =====
-    function init() {
+{ id:33, name:"DVS CP47 2835 Dual Lamp Y/W", stock:3, buy:25, sell:340, storage:"" },
+{ id:34, name:"DVS CP47 2835 Dual Lamp Y/B", stock:3, buy:25, sell:340, storage:"" },
+{ id:35, name:"Saiyan Handgrip 82 Yellow", stock:3, buy:138, sell:280, storage:"" },
+{ id:36, name:"Saiyan Carbon Brush Mio", stock:3, buy:13, sell:30, storage:"" },
+{ id:37, name:"Saiyan Carbon Brush Raider150", stock:3, buy:13, sell:30, storage:"" },
+{ id:38, name:"DVS Optics Side Mirror Black (alt)", stock:3, buy:470, sell:800, storage:"" },
+{ id:39, name:"SMOK Headlight H4 Y/W", stock:3, buy:170, sell:340, storage:"" },
+{ id:40, name:"Otaka High/Low Switch Copper", stock:3, buy:11, sell:25, storage:"" },
+{ id:41, name:"Otaka Muffler Gasket Mio", stock:25, buy:4, sell:10, storage:"" },
+{ id:42, name:"Circlip Small", stock:20, buy:5, sell:10, storage:"" },
+{ id:43, name:"Fuel Filter Ordinary", stock:20, buy:32, sell:50, storage:"" },
+{ id:44, name:"Otaka Front Axle Mio", stock:3, buy:38, sell:80, storage:"" },
+{ id:45, name:"Otaka Front Axle Raider150", stock:3, buy:38, sell:114, storage:"" },
+{ id:46, name:"Cable Tie 4×100", stock:4, buy:2, sell:4, storage:"" },
+{ id:47, name:"Cable Tie 4×150", stock:4, buy:3, sell:5, storage:"" },
+{ id:48, name:"Saiyan Caliper Repair Kit R150 Rear", stock:3, buy:46, sell:138, storage:"" },
+{ id:49, name:"Saiyan Caliper Repair Kit R150 Front", stock:3, buy:46, sell:138, storage:"" },
+{ id:50, name:"Saiyan Caliper Repair Kit Mio", stock:3, buy:46, sell:138, storage:"" },
+{ id:51, name:"Saiyan Tappet Cap Sniper135", stock:3, buy:41, sell:150, storage:"" },
+{ id:52, name:"Saiyan Hydraulic Switch Rear", stock:3, buy:46, sell:138, storage:"" },
+{ id:53, name:"Otaka Horn Relay 5 Pin", stock:3, buy:70, sell:130, storage:"" },
+{ id:54, name:"Otaka Regulator Socket 4 Pin", stock:3, buy:19, sell:60, storage:"" },
+{ id:55, name:"Otaka Shock Bushing Small", stock:3, buy:5, sell:10, storage:"" },
+{ id:56, name:"Speed Thai Silicon Gasket", stock:3, buy:19, sell:75, storage:"" },
+{ id:57, name:"Stoplight Switch Front", stock:3, buy:32, sell:70, storage:"" },
+{ id:58, name:"Saiyan Overhauling Gasket Mio", stock:3, buy:77, sell:300, storage:"" },
+{ id:59, name:"Saiyan Overhauling Gasket Raider150", stock:3, buy:77, sell:300, storage:"" },
+{ id:60, name:"Saiyan Starter Relay M3", stock:3, buy:92, sell:180, storage:"" },
+{ id:61, name:"Saiyan Starter Relay Click 4 Pin", stock:3, buy:92, sell:250, storage:"" },
+{ id:62, name:"Saiyan Starter Relay Raider150", stock:3, buy:92, sell:250, storage:"" },
+{ id:63, name:"Saiyan Carb Repair Kit Raider150", stock:3, buy:84, sell:200, storage:"" },
+{ id:64, name:"Saiyan Carb Repair Kit XRM110", stock:3, buy:84, sell:200, storage:"" },
+{ id:65, name:"Saiyan Carb Repair Kit Sniper", stock:3, buy:84, sell:200, storage:"" },
+{ id:66, name:"Saiyan Chain Adjuster TMX", stock:3, buy:32, sell:70, storage:"" },
+{ id:67, name:"SMOK Dual Contact LED Y/B", stock:3, buy:60, sell:120, storage:"" },
+{ id:68, name:"SMOK Dual Contact LED Y/W", stock:3, buy:60, sell:120, storage:"" },
+{ id:69, name:"SMOK Dual Contact LED Y/R", stock:3, buy:60, sell:120, storage:"" },
+{ id:70, name:"Throttle Pipe White", stock:3, buy:28, sell:70, storage:"" },
+{ id:71, name:"Saiyan Caliper Repair Kit XRM", stock:3, buy:46, sell:138, storage:"" },
+{ id:72, name:"Saiyan Caliper Repair Kit Trinity", stock:3, buy:23, sell:69, storage:"" },
+{ id:73, name:"Saiyan Tappet Cap XRM", stock:3, buy:23, sell:50, storage:"" },
+{ id:74, name:"Saiyan Tappet Cap Wave125", stock:3, buy:23, sell:50, storage:"" },
+{ id:75, name:"Daytona Handgrip w/ Bar End", stock:3, buy:75, sell:250, storage:"" },
+{ id:76, name:"Saiyan Chain Adjuster Raider150", stock:3, buy:38, sell:180, storage:"" },
+{ id:77, name:"Otaka Flasher XRM (TMX) White", stock:3, buy:55, sell:180, storage:"" },
+
+{ id:78, name:"Orig Vbelt Click125 K35", stock:4, buy:352, sell:709, storage:"" },
+{ id:79, name:"Saiyan Brake Master Kit XRM", stock:5, buy:171, sell:200, storage:"" },
+{ id:80, name:"Saiyan Brake Master Kit Click", stock:5, buy:171, sell:150, storage:"" },
+{ id:81, name:"Saiyan Brake Master Kit Mio", stock:5, buy:171, sell:150, storage:"" },
+{ id:82, name:"Saiyan Brake Master Kit MMAX", stock:5, buy:171, sell:150, storage:"" },
+{ id:83, name:"Saiyan Brake Master Kit Wave125", stock:5, buy:171, sell:150, storage:"" },
+{ id:84, name:"Saiyan Brake Master Kit Sniper135", stock:5, buy:171, sell:160, storage:"" },
+{ id:85, name:"Saiyan SS3 Mini Driving Light", stock:3, buy:350, sell:650, storage:"" },
+{ id:86, name:"Saiyan SS4 Mini Driving Light", stock:5, buy:250, sell:900, storage:"" },
+{ id:87, name:"SMOK P45 T15 Yellow", stock:5, buy:35, sell:200, storage:"" },
+{ id:88, name:"SMOK P45 T15 Red", stock:5, buy:35, sell:200, storage:"" },
+{ id:89, name:"SMOK P45 T15 White", stock:5, buy:35, sell:200, storage:"" },
+{ id:90, name:"SMOK P45 T15 Blue", stock:5, buy:35, sell:200, storage:"" },
+{ id:91, name:"SMOK V3 Mini Driving Light", stock:3, buy:75, sell:150, storage:"" },
+{ id:92, name:"SMOK Lightened Disc MMAX", stock:3, buy:600, sell:1200, storage:"" },
+{ id:93, name:"Shihfa Tire 300×17", stock:3, buy:375, sell:750, storage:"" },
+{ id:94, name:"Shihfa Tire 250×17", stock:3, buy:425, sell:850, storage:"" },
+{ id:95, name:"Shihfa Tire 80×80×17", stock:3, buy:395, sell:620, storage:"" },
+{ id:96, name:"Shihfa Tire 100×80×17", stock:3, buy:340, sell:680, storage:"" },
+{ id:97, name:"Beast Tire 70×90×14 (alt)", stock:3, buy:620, sell:880, storage:"" },
+{ id:98, name:"Beast Tire 80×90×14 (alt)", stock:3, buy:740, sell:1080, storage:"" },
+{ id:99, name:"Beast Tire 90×90×14 (alt)", stock:3, buy:825, sell:1200, storage:"" },
+{ id:100, name:"Beast Tire 100×80×14 (alt)", stock:3, buy:1100, sell:1650, storage:"" },
+{ id:101, name:"BUU Tube 175×17", stock:3, buy:90, sell:170, storage:"" },
+{ id:102, name:"BUU Tube 300×17", stock:3, buy:100, sell:180, storage:"" },
+{ id:103, name:"Gripper Tube 225×17", stock:3, buy:90, sell:170, storage:"" },
+{ id:104, name:"BUU Tube 250×17", stock:3, buy:90, sell:170, storage:"" },
+{ id:105, name:"BUU Tube 275×17", stock:3, buy:100, sell:180, storage:"" },
+{ id:106, name:"Orig Vbelt Mio 125 M3", stock:3, buy:340, sell:680, storage:"" },
+{ id:107, name:"Saiyan Handle Switch Honeywell", stock:3, buy:176, sell:580, storage:"" },
+{ id:108, name:"Bosch Horn Evolution", stock:3, buy:230, sell:580, storage:"" },
+{ id:109, name:"Saiyan Rubber Dumper Trinity", stock:3, buy:50, sell:80, storage:"" },
+{ id:110, name:"Saiyan Clutch Lining R150", stock:3, buy:59, sell:130, storage:"" },
+{ id:111, name:"Otaka Oil Seal XRM110", stock:3, buy:75, sell:150, storage:"" },
+{ id:112, name:"Otaka Oil Seal TMX155", stock:3, buy:75, sell:150, storage:"" },
+{ id:113, name:"Saiyan Handle Switch Mio", stock:3, buy:200, sell:360, storage:"" },
+{ id:114, name:"Saiyan Fuel Cock XRM110", stock:3, buy:40, sell:80, storage:"" },
+{ id:115, name:"Otaka Brake Shoe XRM", stock:3, buy:40, sell:80, storage:"" },
+{ id:116, name:"Halo Horn", stock:3, buy:17, sell:50, storage:"" },
+{ id:117, name:"Saiyan FRZA Horn", stock:3, buy:109, sell:350, storage:"" },
+{ id:118, name:"Saiyan Handle Switch R150", stock:3, buy:109, sell:300, storage:"" },
+{ id:119, name:"Saiyan Handle Switch XRM110", stock:3, buy:89, sell:280, storage:"" },
+{ id:120, name:"Saiyan Piston Kit Wave125 STD", stock:3, buy:106, sell:230, storage:"" },
+{ id:121, name:"Otaka Sprocket XRM/Wave125 36T", stock:3, buy:56, sell:120, storage:"" },
+{ id:122, name:"Otaka Sprocket XRM/Wave125 38T", stock:3, buy:56, sell:120, storage:"" },
+{ id:123, name:"Saiyan Fuel Filter Raider150 FI", stock:5, buy:16, sell:100, storage:"" },
+
+{ id:124, name:"Osaki Throttle Cable Aerox155", stock:5, buy:352, sell:700, storage:"" },
+{ id:125, name:"Osaki Speed Cable XRM110", stock:5, buy:180, sell:300, storage:"" },
+{ id:126, name:"Osaki Speed Cable TMX155", stock:5, buy:180, sell:300, storage:"" },
+{ id:127, name:"Otaka Speed Cable Beat", stock:5, buy:132, sell:300, storage:"" },
+{ id:128, name:"Otaka Speed Cable Mio", stock:5, buy:123, sell:300, storage:"" },
+{ id:129, name:"Saiyan Handgrip 418 Blue", stock:10, buy:350, sell:800, storage:"" },
+{ id:130, name:"Pro Side Mirror Yamaha", stock:10, buy:75, sell:280, storage:"" },
+{ id:131, name:"Pro Side Mirror Honda", stock:10, buy:75, sell:280, storage:"" },
+{ id:132, name:"T19 Bulb", stock:5, buy:6, sell:20, storage:"" },
+{ id:133, name:"T20 Bulb", stock:5, buy:6, sell:20, storage:"" },
+{ id:134, name:"B35 Bulb", stock:5, buy:6, sell:40, storage:"" },
+{ id:135, name:"B8.5 Bulb", stock:10, buy:3, sell:20, storage:"" },
+{ id:136, name:"TRC 7117 Headlight White", stock:5, buy:100, sell:200, storage:"" },
+{ id:137, name:"TRC 7115 Headlight Blue", stock:5, buy:100, sell:200, storage:"" },
+{ id:138, name:"TRC 8105 12LED Headlight", stock:5, buy:100, sell:150, storage:"" },
+{ id:139, name:"TRC 8110 H4 Hi/Lo", stock:5, buy:150, sell:250, storage:"" },
+{ id:140, name:"Oil Filter Kawasaki", stock:5, buy:80, sell:120, storage:"" },
+{ id:141, name:"Oil Filter Bajaj", stock:5, buy:80, sell:120, storage:"" },
+{ id:142, name:"Oil Filter Yamaha", stock:5, buy:147, sell:200, storage:"" },
+{ id:143, name:"Fuel Hose Gray", stock:3, buy:25, sell:"", storage:"" },
+{ id:144, name:"JVT Center Spring Aerox 1000", stock:3, buy:380, sell:700, storage:"" },
+{ id:145, name:"JVT Center Spring Aerox 1200", stock:3, buy:380, sell:800, storage:"" },
+{ id:146, name:"JVT Center Spring Mio 1000", stock:3, buy:180, sell:650, storage:"" },
+{ id:147, name:"JVT Center Spring Mio 1200", stock:3, buy:230, sell:700, storage:"" },
+{ id:148, name:"JVT Pulley Set Mio", stock:5, buy:355, sell:2400, storage:"" },
+{ id:149, name:"Saiyan Flyball Click 10G", stock:3, buy:99, sell:280, storage:"" },
+{ id:150, name:"Saiyan Flyball Click 16G", stock:3, buy:99, sell:280, storage:"" },
+{ id:151, name:"Saiyan Flyball M3 9G", stock:3, buy:99, sell:280, storage:"" },
+{ id:152, name:"Saiyan Flyball Click 17G", stock:3, buy:99, sell:300, storage:"" },
+{ id:153, name:"Saiyan Pulley Slider Mio", stock:3, buy:80, sell:180, storage:"" },
+{ id:154, name:"Saiyan Pulley Slider Beat", stock:3, buy:80, sell:180, storage:"" },
+{ id:155, name:"Saiyan Engine Valve Click", stock:3, buy:50, sell:200, storage:"" },
+{ id:156, name:"Saiyan Engine Valve Raider150", stock:3, buy:50, sell:200, storage:"" },
+{ id:157, name:"Saiyan Pulley Slider Aerox", stock:3, buy:418, sell:650, storage:"" },
+{ id:158, name:"Saiyan CDI Mio Sporty", stock:3, buy:75, sell:150, storage:"" },
+{ id:159, name:"Saiyan CDI Beat", stock:3, buy:75, sell:150, storage:"" },
+{ id:160, name:"Saiyan CDI Mio Soul", stock:3, buy:75, sell:150, storage:"" },
+{ id:161, name:"Saiyan CDI Mio 125 MX", stock:3, buy:109, sell:200, storage:"" },
+{ id:162, name:"Saiyan Fuel Filter Click150", stock:5, buy:16, sell:100, storage:"" },
+{ id:163, name:"Saiyan Handle Switch TMX", stock:3, buy:87, sell:300, storage:"" },
+{ id:164, name:"SMOK Mini Driving Light V1", stock:3, buy:214, sell:850, storage:"" },
+{ id:165, name:"Saiyan Piston Kit XRM110 STD", stock:3, buy:92, sell:360, storage:"" },
+{ id:166, name:"Saiyan Flasher Relay w/ Adjuster", stock:3, buy:92, sell:180, storage:"" },
+{ id:167, name:"Saiyan Piston Ring TMX155 STD", stock:10, buy:218, sell:380, storage:"" },
+{ id:168, name:"Saiyan Piston Kit Mio STD", stock:3, buy:218, sell:380, storage:"" },
+
+{ id:169, name:"Pito Tubeless Silver", stock:20, buy:20, sell:35, storage:"" },
+{ id:170, name:"Saiyan Knuckle Bearing Mio", stock:5, buy:70, sell:200, storage:"" },
+{ id:171, name:"Saiyan Knuckle Bearing R150", stock:5, buy:70, sell:200, storage:"" },
+{ id:172, name:"Saiyan Piston Kit TMX155 STD", stock:5, buy:226, sell:350, storage:"" },
+{ id:173, name:"Saiyan Piston Kit Click125 STD", stock:5, buy:225, sell:350, storage:"" },
+{ id:174, name:"Saiyan Piston Kit Wave110 STD", stock:5, buy:214, sell:350, storage:"" },
+{ id:175, name:"JVT Center Spring Click 1000", stock:3, buy:160, sell:250, storage:"" },
+{ id:176, name:"Otaka Brake Shoe TMX155 Rear", stock:5, buy:93, sell:180, storage:"" },
+{ id:177, name:"ZIC M9 10W40 1L", stock:12, buy:277, sell:380, storage:"" },
+{ id:178, name:"ZIC M9 10W40 800mL", stock:12, buy:243, sell:330, storage:"" },
+{ id:179, name:"ZIC M7 10W40 1L", stock:12, buy:263, sell:280, storage:"" },
+{ id:180, name:"ZIC M7 10W40 800mL", stock:12, buy:220, sell:263, storage:"" },
+{ id:181, name:"Castrol Activ 20W40 800mL", stock:10, buy:138, sell:200, storage:"" },
+{ id:182, name:"Shell AX7 10W40 1L", stock:10, buy:260, sell:350, storage:"" },
+{ id:183, name:"Shell AX7 Scooter 800mL", stock:6, buy:150, sell:200, storage:"" },
+{ id:184, name:"Yamalube Blue Auto 20W40 800mL", stock:6, buy:180, sell:250, storage:"" },
+{ id:185, name:"Yamalube Blue Core 10W40 1L", stock:6, buy:200, sell:280, storage:"" },
+{ id:186, name:"Havoline Ezy 20W40 800mL", stock:5, buy:160, sell:200, storage:"" },
+{ id:187, name:"Petron Sprint 1L", stock:5, buy:168, sell:250, storage:"" },
+{ id:188, name:"Petron Sprint 2T", stock:5, buy:45, sell:75, storage:"" },
+{ id:189, name:"TOP UP 200mL (duplicate)", stock:5, buy:33, sell:100, storage:"" },
+{ id:190, name:"Amalie Gear Oil 80W90 120mL", stock:5, buy:45, sell:100, storage:"" },
+{ id:191, name:"Zeno Gear Oil 80W90 120mL", stock:5, buy:45, sell:100, storage:"" },
+{ id:192, name:"Koby Coolant Blue 1L", stock:4, buy:160, sell:200, storage:"" },
+{ id:193, name:"Koby Coolant Green 1L", stock:4, buy:160, sell:200, storage:"" },
+{ id:194, name:"Koby Coolant Pink 1L", stock:4, buy:160, sell:200, storage:"" },
+{ id:195, name:"Brake Fluid Surebrake 150mL", stock:5, buy:38, sell:150, storage:"" },
+{ id:196, name:"Saiyan Tire Sealant 500mL (duplicate)", stock:5, buy:48, sell:120, storage:"" },
+{ id:197, name:"Saiyan Tire Black", stock:5, buy:103, sell:200, storage:"" },
+{ id:198, name:"Koby CVT Cleaner 450mL", stock:5, buy:88, sell:200, storage:"" },
+{ id:199, name:"Volga Fork Oil 200mL", stock:5, buy:33, sell:150, storage:"" },
+{ id:200, name:"OD Battery 12N6.5L", stock:3, buy:950, sell:1100, storage:"" },
+{ id:201, name:"OD Battery YB3L", stock:3, buy:770, sell:890, storage:"" },
+{ id:202, name:"OD Battery YTX5L", stock:3, buy:850, sell:890, storage:"" },
+{ id:203, name:"Koby Hi-Temp Grease 10G", stock:30, buy:10, sell:20, storage:"" },
+{ id:204, name:"Saiyan Protectant Spray", stock:30, buy:20, sell:30, storage:"" },
+{ id:205, name:"FRZA Spark Plug C7HSA", stock:10, buy:53, sell:120, storage:"" },
+{ id:206, name:"FRZA Spark Plug CR8E", stock:10, buy:53, sell:120, storage:"" },
+{ id:207, name:"FRZA Spark Plug D8EA", stock:10, buy:53, sell:120, storage:"" },
+{ id:208, name:"FRZA Spark Plug CPR8EA-9", stock:10, buy:55, sell:120, storage:"" },
+{ id:209, name:"FRZA Spark Plug BP7HS", stock:10, buy:58, sell:120, storage:"" },
+{ id:210, name:"Otaka Throttle Cable Mio", stock:5, buy:43, sell:200, storage:"" },
+{ id:211, name:"Otaka Throttle Cable TMX155", stock:5, buy:43, sell:180, storage:"" },
+{ id:212, name:"Otaka Clutch Cable TMX155", stock:5, buy:53, sell:180, storage:"" },
+{ id:213, name:"Otaka Clutch Cable Raider150", stock:5, buy:53, sell:200, storage:"" },
+
+{ id:214, name:"Saiyan Rocker Arm TMX Cam Follower", stock:3, buy:115, sell:280, storage:"" },
+{ id:215, name:"Saiyan Rocker Arm TMX Upper", stock:3, buy:218, sell:420, storage:"" },
+{ id:216, name:"Saiyan Rocker Arm Wave125", stock:3, buy:245, sell:450, storage:"" },
+{ id:217, name:"OD Battery 12NSL", stock:3, buy:585, sell:900, storage:"" },
+{ id:218, name:"OD Battery YTX4L", stock:3, buy:755, sell:800, storage:"" },
+{ id:219, name:"OD Battery YTZ7S", stock:3, buy:755, sell:1150, storage:"" },
+{ id:220, name:"ZIC M5 1L 20W50", stock:10, buy:109, sell:200, storage:"" },
+{ id:221, name:"Havoline EZY 4T 1L", stock:10, buy:209, sell:280, storage:"" },
+{ id:222, name:"Havoline SF 1L", stock:10, buy:208, sell:280, storage:"" },
+{ id:223, name:"Castrol Activ 20W40 1L", stock:10, buy:230, sell:300, storage:"" },
+{ id:224, name:"Zeno Brake Pad Mio", stock:3, buy:70, sell:120, storage:"" },
+{ id:225, name:"Zeno Brake Pad Click150", stock:3, buy:70, sell:120, storage:"" },
+{ id:226, name:"Zeno Brake Pad XRM Trinity", stock:3, buy:70, sell:120, storage:"" },
+{ id:227, name:"Saiyan Engine Valve XRM110", stock:3, buy:32, sell:200, storage:"" },
+{ id:228, name:"Saiyan Engine Valve Aerox155", stock:3, buy:130, sell:350, storage:"" },
+{ id:229, name:"Otaka Air Filter Aerox155", stock:3, buy:130, sell:350, storage:"" },
+{ id:230, name:"Saiyan Air Filter Beat", stock:3, buy:80, sell:200, storage:"" },
+{ id:231, name:"Saiyan Air Filter Beat FI", stock:3, buy:134, sell:250, storage:"" },
+{ id:232, name:"Saiyan Air Filter Raider150", stock:3, buy:134, sell:250, storage:"" },
+{ id:233, name:"Saiyan Air Filter TMX Supremo", stock:3, buy:180, sell:350, storage:"" },
+{ id:234, name:"Saiyan Air Filter Mio Soul", stock:3, buy:115, sell:250, storage:"" },
+{ id:235, name:"Saiyan Air Filter Mio/ADV160", stock:3, buy:115, sell:250, storage:"" },
+{ id:236, name:"Saiyan Fuel Cock Soul", stock:3, buy:80, sell:230, storage:"" },
+{ id:237, name:"Saiyan Fuel Cock Raider150", stock:3, buy:80, sell:200, storage:"" },
+{ id:238, name:"Saiyan Fuel Cock Universal", stock:3, buy:80, sell:200, storage:"" },
+{ id:239, name:"Saiyan Piston Ring Mio", stock:10, buy:77, sell:180, storage:"" },
+{ id:240, name:"Saiyan Piston Ring XRM110", stock:10, buy:77, sell:180, storage:"" },
+{ id:241, name:"Saiyan Piston Ring Click125", stock:10, buy:84, sell:200, storage:"" },
+{ id:242, name:"Saiyan Piston Ring TMX155", stock:10, buy:84, sell:200, storage:"" },
+{ id:243, name:"Otaka Brake Shoe Beat", stock:10, buy:95, sell:280, storage:"" },
+{ id:244, name:"Zeno Flyball Click125 12G", stock:5, buy:263, sell:400, storage:"" },
+{ id:245, name:"Zeno Flyball 14G", stock:5, buy:313, sell:400, storage:"" },
+{ id:246, name:"Zeno Flyball Mio 7G", stock:5, buy:173, sell:200, storage:"" },
+{ id:247, name:"Zeno Flyball Mio 9G", stock:5, buy:173, sell:200, storage:"" },
+{ id:248, name:"Zeno Flyball Mio 10G", stock:5, buy:173, sell:200, storage:"" },
+{ id:249, name:"Zeno Flyball Mio 8G", stock:5, buy:173, sell:200, storage:"" },
+{ id:250, name:"Otaka Bearing 6205", stock:10, buy:32, sell:100, storage:"" },
+{ id:251, name:"Saiyan Bearing 6203", stock:10, buy:19, sell:100, storage:"" },
+{ id:252, name:"Saiyan Bearing 6201", stock:10, buy:19, sell:100, storage:"" },
+{ id:253, name:"Saiyan Bearing 6300", stock:10, buy:22, sell:100, storage:"" },
+{ id:254, name:"Saiyan Bearing 6202", stock:10, buy:22, sell:100, storage:"" },
+{ id:255, name:"Saiyan Ball Race Aerox", stock:5, buy:69, sell:200, storage:"" },
+{ id:256, name:"Saiyan Ball Race Beat", stock:5, buy:69, sell:200, storage:"" },
+{ id:257, name:"Saiyan Ball Race Click", stock:5, buy:69, sell:200, storage:"" },
+{ id:258, name:"Saiyan Ball Race Mio", stock:5, buy:69, sell:200, storage:"" },
+{ id:259, name:"Saiyan Ball Race Nmax", stock:5, buy:69, sell:200, storage:"" },
+{ id:260, name:"Saiyan Ball Race Raider150", stock:5, buy:69, sell:200, storage:"" },
+
+{ id:261, name:"Saiyan Sprocket TMX 53T", stock:3, buy:184, sell:350, storage:"" },
+{ id:262, name:"Saiyan Sprocket TMX 32T", stock:3, buy:103, sell:280, storage:"" },
+{ id:263, name:"Saiyan Sprocket TMX 48T", stock:3, buy:161, sell:340, storage:"" },
+{ id:264, name:"Saiyan Sprocket TMX 51T", stock:3, buy:225, sell:340, storage:"" },
+{ id:265, name:"Otaka Sprocket TMX155 34T", stock:3, buy:110, sell:280, storage:"" },
+{ id:266, name:"Otaka Sprocket TMX155 36T", stock:3, buy:110, sell:280, storage:"" },
+{ id:267, name:"Otaka Sprocket XRM/Wave125 34T", stock:3, buy:113, sell:280, storage:"" },
+{ id:268, name:"Otaka Sprocket TMX155 42T", stock:3, buy:170, sell:280, storage:"" },
+{ id:269, name:"Saiyan Sprocket TMX 45T", stock:3, buy:109, sell:300, storage:"" },
+{ id:270, name:"Saiyan Engine Sprocket TMX 13T", stock:3, buy:32, sell:80, storage:"" },
+{ id:271, name:"Saiyan Engine Sprocket TMX 14T", stock:3, buy:32, sell:80, storage:"" },
+{ id:272, name:"Saiyan Engine Sprocket XRM 13T", stock:3, buy:32, sell:80, storage:"" },
+{ id:273, name:"Saiyan Engine Sprocket XRM 14T", stock:3, buy:32, sell:80, storage:"" },
+{ id:274, name:"Otaka Brake Pad Mio125", stock:3, buy:96, sell:200, storage:"" },
+{ id:275, name:"Otaka Brake Pad XRM", stock:3, buy:96, sell:200, storage:"" },
+{ id:276, name:"Saiyan Manifold TMX Supremo", stock:3, buy:122, sell:280, storage:"" },
+{ id:277, name:"Saiyan Manifold XRM110", stock:3, buy:99, sell:280, storage:"" },
+{ id:278, name:"Saiyan Air Filter TMX155 Foam", stock:3, buy:38, sell:150, storage:"" },
+{ id:279, name:"Saiyan Air Filter Wave100", stock:3, buy:38, sell:150, storage:"" },
+{ id:280, name:"Saiyan Air Filter Wave Dash", stock:3, buy:75, sell:280, storage:"" },
+{ id:281, name:"Saiyan Air Filter XRM125 FI", stock:3, buy:75, sell:280, storage:"" },
+{ id:282, name:"Saiyan CDI TMX Supremo", stock:3, buy:109, sell:780, storage:"" },
+{ id:283, name:"Saiyan CDI TMX155", stock:3, buy:109, sell:780, storage:"" },
+{ id:284, name:"Saiyan CDI XRM110", stock:3, buy:109, sell:280, storage:"" },
+{ id:285, name:"Saiyan Main Switch TMX125 Alpha", stock:3, buy:145, sell:290, storage:"" },
+{ id:286, name:"Saiyan Main Switch XRM110", stock:3, buy:92, sell:200, storage:"" },
+{ id:287, name:"Saiyan Main Switch Wave125", stock:3, buy:92, sell:200, storage:"" },
+{ id:288, name:"Saiyan Brake Pedal TMX", stock:3, buy:92, sell:280, storage:"" },
+{ id:289, name:"Saiyan Brake Pedal XRM", stock:3, buy:92, sell:280, storage:"" },
+{ id:290, name:"Domino Seat Cover Carbon", stock:3, buy:200, sell:280, storage:"" },
+{ id:291, name:"Zeno Seat Cover", stock:3, buy:200, sell:280, storage:"" },
+
+{ id:292, name:"Signal Light Aerox", stock:2, buy:120, sell:280, storage:"" },
+{ id:293, name:"Front Fork Oil Seal Bana", stock:3, buy:150, sell:200, storage:"" },
+{ id:294, name:"Regulator TMX Alpha", stock:1, buy:250, sell:350, storage:"" },
+{ id:295, name:"Fuel Cock TMX", stock:1, buy:75, sell:150, storage:"" },
+{ id:296, name:"Throttle Universal", stock:1, buy:250, sell:300, storage:"" },
+{ id:297, name:"Clutch Dumper", stock:1, buy:100, sell:280, storage:"" },
+{ id:298, name:"Ball Race Click/Beat", stock:2, buy:150, sell:250, storage:"" },
+{ id:299, name:"Air Filter Universal", stock:1, buy:70, sell:150, storage:"" },
+{ id:300, name:"COI Socket XRM", stock:2, buy:20, sell:50, storage:"" },
+{ id:301, name:"Mirror Holder Universal", stock:4, buy:25, sell:50, storage:"" },
+{ id:302, name:"Horn Relay Universal", stock:2, buy:15, sell:35, storage:"" },
+{ id:303, name:"Halogen Bulb", stock:2, buy:35, sell:95, storage:"" },
+{ id:304, name:"Tank Cap", stock:1, buy:135, sell:320, storage:"" },
+{ id:305, name:"Carbon Brush", stock:3, buy:70, sell:180, storage:"" },
+{ id:306, name:"Additives", stock:12, buy:215, sell:285, storage:"" },
+{ id:307, name:"Head Lamp Big KWS", stock:6, buy:25, sell:45, storage:"" },
+{ id:308, name:"Head Lamp Small KWS", stock:3, buy:10, sell:30, storage:"" },
+{ id:309, name:"Fuse Tube", stock:6, buy:3, sell:15, storage:"" },
+{ id:310, name:"Fuse Flat", stock:6, buy:5, sell:15, storage:"" },
+{ id:311, name:"Chain Lock", stock:10, buy:10, sell:25, storage:"" },
+
+{ id:312, name:"Engine Sprocket TMX AT", stock:1, buy:40, sell:100, storage:"" },
+{ id:313, name:"Handle Switch Rubí TC125", stock:2, buy:120, sell:300, storage:"" },
+{ id:314, name:"Fuel Filter", stock:2, buy:5, sell:30, storage:"" },
+{ id:315, name:"Exhaust Gasket", stock:1, buy:5, sell:30, storage:"" },
+{ id:316, name:"Switch On/Off", stock:7, buy:20, sell:35, storage:"" },
+{ id:317, name:"Brake Rod Universal", stock:1, buy:180, sell:195, storage:"" },
+{ id:318, name:"Tail Light Wave125", stock:1, buy:280, sell:285, storage:"" },
+{ id:319, name:"Light Outer Tube", stock:1, buy:780, sell:980, storage:"" },
+{ id:320, name:"Fender Clip Universal", stock:2, buy:75, sell:110, storage:"" },
+{ id:321, name:"Hydraulic Brake Light Switch", stock:2, buy:120, sell:180, storage:"" },
+{ id:322, name:"Throttle Pipe", stock:1, buy:15, sell:40, storage:"" },
+{ id:323, name:"Brake Light Switch", stock:4, buy:35, sell:80, storage:"" },
+{ id:324, name:"Slider Pulley", stock:2, buy:100, sell:200, storage:"" },
+{ id:325, name:"Caliper Repair Kit", stock:4, buy:65, sell:150, storage:"" },
+{ id:326, name:"Carburetor Repair Kit", stock:1, buy:65, sell:150, storage:"" },
+{ id:327, name:"Cam Chain Kit", stock:3, buy:350, sell:750, storage:"" },
+{ id:328, name:"Flyball Chicken Mox", stock:5, buy:120, sell:350, storage:"" },
+{ id:329, name:"Signal Light Big", stock:3, buy:50, sell:150, storage:"" },
+{ id:330, name:"Handle Grip RCB", stock:2, buy:115, sell:250, storage:"" },
+{ id:331, name:"Genuine Flyball Universal", stock:4, buy:220, sell:480, storage:"" },
+{ id:332, name:"Fan Belt", stock:3, buy:180, sell:380, storage:"" },
+{ id:333, name:"Fuel Filter FI", stock:2, buy:50, sell:200, storage:"" },
+{ id:334, name:"Timing Chain Set XRM110", stock:3, buy:230, sell:450, storage:"" },
+
+{ id:335, name:"Cylinder Block WMM", stock:1, buy:2180, sell:3080, storage:"" },
+{ id:336, name:"Tire Hero Rider 110", stock:1, buy:685, sell:1010, storage:"" },
+{ id:337, name:"Oil Filter Yamaha", stock:15, buy:37, sell:100, storage:"" },
+{ id:338, name:"Side Mirror Yamaha", stock:2, buy:71, sell:180, storage:"" },
+{ id:339, name:"Domino Side Mirror", stock:1, buy:100, sell:260, storage:"" },
+{ id:340, name:"Bar End Side Mirror", stock:1, buy:200, sell:400, storage:"" },
+{ id:341, name:"Oil Seat Set Mio", stock:1, buy:75, sell:180, storage:"" },
+{ id:342, name:"Center Spring", stock:3, buy:226, sell:350, storage:"" },
+{ id:343, name:"LED Module Light", stock:20, buy:15, sell:30, storage:"" },
+{ id:344, name:"Kargador TMX/Rusi", stock:2, buy:15, sell:30, storage:"" },
+{ id:345, name:"Rubber Foot Rest", stock:2, buy:30, sell:60, storage:"" },
+{ id:346, name:"Throttle Cable Mio", stock:2, buy:80, sell:160, storage:"" },
+{ id:347, name:"Throttle Cable Rusi", stock:2, buy:80, sell:160, storage:"" },
+{ id:348, name:"Brake Cable Yamaha", stock:1, buy:77, sell:120, storage:"" },
+{ id:349, name:"Clutch Cable Rider", stock:1, buy:77, sell:120, storage:"" },
+{ id:350, name:"Rubber Dumper", stock:2, buy:40, sell:100, storage:"" },
+{ id:351, name:"Rear Axle XRM", stock:4, buy:85, sell:200, storage:"" },
+{ id:352, name:"Swing Arm Bushing XRM", stock:6, buy:85, sell:200, storage:"" },
+{ id:353, name:"Brake Cam TMX", stock:4, buy:85, sell:200, storage:"" },
+{ id:354, name:"Kick Starter XRM110", stock:1, buy:110, sell:120, storage:"" },
+{ id:355, name:"Rear Sprocket 4T", stock:2, buy:180, sell:220, storage:"" },
+{ id:356, name:"Rear Sprocket 40T", stock:4, buy:175, sell:225, storage:"" },
+{ id:357, name:"Harness Wire Assorted", stock:8, buy:87, sell:800, storage:"" },
+
+{ id:358, name:"XRM Trinity Front Fender", stock:5, buy:150, sell:300, storage:"" },
+{ id:359, name:"Universal Front Fender", stock:7, buy:100, sell:220, storage:"" },
+{ id:360, name:"Popsop Music", stock:3, buy:200, sell:350, storage:"" },
+{ id:361, name:"TMX155 Makoto Brake Shoe", stock:9, buy:110, sell:280, storage:"" }
+    ];/********** PART 4: BOOT & FINALIZE **********/
+    function boot(){
       loadState();
-      renderItems();
-      renderExpenses();
-      renderSales();
-      clearSaleForm();
-
       saleDateInput.value = todayISO();
       expDateInput.value = todayISO();
-
-      document.getElementById("saveItemBtn").addEventListener("click", onSaveItem);
-      document.getElementById("resetItemBtn").addEventListener("click", clearItemForm);
-      document.getElementById("clearAllBtn").addEventListener("click", clearAllData);
-
-      searchInput.addEventListener("input", renderItems);
-
-      saleItemSelect.addEventListener("change", onChangeSaleItem);
-      saleQtyInput.addEventListener("input", calcSaleTotals);
-      saleSellPriceInput.addEventListener("input", calcSaleTotals);
-
-      document.getElementById("saveSaleBtn").addEventListener("click", onSaveSale);
-      document.getElementById("resetSaleBtn").addEventListener("click", clearSaleForm);
-
-      tabTodayBtn.addEventListener("click", () => {
-        currentTab = "today";
-        tabTodayBtn.classList.add("active");
-        tabAllBtn.classList.remove("active");
-        renderSales();
-      });
-
-      tabAllBtn.addEventListener("click", () => {
-        currentTab = "all";
-        tabAllBtn.classList.add("active");
-        tabTodayBtn.classList.remove("active");
-        renderSales();
-      });
-
-      clearSalesLink.addEventListener("click", clearAllSales);
-
-      document.getElementById("saveExpBtn").addEventListener("click", onSaveExpense);
+      updateBadges();
+      renderInventoryResults(''); // hide list until search
+      renderSales();
+      renderExpenses();
     }
 
-    document.addEventListener("DOMContentLoaded", init);
+    // bind sale suggestion events (ensure no duplicate listener)
+    saleSearchInput.addEventListener('input', (e)=> showSaleSuggestions(e.target.value));
+    saleSearchInput.addEventListener('focus', (e)=> showSaleSuggestions(e.target.value));
+
+    // small helpers to keep UI reactive
+    function updateEverything(){
+      renderInventoryResults(inventorySearchInput.value);
+      renderSales();
+      renderExpenses();
+      updateBadges();
+    }
+
+    // ensure saving on close
+    window.addEventListener('beforeunload', ()=> saveState());
+
+    // start
+    boot();
+
+    // expose for debugging in console
+    window._makoi_state = state;
   </script>
 </body>
 </html>
