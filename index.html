@@ -1405,7 +1405,45 @@
       renderSales();
       clearSaleForm();
     }
+function renderSales() {
+    let filteredSales = sales;
+    const today = todayISO();
 
+    // Filter depende sa tab
+    if (currentTab === "today") {
+        filteredSales = sales.filter((s) => s.date === today);
+        summaryLabelEl.textContent = "Today sales";
+        summaryProfitLabelEl.textContent = "Today profit";
+    } else {
+        summaryLabelEl.textContent = "All-time sales";
+        summaryProfitLabelEl.textContent = "All-time profit";
+    }
+
+    // Compute totals
+    let totalSales = 0;
+    let totalProfit = 0;
+    let rows = "";
+
+    filteredSales
+        .slice()
+        .reverse()
+        .forEach((s) => {
+            totalSales += s.total;
+            totalProfit += s.profit;
+
+            rows += `
+            <tr>
+                <td>${s.date}</td>
+                <td>${s.itemName}</td>
+                <td class="text-center">${s.qty}</td>
+                <td class="text-right">${formatMoney(s.total)}</td>
+                <td class="text-right">${formatMoney(s.profit)}</td>
+            </tr>`;
+        });
+
+    salesTbody.innerHTML = rows;
+
+    summarySalesEl.textContent = formatMoney(totalSales);
     function clearSaleForm() {
       saleItemSelect.value = "";
       if (saleSearchInput) {
@@ -1423,75 +1461,7 @@
       saleDateInput.value = todayISO();
     }
 
-    function renderSales() {
-      let filteredSales = sales;
-      const today = todayISO();
-
-      if (currentTab === "today") {
-        filteredSales = sales.filter((s) => s.date === today);
-        summaryLabelEl.textContent = "Today sales";
-        summaryProfitLabelEl.textContent = "Today profit";
-      } else {
-        summaryLabelEl.textContent = "All-time sales";
-        summaryProfitLabelEl.textContent = "All-time profit";
-      }
-
-      let rows = "";
-      let totalSales = 0;
-      let totalProfit = 0;
-
-      filteredSales
-        .slice()
-        .reverse()
-        .forEach((s) => {
-          totalSales += s.total;
-          totalProfit += s.profit;
-          rows += `
-          <tr>
-            <td>${s.date}</td>
-            <td>${s.itemName}</td>
-            <td class="text-center">${s.qty}</td>
-            <td class="text-right">${formatMoney(s.total)}</td>
-            <td class="text-right">${formatMoney(s.profit)}</td>
-          </tr>`;
-        });
-
-      salesTbody.innerHTML =
-        rows ||
-        '<tr><td colspan="5" class="text-center text-muted">No sales yet.</td></tr>';
-
-      summarySalesEl.textContent = formatMoney(totalSales);
-      summaryProfitEl.textContent = formatMoney(totalProfit);
-
-      const expTotal = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
-      summaryExpensesEl.textContent = formatMoney(expTotal);
-    }
-
-    // ===== EXPENSES =====
-    const expDescInput = document.getElementById("expDesc");
-    const expAmountInput = document.getElementById("expAmount");
-    const expDateInput = document.getElementById("expDate");
-    const expensesTbody = document.getElementById("expensesTbody");
-
-    function renderExpenses() {
-      let rows = "";
-      expenses
-        .slice()
-        .reverse()
-        .forEach((e) => {
-          rows += `
-          <tr>
-            <td>${e.date}</td>
-            <td>${e.desc}</td>
-            <td class="text-right">${formatMoney(e.amount)}</td>
-          </tr>`;
-        });
-      expensesTbody.innerHTML =
-        rows ||
-        '<tr><td colspan="3" class="text-center text-muted">No expenses yet.</td></tr>';
-
-      renderSales();
-    }
+   
 
     function onSaveExpense() {
       const desc = expDescInput.value.trim();
