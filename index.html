@@ -1,71 +1,193 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Simple POS - Strong Saul</title>
-<link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header>
-    <h1>Simple POS</h1>
-    <div class="controls">
-      <input id="searchBox" placeholder="Search item..." />
-      <button id="exportBtn">Export Backup</button>
-      <input id="importFile" type="file" style="display:none" />
-      <button id="importBtn">Import Backup</button>
-      <button id="clearAll">Clear All (dev)</button>
-    </div>
-  </header>
+// Simple POS logic using localStorage
+const LS_ITEMS = 'pos_items_v1';
+const LS_SALES = 'pos_sales_v1';
 
-  <main>
-    <section class="form-section">
-      <h2>Add / Edit Item</h2>
-      <form id="itemForm">
-        <input id="itemId" type="hidden" />
-        <label>Name<br/><input id="name" required /></label>
-        <label>Buying Price<br/><input id="buying" type="number" step="0.01" required /></label>
-        <label>Selling Price<br/><input id="selling" type="number" step="0.01" required /></label>
-        <label>Quantity<br/><input id="qty" type="number" step="1" required /></label>
-        <label>Location<br/><input id="location" /></label>
-        <div class="form-actions">
-          <button type="submit">Save Item</button>
-          <button id="cancelEdit" type="button">Cancel</button>
-        </div>
-      </form>
-    </section>
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 
-    <section>
-      <h2>Items</h2>
-      <table id="itemsTable">
-        <thead><tr><th>Name</th><th>Buy</th><th>Sell</th><th>Profit</th><th>Qty</th><th>Location</th><th>Actions</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </section>
+function loadItems(){
+  return JSON.parse(localStorage.getItem(LS_ITEMS) || '[]');
+}
+function saveItems(items){
+  localStorage.setItem(LS_ITEMS, JSON.stringify(items));
+}
+function loadSales(){ return JSON.parse(localStorage.getItem(LS_SALES) || '[]');}
+function saveSales(sales){ localStorage.setItem(LS_SALES, JSON.stringify(sales));}
 
-    <section class="sales-section">
-      <h2>Record Sale</h2>
-      <form id="saleForm">
-        <label>Item<select id="saleItem"></select></label>
-        <label>Quantity sold<input id="saleQty" type="number" min="1" value="1" required /></label>
-        <label>Date<input id="saleDate" type="date" required /></label>
-        <div class="form-actions"><button type="submit">Add Sale</button></div>
-      </form>
+function renderItems(filter=''){
+  const tbody = document.querySelector('#itemsTable tbody'); tbody.innerHTML='';
+  const items = loadItems();
+  const f = filter.trim().toLowerCase();
+  items.filter(it => !f || it.name.toLowerCase().includes(f)).forEach(it=>{
+    const tr = document.createElement('tr');
+    const profit = (+it.selling - +it.buying).toFixed(2);
+    tr.innerHTML = `<td>${it.name}</td><td>${parseFloat(it.buying).toFixed(2)}</td><td>${parseFloat(it.selling).toFixed(2)}</td>
+    <td>${profit}</td><td>${it.qty}</td><td>${it.location||''}</td>
+    <td>
+      <button data-id="${it.id}" class="edit">Edit</button>
+      <button data-id="${it.id}" class="delete danger">Delete</button>
+    </td>`;
+    tbody.appendChild(tr);
+  });
+  populateSaleSelect();
+}
 
-      <h3>Sales</h3>
-      <table id="salesTable">
-        <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Total</th><th>Profit</th><th>Actions</th></tr></thead>
-        <tbody></tbody>
-      </table>
+function renderSales(){
+  const tbody = document.querySelector('#salesTable tbody'); tbody.innerHTML='';
+  const sales = loadSales();
+  sales.forEach(s=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${s.date}</td><td>${s.itemName}</td><td>${s.qty}</td><td>${parseFloat(s.total).toFixed(2)}</td>
+    <td>${parseFloat(s.profit).toFixed(2)}</td>
+    <td><button data-id="${s.id}" class="deleteSale danger">Delete</button></td>`;
+    tbody.appendChild(tr);
+  });
+  calcReports();
+}
 
-      <div class="reports">
-        <h3>Reports</h3>
-        <div>Daily Total: <span id="dailyTotal">0</span></div>
-        <div>Monthly Total: <span id="monthlyTotal">0</span></div>
-      </div>
-    </section>
-  </main>
+function populateSaleSelect(){
+  const sel = document.getElementById('saleItem'); sel.innerHTML='';
+  loadItems().forEach(it=>{
+    const opt = document.createElement('option'); opt.value = it.id; opt.textContent = `${it.name} (stock ${it.qty})`;
+    sel.appendChild(opt);
+  });
+}
 
-<script src="app.js"></script>
-</body>
-</html>
+document.getElementById('itemForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const id = document.getElementById('itemId').value || uid();
+  const name = document.getElementById('name').value.trim();
+  const buying = parseFloat(document.getElementById('buying').value) || 0;
+  const selling = parseFloat(document.getElementById('selling').value) || 0;
+  const qty = parseInt(document.getElementById('qty').value) || 0;
+  const location = document.getElementById('location').value.trim();
+  let items = loadItems();
+  const existing = items.find(x=>x.id===id);
+  if(existing){
+    existing.name = name; existing.buying = buying; existing.selling = selling; existing.qty = qty; existing.location = location;
+  } else {
+    items.push({id,name,buying,selling,qty,location});
+  }
+  saveItems(items);
+  e.target.reset();
+  document.getElementById('itemId').value='';
+  renderItems(document.getElementById('searchBox').value);
+});
+
+document.getElementById('itemsTable').addEventListener('click', e=>{
+  if(e.target.matches('.edit')){
+    const id = e.target.dataset.id;
+    const it = loadItems().find(x=>x.id===id);
+    if(!it) return;
+    document.getElementById('itemId').value = it.id;
+    document.getElementById('name').value = it.name;
+    document.getElementById('buying').value = it.buying;
+    document.getElementById('selling').value = it.selling;
+    document.getElementById('qty').value = it.qty;
+    document.getElementById('location').value = it.location;
+  } else if(e.target.matches('.delete')){
+    if(!confirm('Delete item? This does not delete past sales.')) return;
+    const id = e.target.dataset.id;
+    let items = loadItems().filter(x=>x.id!==id);
+    saveItems(items);
+    renderItems(document.getElementById('searchBox').value);
+  }
+});
+
+document.getElementById('cancelEdit').addEventListener('click', ()=>{
+  document.getElementById('itemForm').reset();
+  document.getElementById('itemId').value='';
+});
+
+document.getElementById('saleForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const itemId = document.getElementById('saleItem').value;
+  const qty = parseInt(document.getElementById('saleQty').value) || 0;
+  const date = document.getElementById('saleDate').value;
+  if(!itemId){alert('No items');return;}
+  let items = loadItems();
+  const it = items.find(x=>x.id===itemId);
+  if(!it){alert('Item not found');return;}
+  if(qty>it.qty){ if(!confirm('Quantity greater than stock. Continue?')) return; }
+  // compute totals
+  const total = qty * parseFloat(it.selling);
+  const profit = qty * (parseFloat(it.selling)-parseFloat(it.buying));
+  // update stock
+  it.qty = it.qty - qty;
+  saveItems(items);
+  // save sale
+  const sales = loadSales();
+  const sale = {id:uid(), itemId, itemName:it.name, qty, date, total, profit};
+  sales.push(sale);
+  saveSales(sales);
+  renderSales(); renderItems(document.getElementById('searchBox').value);
+});
+
+document.getElementById('salesTable').addEventListener('click', e=>{
+  if(e.target.matches('.deleteSale')){
+    if(!confirm('Delete this sale? This will not restore stock.')) return;
+    const id = e.target.dataset.id;
+    const sales = loadSales().filter(s=>s.id!==id);
+    saveSales(sales);
+    renderSales();
+  }
+});
+
+document.getElementById('searchBox').addEventListener('input', e=>{
+  renderItems(e.target.value);
+});
+
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const data = {items: loadItems(), sales: loadSales(), exportedAt: new Date().toISOString()};
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `pos-backup-${Date.now()}.json`; a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('importBtn').addEventListener('click', ()=>{
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change', (ev)=>{
+  const f = ev.target.files[0]; if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ()=> {
+    try{
+      const data = JSON.parse(reader.result);
+      if(Array.isArray(data.items) && Array.isArray(data.sales)){
+        saveItems(data.items); saveSales(data.sales); alert('Imported backup.');
+        renderItems(); renderSales();
+      } else {
+        alert('Invalid backup file format.');
+      }
+    }catch(err){ alert('Invalid JSON file.'); }
+  };
+  reader.readAsText(f);
+});
+
+document.getElementById('clearAll').addEventListener('click', ()=>{
+  if(!confirm('Clear ALL items and sales?')) return;
+  localStorage.removeItem(LS_ITEMS); localStorage.removeItem(LS_SALES);
+  renderItems(); renderSales();
+});
+
+// reports
+function calcReports(){
+  const sales = loadSales();
+  const today = new Date().toISOString().slice(0,10);
+  const now = new Date();
+  const month = now.toISOString().slice(0,7);
+  let daily=0, monthly=0;
+  sales.forEach(s=>{
+    if(s.date===today) daily += parseFloat(s.total);
+    if(s.date && s.date.slice(0,7)===month) monthly += parseFloat(s.total);
+  });
+  document.getElementById('dailyTotal').textContent = daily.toFixed(2);
+  document.getElementById('monthlyTotal').textContent = monthly.toFixed(2);
+}
+
+// initialize
+document.addEventListener('DOMContentLoaded', ()=>{
+  // set default saleDate to today
+  document.getElementById('saleDate').value = new Date().toISOString().slice(0,10);
+  renderItems(); renderSales();
+});
