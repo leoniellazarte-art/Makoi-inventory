@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>POS - Motor Shop (Single File)</title>
+<title>POS - Motor Shop (Search-style Sales)</title>
 <style>
-  /* Simple clean style */
+  /* KEEP SAME LOOK as your working Vercel UI, plus hide-by-default items */
   *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
   body{margin:0;background:#f7f8fb;color:#222}
   header{background:#ffffff;border-bottom:1px solid #e6e9ef;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
@@ -25,6 +25,15 @@
   .info{margin-top:10px;padding:10px;border-radius:6px;background:#fbfdff;border:1px solid #eef4fb}
   .row{display:flex;gap:8px}
   .small{width:120px}
+  /* HIDE items list by default */
+  #itemsWrapper{display:none}
+  /* sale suggestions box (details style) */
+  .suggestions{position:relative}
+  .suggestionsList{position:absolute;left:0;right:0;z-index:40;background:#fff;border:1px solid #e6e9ef;border-radius:6px;max-height:240px;overflow:auto;box-shadow:0 6px 18px rgba(10,20,40,0.08);display:none}
+  .suggestItem{padding:8px;border-bottom:1px solid #f2f4f7;cursor:pointer}
+  .suggestItem:last-child{border-bottom:0}
+  .suggestTitle{font-weight:700}
+  .suggestMeta{font-size:13px;color:#666;margin-top:4px}
   @media(max-width:980px){main{grid-template-columns:1fr}}
 </style>
 </head>
@@ -42,7 +51,7 @@
 
 <main>
 
-  <!-- LEFT: Items -->
+  <!-- LEFT: Items (hidden by default; will show on search) -->
   <section class="card">
     <h3>Add / Edit Item</h3>
     <form id="itemForm">
@@ -58,14 +67,17 @@
       </div>
     </form>
 
-    <h3 style="margin-top:14px">Items</h3>
-    <input id="search" type="text" placeholder="Search item..." />
+    <h3 style="margin-top:14px">Items (search-only)</h3>
+    <input id="search" type="text" placeholder="Type to search items (list hidden by default)..." />
     <div id="searchDetails" class="info" style="display:none"></div>
 
-    <table aria-label="Items table">
-      <thead><tr><th>Name</th><th>Buy</th><th>Sell</th><th>Profit</th><th>Qty</th><th>Loc</th><th>Actions</th></tr></thead>
-      <tbody id="items"></tbody>
-    </table>
+    <!-- wrapper (hidden by default) -->
+    <div id="itemsWrapper">
+      <table aria-label="Items table">
+        <thead><tr><th>Name</th><th>Buy</th><th>Sell</th><th>Profit</th><th>Qty</th><th>Loc</th><th>Actions</th></tr></thead>
+        <tbody id="items"></tbody>
+      </table>
+    </div>
 
     <div class="info" style="margin-top:12px">
       <b>Total Inventory Value:</b> ₱<span id="invValue">0.00</span>
@@ -74,20 +86,23 @@
 
   <!-- RIGHT: Sales + Expenses + Reports + History -->
   <section class="card">
-    <h3>Record Sale</h3>
-    <form id="saleForm">
-      <label>Item
-        <select id="saleItem"></select>
-      </label>
-      <label>Quantity <input id="saleQty" type="number" min="1" value="1" required /></label>
-      <label>Date <input id="saleDate" type="date" required /></label>
-      <div style="margin-top:8px"><button class="primary" type="submit">Add Sale</button></div>
-    </form>
+    <h3>Record Sale (search-style)</h3>
+
+    <!-- SALE SEARCH (replaces dropdown). suggestions show details (style B) -->
+    <div class="suggestions">
+      <label>Search Item <input id="saleSearch" type="text" placeholder="Search item to sell..." autocomplete="off" /></label>
+      <div id="saleSuggestions" class="suggestionsList" role="listbox"></div>
+    </div>
+
+    <!-- hidden fields to store selected item id & selling price (will be used by JS) -->
+    <input type="hidden" id="saleItemId" />
+    <label>Quantity <input id="saleQty" type="number" min="1" value="1" /></label>
+    <label>Date <input id="saleDate" type="date" /></label>
+    <div style="margin-top:8px"><button class="primary" id="addSaleBtn">Add Sale</button></div>
 
     <h3 style="margin-top:12px">Sales</h3>
     <table><thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Total</th><th>Profit</th><th>Actions</th></tr></thead>
     <tbody id="sales"></tbody></table>
-
     <h3 style="margin-top:12px">Daily / Monthly Summary</h3>
     <div class="info">
       <div>Sales Profit Today: ₱<span id="salesProfitToday">0.00</span></div>
@@ -99,35 +114,41 @@
       <div><b>Net Profit This Month: ₱<span id="netMonth">0.00</span></b></div>
     </div>
 
-    <h3 style="margin-top:12px">Expenses (with Category)</h3>
+    <h3 style="margin-top:12px">Expenses</h3>
     <form id="expenseForm">
       <label>Expense Name <input id="expName" type="text" required /></label>
       <label>Amount <input id="expAmount" type="number" step="0.01" required /></label>
       <label>Category
         <select id="expCategory">
-          <option>Fuel</option><option>Food</option><option>Delivery</option><option>Supplies</option><option>Other</option>
+          <option>Fuel</option>
+          <option>Food</option>
+          <option>Delivery</option>
+          <option>Supplies</option>
+          <option>Other</option>
         </select>
       </label>
       <label>Date <input id="expDate" type="date" required /></label>
-      <div style="margin-top:8px"><button class="primary" type="submit">Add Expense</button></div>
+      <div style="margin-top:8px"><button type="submit" class="primary">Add Expense</button></div>
     </form>
 
     <h4 style="margin-top:12px">Expenses List</h4>
-    <table><thead><tr><th>Date</th><th>Name</th><th>Cat</th><th>Amount</th><th>Action</th></tr></thead>
-    <tbody id="expenses"></tbody></table>
+    <table>
+      <thead><tr><th>Date</th><th>Name</th><th>Cat</th><th>Amount</th><th>Actions</th></tr></thead>
+      <tbody id="expenses"></tbody>
+    </table>
 
-    <h3 style="margin-top:12px">Sales History / Filter</h3>
+    <h3 style="margin-top:14px">Sales History / Filter</h3>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-      <div style="min-width:160px">
+      <div style="min-width:150px">
         <label>Single Date <input id="histDate" type="date" /></label>
       </div>
-      <div style="min-width:160px">
+      <div style="min-width:150px">
         <label>Range From <input id="histFrom" type="date" /></label>
       </div>
-      <div style="min-width:160px">
+      <div style="min-width:150px">
         <label>Range To <input id="histTo" type="date" /></label>
       </div>
-      <div style="min-width:160px">
+      <div style="min-width:150px">
         <label>Month <input id="histMonth" type="month" /></label>
       </div>
       <div style="align-self:end">
@@ -136,291 +157,599 @@
       </div>
     </div>
 
-    <div class="info" id="histInfo" style="display:none"></div>
-    <table><thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Total</th><th>Profit</th></tr></thead>
-    <tbody id="histResults"></tbody></table>
+    <div id="histInfo" class="info" style="display:none"></div>
+
+    <table>
+      <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Total</th><th>Profit</th></tr></thead>
+      <tbody id="histResults"></tbody>
+    </table>
 
   </section>
 
 </main>
 
 <script>
-/* Storage keys */
-const LS_ITEMS = 'pos_items_v2';
-const LS_SALES = 'pos_sales_v2';
-const LS_EXP = 'pos_exp_v2';
+/* LocalStorage Keys */
+const LS_ITEMS = 'pos_items_new_v3';
+const LS_SALES = 'pos_sales_new_v3';
+const LS_EXP   = 'pos_expenses_new_v3';
 
-/* Helpers */
+/* Shortcuts */
 const $ = id => document.getElementById(id);
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-const load = k => { try { return JSON.parse(localStorage.getItem(k)||'[]'); } catch(e){ return []; } };
-const save = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+const load = key => JSON.parse(localStorage.getItem(key) || '[]');
+const save = (key,val) => localStorage.setItem(key, JSON.stringify(val));
 
-/* Render Items */
+/* ---------------------
+   RENDER ITEMS (hidden unless search)
+---------------------- */
 function renderItems(filter='') {
   const items = load(LS_ITEMS);
   const tbody = $('items');
   tbody.innerHTML = '';
-  const f = (filter||'').trim().toLowerCase();
-  items.filter(it => !f || it.name.toLowerCase().includes(f)).forEach(it=>{
+
+  const f = (filter || '').trim().toLowerCase();
+
+  const filtered = items.filter(it =>
+    !f || it.name.toLowerCase().includes(f)
+  );
+
+  // show wrapper only if searching
+  $('itemsWrapper').style.display = f.length > 0 ? 'block' : 'none';
+
+  filtered.forEach(it => {
     const profit = (parseFloat(it.sell) - parseFloat(it.buy)).toFixed(2);
-    const lowClass = (parseInt(it.qty)||0) < 5 ? 'low' : '';
+    const lowClass = it.qty < 5 ? 'low' : '';
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${it.name}</td>
+    tr.innerHTML = `
+      <td>${it.name}</td>
       <td>₱${parseFloat(it.buy).toFixed(2)}</td>
       <td>₱${parseFloat(it.sell).toFixed(2)}</td>
       <td>₱${profit}</td>
       <td class="${lowClass}">${it.qty}</td>
-      <td>${it.loc||''}</td>
+      <td>${it.loc || ''}</td>
       <td>
         <button class="edit" data-id="${it.id}">Edit</button>
         <button class="danger delItem" data-id="${it.id}">Delete</button>
       </td>`;
     tbody.appendChild(tr);
   });
-  renderSaleSelect();
-  calcInventoryValue();
+
+  calcInventory();
+  showSearchDetails(f);
 }
 
-/* Search details */
+/* ---------------------
+   SEARCH DETAIL BOX
+---------------------- */
 function showSearchDetails(text) {
   const items = load(LS_ITEMS);
   const box = $('searchDetails');
-  if(!text || !text.trim()){ box.style.display='none'; return; }
-  const exact = items.find(i=>i.name.toLowerCase()===text.trim().toLowerCase());
-  const partial = items.find(i=>i.name.toLowerCase().includes(text.trim().toLowerCase()));
-  const match = exact || partial;
-  if(match){
+
+  if (!text || !text.trim()) {
+    box.style.display = 'none';
+    return;
+  }
+
+  const match = items.find(i =>
+    i.name.toLowerCase().includes(text.toLowerCase())
+  );
+
+  if (match) {
     box.style.display = 'block';
-    box.innerHTML = `<b>Item Details</b><br>
+    box.innerHTML = `
+      <b>Item Details</b><br>
       Name: ${match.name}<br>
-      Buying: ₱${parseFloat(match.buy).toFixed(2)}<br>
-      Selling: ₱${parseFloat(match.sell).toFixed(2)}<br>
-      Profit/unit: ₱${(parseFloat(match.sell)-parseFloat(match.buy)).toFixed(2)}<br>
-      Remaining stock: ${match.qty} ${match.qty < 5 ? '<span class="low">(LOW STOCK)</span>' : '' }<br>
-      Location: ${match.loc||''}`;
-  } else box.style.display='none';
+      Buy: ₱${match.buy}<br>
+      Sell: ₱${match.sell}<br>
+      Profit/unit: ₱${(match.sell - match.buy).toFixed(2)}<br>
+      Stock: ${match.qty} ${match.qty < 5 ? '<span class="low">(LOW)</span>' : ''}<br>
+      Location: ${match.loc || ''}
+    `;
+  } else {
+    box.style.display = 'none';
+  }
 }
+  /* ---------------------
+   RENDER SALES TABLE
+---------------------- */
+function renderSales() {
+  const sales = load(LS_SALES);
+  const tbody = $('sales');
+  tbody.innerHTML = '';
 
-/* Render sale select */
-function renderSaleSelect(){
-  const sel = $('saleItem'); sel.innerHTML = '';
-  load(LS_ITEMS).forEach(i=>{
-    const opt = document.createElement('option'); opt.value = i.id; opt.textContent = `${i.name} (stock ${i.qty})`;
-    sel.appendChild(opt);
-  });
-}
-
-/* Render Sales */
-function renderSales(){
-  const s = load(LS_SALES);
-  const tbody = $('sales'); tbody.innerHTML = '';
-  s.forEach(row=>{
+  sales.forEach(s => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${row.date}</td>
-      <td>${row.item}</td>
-      <td>${row.qty}</td>
-      <td>₱${parseFloat(row.total).toFixed(2)}</td>
-      <td>₱${parseFloat(row.profit).toFixed(2)}</td>
-      <td><button class="danger delSale" data-id="${row.id}">Delete</button></td>`;
+    tr.innerHTML = `
+      <td>${s.date}</td>
+      <td>${s.item}</td>
+      <td>${s.qty}</td>
+      <td>₱${parseFloat(s.total).toFixed(2)}</td>
+      <td>₱${parseFloat(s.profit).toFixed(2)}</td>
+      <td><button class="danger delSale" data-id="${s.id}">Delete</button></td>
+    `;
     tbody.appendChild(tr);
   });
+
   calcReports();
 }
 
-/* Render Expenses */
-function renderExpenses(){
+/* ---------------------
+   RENDER EXPENSES TABLE
+---------------------- */
+function renderExpenses() {
   const ex = load(LS_EXP);
-  const tbody = $('expenses'); tbody.innerHTML = '';
-  ex.forEach(e=>{
+  const tbody = $('expenses');
+  tbody.innerHTML = '';
+
+  ex.forEach(e => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${e.date}</td><td>${e.name}</td><td>${e.category}</td><td>₱${parseFloat(e.amount).toFixed(2)}</td>
-      <td><button class="danger delExp" data-id="${e.id}">Delete</button></td>`;
+    tr.innerHTML = `
+      <td>${e.date}</td>
+      <td>${e.name}</td>
+      <td>${e.category}</td>
+      <td>₱${parseFloat(e.amount).toFixed(2)}</td>
+      <td><button class="danger delExp" data-id="${e.id}">Delete</button></td>
+    `;
     tbody.appendChild(tr);
   });
+
   calcReports();
 }
 
-/* Inventory value */
-function calcInventoryValue(){
+/* ---------------------
+   INVENTORY TOTAL VALUE
+---------------------- */
+function calcInventory() {
   const items = load(LS_ITEMS);
-  let v = 0;
-  items.forEach(i => { v += (parseFloat(i.buy)||0) * (parseInt(i.qty)||0); });
-  $('invValue').textContent = v.toFixed(2);
+  let total = 0;
+  items.forEach(i => {
+    total += (parseFloat(i.buy) || 0) * (parseInt(i.qty) || 0);
+  });
+  $('invValue').textContent = total.toFixed(2);
 }
 
-/* Reports */
-function calcReports(){
+/* ---------------------
+   DAILY & MONTHLY REPORTS
+---------------------- */
+function calcReports() {
   const sales = load(LS_SALES);
   const expenses = load(LS_EXP);
+
   const today = new Date().toISOString().slice(0,10);
   const month = new Date().toISOString().slice(0,7);
 
-  let salesToday=0, salesMonth=0, expToday=0, expMonth=0;
-  sales.forEach(s => { if(s.date===today) salesToday += parseFloat(s.profit)||0; if(s.date && s.date.slice(0,7)===month) salesMonth += parseFloat(s.profit)||0; });
-  expenses.forEach(e => { if(e.date===today) expToday += parseFloat(e.amount)||0; if(e.date && e.date.slice(0,7)===month) expMonth += parseFloat(e.amount)||0; });
+  let spToday = 0, spMonth = 0;
+  let exToday = 0, exMonth = 0;
 
-  $('salesProfitToday').textContent = salesToday.toFixed(2);
-  $('expensesToday').textContent = expToday.toFixed(2);
-  $('netToday').textContent = (salesToday - expToday).toFixed(2);
-
-  $('salesProfitMonth').textContent = salesMonth.toFixed(2);
-  $('expensesMonth').textContent = expMonth.toFixed(2);
-  $('netMonth').textContent = (salesMonth - expMonth).toFixed(2);
-}
-
-/* History filter */
-function filterHistory(){
-  const sales = load(LS_SALES);
-  const hf = $('histFrom').value;
-  const ht = $('histTo').value;
-  const hd = $('histDate').value;
-  const hm = $('histMonth').value;
-  let filtered = sales.slice();
-
-  if(hd){
-    filtered = filtered.filter(s => s.date === hd);
-  } else if(hf || ht){
-    if(hf) filtered = filtered.filter(s => s.date >= hf);
-    if(ht) filtered = filtered.filter(s => s.date <= ht);
-  } else if(hm){
-    filtered = filtered.filter(s => s.date.slice(0,7) === hm);
-  }
-
-  const tbody = $('histResults'); tbody.innerHTML = '';
-  let tot = 0, tprofit = 0;
-  filtered.forEach(s=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${s.date}</td><td>${s.item}</td><td>${s.qty}</td><td>₱${parseFloat(s.total).toFixed(2)}</td><td>₱${parseFloat(s.profit).toFixed(2)}</td>`;
-    tbody.appendChild(tr);
-    tot += parseFloat(s.total)||0;
-    tprofit += parseFloat(s.profit)||0;
+  // sales
+  sales.forEach(s => {
+    if (s.date === today) spToday += parseFloat(s.profit) || 0;
+    if (s.date && s.date.slice(0,7) === month) spMonth += parseFloat(s.profit) || 0;
   });
 
-  const info = $('histInfo');
-  info.style.display = filtered.length ? 'block' : 'none';
-  info.innerHTML = `<b>Results:</b> ${filtered.length} sales &nbsp; <b>Total Sales:</b> ₱${tot.toFixed(2)} &nbsp; <b>Total Profit:</b> ₱${tprofit.toFixed(2)}`;
+  // expenses
+  expenses.forEach(e => {
+    if (e.date === today) exToday += parseFloat(e.amount) || 0;
+    if (e.date && e.date.slice(0,7) === month) exMonth += parseFloat(e.amount) || 0;
+  });
+
+  $('salesProfitToday').textContent = spToday.toFixed(2);
+  $('expensesToday').textContent = exToday.toFixed(2);
+  $('netToday').textContent = (spToday - exToday).toFixed(2);
+
+  $('salesProfitMonth').textContent = spMonth.toFixed(2);
+  $('expensesMonth').textContent = exMonth.toFixed(2);
+  $('netMonth').textContent = (spMonth - exMonth).toFixed(2);
 }
 
-/* Click handlers: edit, delete (sales/items/expenses) */
-document.addEventListener('click', function(e){
-  /* edit item */
-  if(e.target.classList.contains('edit')){
-    const id = e.target.dataset.id;
-    const it = load(LS_ITEMS).find(x=>x.id===id);
-    if(!it) return;
-    $('itemId').value = it.id; $('name').value = it.name; $('buy').value = it.buy; $('sell').value = it.sell; $('qty').value = it.qty; $('loc').value = it.loc;
+/* =======================================================
+     SALES SEARCH (Style B) – WITH DETAILS IN SUGGESTIONS
+======================================================= */
+$('saleSearch').addEventListener('input', function(e) {
+  const text = e.target.value.trim().toLowerCase();
+  const items = load(LS_ITEMS);
+  const box = $('saleSuggestions');
+
+  if (!text) {
+    box.style.display = 'none';
+    box.innerHTML = '';
+    return;
   }
 
-  /* delete item: restore stock from sales of this item, remove those sales, then remove item */
-  if(e.target.classList.contains('delItem')){
-    if(!confirm('Delete item? All related sales will be removed and stock restored before deletion.')) return;
+  // match item by search
+  const matches = items.filter(it =>
+    it.name.toLowerCase().includes(text)
+  );
+
+  if (matches.length === 0) {
+    box.style.display = 'none';
+    box.innerHTML = '';
+    return;
+  }
+
+  // show list
+  box.innerHTML = matches.map(it => `
+    <div class="suggestItem" data-id="${it.id}">
+      <div class="suggestTitle">${it.name}</div>
+      <div class="suggestMeta">₱${it.sell} • Stock: ${it.qty}</div>
+    </div>
+  `).join('');
+
+  box.style.display = 'block';
+});
+
+/* CLICK ON SUGGESTED ITEM */
+document.addEventListener('click', function(e) {
+  if (e.target.closest('.suggestItem')) {
+    const id = e.target.closest('.suggestItem').dataset.id;
+    const it = load(LS_ITEMS).find(x => x.id === id);
+
+    if (it) {
+      $('saleItemId').value = it.id;
+      $('saleSearch').value = it.name;  // show selected name
+      $('saleSuggestions').style.display = 'none';
+    }
+  }
+});
+  /* =======================================================
+   ADD SALE (after selecting from search suggestions)
+======================================================= */
+$('addSaleBtn').addEventListener('click', function () {
+  const itemId = $('saleItemId').value;
+  const qty = parseInt($('saleQty').value) || 0;
+  const date = $('saleDate').value;
+
+  if (!itemId) {
+    alert("Please select an item.");
+    return;
+  }
+  if (!date) {
+    alert("Please choose sale date.");
+    return;
+  }
+
+  const items = load(LS_ITEMS);
+  const it = items.find(x => x.id === itemId);
+
+  if (!it) {
+    alert("Item not found.");
+    return;
+  }
+
+  if (qty > it.qty) {
+    if (!confirm("Quantity is greater than stock. Continue?")) return;
+  }
+
+  const total = qty * parseFloat(it.sell);
+  const profit = qty * (parseFloat(it.sell) - parseFloat(it.buy));
+
+  it.qty -= qty;  // deduct stock
+  save(LS_ITEMS, items);
+
+  const sales = load(LS_SALES);
+  sales.push({
+    id: uid(),
+    item: it.name,
+    qty: qty,
+    date: date,
+    total: total,
+    profit: profit
+  });
+  save(LS_SALES, sales);
+
+  $('saleItemId').value = "";
+  $('saleQty').value = 1;
+  $('saleSearch').value = "";
+  $('saleSuggestions').style.display = "none";
+
+  renderItems();
+  renderSales();
+  calcInventory();
+});
+
+/* =======================================================
+   ADD / EDIT ITEM
+======================================================= */
+$('itemForm').addEventListener('submit', function(ev) {
+  ev.preventDefault();
+
+  const id = $('itemId').value || uid();
+  const obj = {
+    id: id,
+    name: $('name').value.trim(),
+    buy: parseFloat($('buy').value) || 0,
+    sell: parseFloat($('sell').value) || 0,
+    qty: parseInt($('qty').value) || 0,
+    loc: $('loc').value.trim()
+  };
+
+  const items = load(LS_ITEMS);
+  const existing = items.find(x => x.id === id);
+
+  if (existing) {
+    Object.assign(existing, obj);
+  } else {
+    items.push(obj);
+  }
+
+  save(LS_ITEMS, items);
+
+  $('itemForm').reset();
+  $('itemId').value = "";
+
+  renderItems();
+});
+
+/* Reset form cancel */
+$('cancel').addEventListener('click', () => {
+  $('itemForm').reset();
+  $('itemId').value = "";
+});
+
+/* =======================================================
+   DELETE ITEM — removes item + returns stock from sales
+======================================================= */
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('delItem')) {
+    if (!confirm("Delete item? Sales linked to this item will also be removed.")) return;
+
     const id = e.target.dataset.id;
+
     let items = load(LS_ITEMS);
-    const item = items.find(i=>i.id===id);
-    if(!item) return;
     let sales = load(LS_SALES);
-    // restore sold qty to the item (we will then delete item so restoring is mostly academic)
-    sales.forEach(s => { if(s.item === item.name) { item.qty = (parseInt(item.qty)||0) + (parseInt(s.qty)||0); }});
-    // remove sales for this item
+
+    const item = items.find(x => x.id === id);
+
+    if (!item) return;
+
+    // restore stock from all its sales
+    sales.forEach(s => {
+      if (s.item === item.name) {
+        item.qty += parseInt(s.qty);
+      }
+    });
+
+    // remove sales of this item
     sales = sales.filter(s => s.item !== item.name);
     save(LS_SALES, sales);
+
     // remove item
     items = items.filter(i => i.id !== id);
     save(LS_ITEMS, items);
-    renderItems(); renderSales(); renderExpenses(); calcReports(); calcInventoryValue();
-  }
 
-  /* delete sale: return stock */
-  if(e.target.classList.contains('delSale')){
-    if(!confirm('Delete this sale? Stock will be returned.')) return;
-    const id = e.target.dataset.id;
-    let sales = load(LS_SALES);
-    const sale = sales.find(s=>s.id===id);
-    if(!sale) return;
-    let items = load(LS_ITEMS);
-    const item = items.find(i=>i.name === sale.item);
-    if(item){ item.qty = (parseInt(item.qty)||0) + (parseInt(sale.qty)||0); save(LS_ITEMS, items); }
-    sales = sales.filter(s=>s.id!==id); save(LS_SALES, sales);
-    renderItems(); renderSales(); calcReports(); calcInventoryValue();
-  }
-
-  /* delete expense */
-  if(e.target.classList.contains('delExp')){
-    if(!confirm('Delete this expense?')) return;
-    const id = e.target.dataset.id; let ex = load(LS_EXP); ex = ex.filter(x=>x.id!==id); save(LS_EXP, ex); renderExpenses(); calcReports();
+    renderItems();
+    renderSales();
+    calcInventory();
   }
 });
 
-/* Add / Edit Item */
-$('itemForm').addEventListener('submit', function(ev){
-  ev.preventDefault();
-  const id = $('itemId').value || uid();
-  const obj = { id:id, name: $('name').value.trim(), buy: parseFloat($('buy').value)||0, sell: parseFloat($('sell').value)||0, qty: parseInt($('qty').value)||0, loc: $('loc').value.trim() };
-  const items = load(LS_ITEMS);
-  const ex = items.find(x=>x.id===id);
-  if(ex) Object.assign(ex, obj); else items.push(obj);
-  save(LS_ITEMS, items);
-  $('itemForm').reset(); $('itemId').value = ''; renderItems();
-});
+/* =======================================================
+   DELETE SALE – auto return stock
+======================================================= */
+document.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('delSale')) return;
 
-/* Add Sale */
-$('saleForm').addEventListener('submit', function(ev){
-  ev.preventDefault();
-  const itemId = $('saleItem').value;
-  const qty = parseInt($('saleQty').value)||0;
-  const date = $('saleDate').value;
-  if(!itemId){ alert('No item selected'); return; }
-  const items = load(LS_ITEMS); const it = items.find(i=>i.id===itemId);
-  if(!it){ alert('Item not found'); return; }
-  if(qty > it.qty){ if(!confirm('Quantity greater than stock. Continue?')) return; }
-  const total = qty * parseFloat(it.sell);
-  const profit = qty * (parseFloat(it.sell) - parseFloat(it.buy));
-  it.qty = (parseInt(it.qty)||0) - qty; save(LS_ITEMS, items);
-  const sales = load(LS_SALES);
-  sales.push({ id: uid(), item: it.name, qty: qty, date: date, total: total, profit: profit });
+  if (!confirm("Delete this sale? Stock will be restored.")) return;
+
+  const id = e.target.dataset.id;
+
+  let sales = load(LS_SALES);
+  const sale = sales.find(s => s.id === id);
+
+  if (!sale) return;
+
+  let items = load(LS_ITEMS);
+  const it = items.find(i => i.name === sale.item);
+
+  if (it) {
+    it.qty += parseInt(sale.qty);
+    save(LS_ITEMS, items);
+  }
+
+  sales = sales.filter(s => s.id !== id);
   save(LS_SALES, sales);
-  renderItems(); renderSales(); calcInventoryValue(); calcReports();
+
+  renderItems();
+  renderSales();
+  calcInventory();
 });
 
-/* Add Expense */
-$('expenseForm').addEventListener('submit', function(ev){
+/* =======================================================
+   DELETE EXPENSE
+======================================================= */
+document.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('delExp')) return;
+
+  if (!confirm("Delete this expense?")) return;
+
+  let ex = load(LS_EXP);
+  const id = e.target.dataset.id;
+
+  ex = ex.filter(x => x.id !== id);
+  save(LS_EXP, ex);
+
+  renderExpenses();
+});
+
+/* =======================================================
+   ADD EXPENSE
+======================================================= */
+$('expenseForm').addEventListener('submit', function(ev) {
   ev.preventDefault();
+
   const name = $('expName').value.trim();
-  const amount = parseFloat($('expAmount').value)||0;
-  const category = $('expCategory').value; const date = $('expDate').value;
-  const ex = load(LS_EXP); ex.push({ id: uid(), name: name, amount: amount, category: category, date: date }); save(LS_EXP, ex);
-  $('expenseForm').reset(); renderExpenses(); calcReports();
+  const amount = parseFloat($('expAmount').value) || 0;
+  const cat = $('expCategory').value;
+  const date = $('expDate').value;
+
+  const ex = load(LS_EXP);
+  ex.push({
+    id: uid(),
+    name: name,
+    amount: amount,
+    category: cat,
+    date: date
+  });
+
+  save(LS_EXP, ex);
+
+  $('expenseForm').reset();
+  renderExpenses();
+});
+  /* =======================================================
+   SALES HISTORY FILTER
+======================================================= */
+$('histFilter').addEventListener('click', function () {
+  const sales = load(LS_SALES);
+
+  const hd = $('histDate').value;
+  const hf = $('histFrom').value;
+  const ht = $('histTo').value;
+  const hm = $('histMonth').value;
+
+  let filtered = sales.slice();
+
+  if (hd) {
+    filtered = filtered.filter(s => s.date === hd);
+  } 
+  else if (hf || ht) {
+    if (hf) filtered = filtered.filter(s => s.date >= hf);
+    if (ht) filtered = filtered.filter(s => s.date <= ht);
+  }
+  else if (hm) {
+    filtered = filtered.filter(s => s.date.slice(0,7) === hm);
+  }
+
+  const tbody = $('histResults');
+  tbody.innerHTML = "";
+
+  let totSales = 0;
+  let totProfit = 0;
+
+  filtered.forEach(s => {
+    totSales += parseFloat(s.total) || 0;
+    totProfit += parseFloat(s.profit) || 0;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${s.date}</td>
+      <td>${s.item}</td>
+      <td>${s.qty}</td>
+      <td>₱${parseFloat(s.total).toFixed(2)}</td>
+      <td>₱${parseFloat(s.profit).toFixed(2)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const info = $('histInfo');
+  if (filtered.length === 0) {
+    info.style.display = "none";
+  } else {
+    info.style.display = "block";
+    info.innerHTML = `
+      <b>Total Sales:</b> ₱${totSales.toFixed(2)}<br>
+      <b>Total Profit:</b> ₱${totProfit.toFixed(2)}<br>
+      <b>Records:</b> ${filtered.length}
+    `;
+  }
 });
 
-/* Search input */
-$('search').addEventListener('input', function(e){ const t = e.target.value; renderItems(t); showSearchDetails(t); });
+/* CLEAR HISTORY FILTER */
+$('histClear').addEventListener('click', () => {
+  $('histDate').value = "";
+  $('histFrom').value = "";
+  $('histTo').value = "";
+  $('histMonth').value = "";
 
-/* Export / Import backup */
-$('exportBtn').addEventListener('click', function(){
-  const data = { items: load(LS_ITEMS), sales: load(LS_SALES), expenses: load(LS_EXP), exportedAt: new Date().toISOString() };
-  const blob = new Blob([JSON.stringify(data,null,2)], { type:'application/json' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'pos_backup_' + Date.now() + '.json'; a.click(); URL.revokeObjectURL(a.href);
-});
-$('importBtn').addEventListener('click', ()=>$('importFile').click());
-$('importFile').addEventListener('change', function(e){
-  const f = e.target.files[0]; if(!f) return; const reader = new FileReader();
-  reader.onload = function(){ try { const d = JSON.parse(reader.result); save(LS_ITEMS,d.items||[]); save(LS_SALES,d.sales||[]); save(LS_EXP,d.expenses||[]); alert('Backup imported'); renderItems(); renderSales(); renderExpenses(); calcReports(); } catch(err){ alert('Invalid file'); } };
-  reader.readAsText(f);
+  $('histResults').innerHTML = "";
+  $('histInfo').style.display = "none";
 });
 
-/* History filter buttons */
-$('histFilter').addEventListener('click', filterHistory);
-$('histClear').addEventListener('click', function(){ $('histFrom').value=''; $('histTo').value=''; $('histDate').value=''; $('histMonth').value=''; $('histResults').innerHTML=''; $('histInfo').style.display='none'; });
+/* =======================================================
+   EXPORT BACKUP
+======================================================= */
+$('exportBtn').addEventListener('click', function () {
+  const data = {
+    items: load(LS_ITEMS),
+    sales: load(LS_SALES),
+    expenses: load(LS_EXP),
+    exported: new Date().toISOString()
+  };
 
-/* Clear all (dev) */
-$('clearAll').addEventListener('click', function(){ if(!confirm('Clear ALL data?')) return; localStorage.removeItem(LS_ITEMS); localStorage.removeItem(LS_SALES); localStorage.removeItem(LS_EXP); renderItems(); renderSales(); renderExpenses(); calcReports(); calcInventoryValue(); });
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = "pos_backup_" + Date.now() + ".json";
+  a.click();
+});
 
-/* Init */
-document.addEventListener('DOMContentLoaded', function(){
-  $('saleDate').value = new Date().toISOString().slice(0,10);
-  $('expDate').value = new Date().toISOString().slice(0,10);
-  renderItems(); renderSales(); renderExpenses(); calcReports(); calcInventoryValue();
+/* =======================================================
+   IMPORT BACKUP
+======================================================= */
+$('importBtn').addEventListener('click', () => $('importFile').click());
+
+$('importFile').addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function () {
+    try {
+      const data = JSON.parse(reader.result);
+
+      save(LS_ITEMS, data.items || []);
+      save(LS_SALES, data.sales || []);
+      save(LS_EXP, data.expenses || []);
+
+      alert("Backup imported successfully!");
+
+      renderItems();
+      renderSales();
+      renderExpenses();
+      calcReports();
+      calcInventory();
+
+    } catch (err) {
+      alert("Invalid backup file.");
+    }
+  };
+
+  reader.readAsText(file);
+});
+
+/* =======================================================
+   CLEAR ALL DATA (DEV)
+======================================================= */
+$('clearAll').addEventListener('click', function () {
+  if (!confirm("Delete ALL data? Items, sales, expenses?")) return;
+
+  localStorage.removeItem(LS_ITEMS);
+  localStorage.removeItem(LS_SALES);
+  localStorage.removeItem(LS_EXP);
+
+  renderItems();
+  renderSales();
+  renderExpenses();
+  calcReports();
+  calcInventory();
+});
+
+/* =======================================================
+   INITIALIZE APP ON LOAD
+======================================================= */
+document.addEventListener('DOMContentLoaded', function () {
+  const today = new Date().toISOString().slice(0,10);
+
+  $('saleDate').value = today;
+  $('expDate').value  = today;
+
+  renderItems();
+  renderSales();
+  renderExpenses();
+  calcReports();
+  calcInventory();
 });
 </script>
 
