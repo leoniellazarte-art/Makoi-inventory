@@ -1,193 +1,431 @@
-// Simple POS logic using localStorage
-const LS_ITEMS = 'pos_items_v1';
-const LS_SALES = 'pos_sales_v1';
+Vite POS Project — Ready-to-upload
 
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+This single textdoc contains the complete Vite project files you asked for. Copy each file into the same folder structure in your GitHub repo and run npm install → npm run dev.
 
-function loadItems(){
-  return JSON.parse(localStorage.getItem(LS_ITEMS) || '[]');
-}
-function saveItems(items){
-  localStorage.setItem(LS_ITEMS, JSON.stringify(items));
-}
-function loadSales(){ return JSON.parse(localStorage.getItem(LS_SALES) || '[]');}
-function saveSales(sales){ localStorage.setItem(LS_SALES, JSON.stringify(sales));}
 
-function renderItems(filter=''){
-  const tbody = document.querySelector('#itemsTable tbody'); tbody.innerHTML='';
-  const items = loadItems();
-  const f = filter.trim().toLowerCase();
-  items.filter(it => !f || it.name.toLowerCase().includes(f)).forEach(it=>{
-    const tr = document.createElement('tr');
-    const profit = (+it.selling - +it.buying).toFixed(2);
-    tr.innerHTML = `<td>${it.name}</td><td>${parseFloat(it.buying).toFixed(2)}</td><td>${parseFloat(it.selling).toFixed(2)}</td>
-    <td>${profit}</td><td>${it.qty}</td><td>${it.location||''}</td>
-    <td>
-      <button data-id="${it.id}" class="edit">Edit</button>
-      <button data-id="${it.id}" class="delete danger">Delete</button>
-    </td>`;
-    tbody.appendChild(tr);
-  });
-  populateSaleSelect();
-}
+---
 
-function renderSales(){
-  const tbody = document.querySelector('#salesTable tbody'); tbody.innerHTML='';
-  const sales = loadSales();
-  sales.forEach(s=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${s.date}</td><td>${s.itemName}</td><td>${s.qty}</td><td>${parseFloat(s.total).toFixed(2)}</td>
-    <td>${parseFloat(s.profit).toFixed(2)}</td>
-    <td><button data-id="${s.id}" class="deleteSale danger">Delete</button></td>`;
-    tbody.appendChild(tr);
-  });
-  calcReports();
-}
+Project file tree
 
-function populateSaleSelect(){
-  const sel = document.getElementById('saleItem'); sel.innerHTML='';
-  loadItems().forEach(it=>{
-    const opt = document.createElement('option'); opt.value = it.id; opt.textContent = `${it.name} (stock ${it.qty})`;
-    sel.appendChild(opt);
-  });
-}
+pos-vite/
+├─ package.json
+├─ index.html
+├─ postcss.config.cjs
+├─ tailwind.config.cjs
+├─ vite.config.js
+├─ src/
+│  ├─ main.jsx
+│  ├─ App.jsx
+│  ├─ components/
+│  │   └─ (small inline components are inside App.jsx to keep it single-file)
+│  └─ index.css
+└─ README.md
 
-document.getElementById('itemForm').addEventListener('submit', e=>{
-  e.preventDefault();
-  const id = document.getElementById('itemId').value || uid();
-  const name = document.getElementById('name').value.trim();
-  const buying = parseFloat(document.getElementById('buying').value) || 0;
-  const selling = parseFloat(document.getElementById('selling').value) || 0;
-  const qty = parseInt(document.getElementById('qty').value) || 0;
-  const location = document.getElementById('location').value.trim();
-  let items = loadItems();
-  const existing = items.find(x=>x.id===id);
-  if(existing){
-    existing.name = name; existing.buying = buying; existing.selling = selling; existing.qty = qty; existing.location = location;
-  } else {
-    items.push({id,name,buying,selling,qty,location});
+
+---
+
+package.json
+
+{
+  "name": "pos-vite",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.4.7",
+    "vite": "^5.0.0"
   }
-  saveItems(items);
-  e.target.reset();
-  document.getElementById('itemId').value='';
-  renderItems(document.getElementById('searchBox').value);
-});
-
-document.getElementById('itemsTable').addEventListener('click', e=>{
-  if(e.target.matches('.edit')){
-    const id = e.target.dataset.id;
-    const it = loadItems().find(x=>x.id===id);
-    if(!it) return;
-    document.getElementById('itemId').value = it.id;
-    document.getElementById('name').value = it.name;
-    document.getElementById('buying').value = it.buying;
-    document.getElementById('selling').value = it.selling;
-    document.getElementById('qty').value = it.qty;
-    document.getElementById('location').value = it.location;
-  } else if(e.target.matches('.delete')){
-    if(!confirm('Delete item? This does not delete past sales.')) return;
-    const id = e.target.dataset.id;
-    let items = loadItems().filter(x=>x.id!==id);
-    saveItems(items);
-    renderItems(document.getElementById('searchBox').value);
-  }
-});
-
-document.getElementById('cancelEdit').addEventListener('click', ()=>{
-  document.getElementById('itemForm').reset();
-  document.getElementById('itemId').value='';
-});
-
-document.getElementById('saleForm').addEventListener('submit', e=>{
-  e.preventDefault();
-  const itemId = document.getElementById('saleItem').value;
-  const qty = parseInt(document.getElementById('saleQty').value) || 0;
-  const date = document.getElementById('saleDate').value;
-  if(!itemId){alert('No items');return;}
-  let items = loadItems();
-  const it = items.find(x=>x.id===itemId);
-  if(!it){alert('Item not found');return;}
-  if(qty>it.qty){ if(!confirm('Quantity greater than stock. Continue?')) return; }
-  // compute totals
-  const total = qty * parseFloat(it.selling);
-  const profit = qty * (parseFloat(it.selling)-parseFloat(it.buying));
-  // update stock
-  it.qty = it.qty - qty;
-  saveItems(items);
-  // save sale
-  const sales = loadSales();
-  const sale = {id:uid(), itemId, itemName:it.name, qty, date, total, profit};
-  sales.push(sale);
-  saveSales(sales);
-  renderSales(); renderItems(document.getElementById('searchBox').value);
-});
-
-document.getElementById('salesTable').addEventListener('click', e=>{
-  if(e.target.matches('.deleteSale')){
-    if(!confirm('Delete this sale? This will not restore stock.')) return;
-    const id = e.target.dataset.id;
-    const sales = loadSales().filter(s=>s.id!==id);
-    saveSales(sales);
-    renderSales();
-  }
-});
-
-document.getElementById('searchBox').addEventListener('input', e=>{
-  renderItems(e.target.value);
-});
-
-document.getElementById('exportBtn').addEventListener('click', ()=>{
-  const data = {items: loadItems(), sales: loadSales(), exportedAt: new Date().toISOString()};
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = `pos-backup-${Date.now()}.json`; a.click();
-  URL.revokeObjectURL(url);
-});
-
-document.getElementById('importBtn').addEventListener('click', ()=>{
-  document.getElementById('importFile').click();
-});
-document.getElementById('importFile').addEventListener('change', (ev)=>{
-  const f = ev.target.files[0]; if(!f) return;
-  const reader = new FileReader();
-  reader.onload = ()=> {
-    try{
-      const data = JSON.parse(reader.result);
-      if(Array.isArray(data.items) && Array.isArray(data.sales)){
-        saveItems(data.items); saveSales(data.sales); alert('Imported backup.');
-        renderItems(); renderSales();
-      } else {
-        alert('Invalid backup file format.');
-      }
-    }catch(err){ alert('Invalid JSON file.'); }
-  };
-  reader.readAsText(f);
-});
-
-document.getElementById('clearAll').addEventListener('click', ()=>{
-  if(!confirm('Clear ALL items and sales?')) return;
-  localStorage.removeItem(LS_ITEMS); localStorage.removeItem(LS_SALES);
-  renderItems(); renderSales();
-});
-
-// reports
-function calcReports(){
-  const sales = loadSales();
-  const today = new Date().toISOString().slice(0,10);
-  const now = new Date();
-  const month = now.toISOString().slice(0,7);
-  let daily=0, monthly=0;
-  sales.forEach(s=>{
-    if(s.date===today) daily += parseFloat(s.total);
-    if(s.date && s.date.slice(0,7)===month) monthly += parseFloat(s.total);
-  });
-  document.getElementById('dailyTotal').textContent = daily.toFixed(2);
-  document.getElementById('monthlyTotal').textContent = monthly.toFixed(2);
 }
 
-// initialize
-document.addEventListener('DOMContentLoaded', ()=>{
-  // set default saleDate to today
-  document.getElementById('saleDate').value = new Date().toISOString().slice(0,10);
-  renderItems(); renderSales();
-});
+
+---
+
+index.html
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>POS - Inventory & Sales</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+
+---
+
+vite.config.js
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+})
+
+> Note: plugin-react is optional for simple projects, but it's recommended. If you prefer not to add it, remove the plugin import and the plugin from config and install @vitejs/plugin-react.
+
+
+
+
+---
+
+postcss.config.cjs
+
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+
+
+---
+
+tailwind.config.cjs
+
+module.exports = {
+  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+
+---
+
+src/index.css
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+body { @apply bg-gray-50 text-gray-800; }
+
+
+---
+
+src/main.jsx
+
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App'
+import './index.css'
+
+createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+)
+
+
+---
+
+src/App.jsx
+
+This file is the single-page POS app. It is the full React component (based on the version I previously made) — inventory CRUD, sales recording & editing, daily/monthly totals, search, backup/restore. Paste it into src/App.jsx.
+
+import React, { useEffect, useState, useMemo } from 'react'
+
+export default function App() {
+  const [items, setItems] = useState(() => loadFromStorage('pos_items') || [])
+  const [sales, setSales] = useState(() => loadFromStorage('pos_sales') || [])
+  const [query, setQuery] = useState('')
+  const [selectedItemId, setSelectedItemId] = useState(null)
+  const [uiMsg, setUiMsg] = useState('')
+
+  useEffect(() => { if (uiMsg) { const t = setTimeout(() => setUiMsg(''), 3000); return () => clearTimeout(t) } }, [uiMsg])
+  useEffect(() => saveToStorage('pos_items', items), [items])
+  useEffect(() => saveToStorage('pos_sales', sales), [sales])
+
+  const filteredItems = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter(it => [it.name, it.location, String(it.buying), String(it.selling)].some(f => String(f).toLowerCase().includes(q)))
+  }, [items, query])
+
+  function addItem(item) { const id = cryptoId(); setItems(s => [...s, { ...item, id }]); setUiMsg('Item added') }
+  function updateItem(id, patch) { setItems(s => s.map(it => it.id === id ? { ...it, ...patch } : it)); setUiMsg('Item updated') }
+  function deleteItem(id) { if (!confirm('Delete item? This will not remove past sales.')) return; setItems(s => s.filter(it => it.id !== id)); setUiMsg('Item deleted') }
+
+  function recordSale({ itemId, qty, note = '' }) {
+    const item = items.find(i => i.id === itemId)
+    if (!item) { setUiMsg('Item not found'); return }
+    if (qty <= 0) { setUiMsg('Invalid quantity'); return }
+    const sale = { id: cryptoId(), itemId, qty, price: Number(item.selling) || 0, buying: Number(item.buying) || 0, profit: (Number(item.selling) || 0) - (Number(item.buying) || 0), createdAt: new Date().toISOString(), note }
+    setSales(s => [sale, ...s])
+    setItems(s => s.map(it => it.id === itemId ? { ...it, qty: safeNum(it.qty) - qty } : it))
+    setUiMsg('Sale recorded')
+  }
+
+  function deleteSale(saleId) { if (!confirm('Delete sale? This will not restore stock automatically.')) return; setSales(s => s.filter(x => x.id !== saleId)); setUiMsg('Sale deleted') }
+  function editSale(saleId, patch) { setSales(s => s.map(x => x.id === saleId ? { ...x, ...patch } : x)); setUiMsg('Sale updated') }
+
+  function salesWithin(rangeFrom, rangeTo) {
+    const from = rangeFrom ? new Date(rangeFrom) : null
+    const to = rangeTo ? new Date(rangeTo) : null
+    return sales.filter(s => { const d = new Date(s.createdAt); if (from && d < from) return false; if (to && d > addOneDay(to)) return false; return true })
+  }
+
+  const dailyTotal = useMemo(() => {
+    const today = new Date().toISOString().slice(0,10)
+    const todaySales = sales.filter(s => s.createdAt.slice(0,10) === today)
+    return sumSales(todaySales)
+  }, [sales])
+
+  const monthlyTotal = useMemo(() => {
+    const month = new Date().toISOString().slice(0,7)
+    const mSales = sales.filter(s => s.createdAt.slice(0,7) === month)
+    return sumSales(mSales)
+  }, [sales])
+
+  function exportBackup() { const payload = { items, sales, exportedAt: new Date().toISOString() }; const blob = new Blob([JSON.stringify(payload, null,2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `pos-backup-${new Date().toISOString().slice(0,19)}.json`; a.click(); URL.revokeObjectURL(url) }
+
+  function importBackup(file) {
+    const reader = new FileReader();
+    reader.onload = e => { try { const payload = JSON.parse(e.target.result); if (payload.items && payload.sales) { if (!confirm('This will replace your current data. Continue?')) return; setItems(payload.items); setSales(payload.sales); setUiMsg('Backup restored') } else setUiMsg('Invalid backup file') } catch (err) { setUiMsg('Failed to parse backup') } }
+    reader.readAsText(file)
+  }
+
+  function exportCSV(list, filename = 'export.csv') { if (!list.length) return; const keys = Object.keys(list[0]); const csv = [keys.join(',')].concat(list.map(row => keys.map(k => safeCell(row[k])).join(','))).join('\n'); const blob = new Blob([csv], { type: 'text/csv' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url) }
+
+  return (
+    <div className="p-4 max-w-6xl mx-auto">
+      <header className="mb-4">
+        <h1 className="text-2xl font-bold">POS — Inventory & Sales</h1>
+        <p className="text-sm text-gray-500">Local demo — backup/restore included</p>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="col-span-2">
+          <div className="flex gap-2 mb-2">
+            <input className="flex-1 p-2 border rounded" placeholder="Search items by name, location, price..." value={query} onChange={e => setQuery(e.target.value)} />
+            <button className="px-3 py-2 border rounded" onClick={() => setQuery('')}>Clear</button>
+          </div>
+
+          <ItemList items={filteredItems} onEdit={updateItem} onDelete={deleteItem} onSelect={id => setSelectedItemId(id)} />
+        </div>
+
+        <aside className="space-y-4">
+          <div className="p-3 border rounded">
+            <h3 className="font-semibold">Quick Add Item</h3>
+            <AddItemForm onAdd={addItem} />
+          </div>
+
+          <div className="p-3 border rounded">
+            <h3 className="font-semibold">Record Sale</h3>
+            <RecordSale items={items} preselect={selectedItemId} onRecord={recordSale} />
+          </div>
+
+          <div className="p-3 border rounded space-y-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm">Today</div>
+                <div className="font-bold">PHP {dailyTotal.total.toLocaleString()}</div>
+                <div className="text-xs">Profit: {dailyTotal.profit.toLocaleString()}</div>
+              </div>
+              <div>
+                <div className="text-sm">This month</div>
+                <div className="font-bold">PHP {monthlyTotal.total.toLocaleString()}</div>
+                <div className="text-xs">Profit: {monthlyTotal.profit.toLocaleString()}</div>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button className="px-2 py-1 border rounded" onClick={exportBackup}>Export backup</button>
+              <label className="px-2 py-1 border rounded cursor-pointer">Import backup<input type="file" className="hidden" onChange={e => importBackup(e.target.files[0])} /></label>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <section className="mt-6">
+        <h2 className="font-semibold mb-2">Sales</h2>
+        <SalesTable sales={sales} itemsMap={arrayToMap(items)} onDelete={deleteSale} onEdit={editSale} />
+      </section>
+
+      <footer className="mt-6 text-sm text-gray-500">{uiMsg}</footer>
+    </div>
+  )
+}
+
+function ItemList({ items, onEdit, onDelete, onSelect }) {
+  return (
+    <div className="border rounded overflow-auto max-h-[60vh]">
+      <table className="w-full table-auto text-sm">
+        <thead className="bg-gray-100 sticky top-0">
+          <tr>
+            <th className="p-2">QTY</th>
+            <th className="p-2">Item</th>
+            <th className="p-2">Buying</th>
+            <th className="p-2">Selling</th>
+            <th className="p-2">Location</th>
+            <th className="p-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map(it => (
+            <tr key={it.id} className="border-t">
+              <td className="p-2">{safeNum(it.qty)}</td>
+              <td className="p-2">{it.name}</td>
+              <td className="p-2">{safeNum(it.buying)}</td>
+              <td className="p-2">{safeNum(it.selling)}</td>
+              <td className="p-2">{it.location || '-'}</td>
+              <td className="p-2 space-x-2">
+                <button className="px-2 py-1 border rounded" onClick={() => onSelect(it.id)}>Select</button>
+                <button className="px-2 py-1 border rounded" onClick={() => { const updated = promptEditItem(it); if (updated) onEdit(it.id, updated) }}>Edit</button>
+                <button className="px-2 py-1 border rounded text-red-600" onClick={() => onDelete(it.id)}>Delete</button>
+              </td>
+            </tr>
+          ))}
+          {items.length === 0 && <tr><td colSpan={6} className="p-4 text-center text-gray-500">No items</td></tr>}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function AddItemForm({ onAdd }) {
+  const [name, setName] = useState('')
+  const [qty, setQty] = useState(1)
+  const [buying, setBuying] = useState(0)
+  const [selling, setSelling] = useState(0)
+  const [location, setLocation] = useState('')
+  function submit(e) { e.preventDefault(); if (!name.trim()) return alert('Item name required'); onAdd({ name: name.trim(), qty: safeNum(qty), buying: safeNum(buying), selling: safeNum(selling), location: location.trim() }); setName(''); setQty(1); setBuying(0); setSelling(0); setLocation('') }
+  return (
+    <form onSubmit={submit} className="space-y-2">
+      <input className="w-full p-2 border rounded" placeholder="Item name" value={name} onChange={e => setName(e.target.value)} />
+      <div className="flex gap-2">
+        <input className="flex-1 p-2 border rounded" type="number" value={qty} onChange={e => setQty(e.target.value)} />
+        <input className="flex-1 p-2 border rounded" type="number" value={buying} onChange={e => setBuying(e.target.value)} />
+        <input className="flex-1 p-2 border rounded" type="number" value={selling} onChange={e => setSelling(e.target.value)} />
+      </div>
+      <input className="w-full p-2 border rounded" placeholder="Location" value={location} onChange={e => setLocation(e.target.value)} />
+      <button className="px-3 py-2 border rounded bg-blue-600 text-white" type="submit">Add Item</button>
+    </form>
+  )
+}
+
+function RecordSale({ items, preselect, onRecord }) {
+  const [itemId, setItemId] = useState(preselect || (items[0] && items[0].id) || '')
+  const [qty, setQty] = useState(1)
+  const [note, setNote] = useState('')
+  useEffect(() => { if (preselect) setItemId(preselect) }, [preselect])
+  useEffect(() => { if (!itemId && items[0]) setItemId(items[0].id) }, [items])
+  function submit(e) { e.preventDefault(); onRecord({ itemId, qty: Number(qty), note }); setQty(1); setNote('') }
+  return (
+    <form onSubmit={submit} className="space-y-2">
+      <select className="w-full p-2 border rounded" value={itemId} onChange={e => setItemId(e.target.value)}>
+        {items.map(it => <option key={it.id} value={it.id}>{it.name} — stock: {safeNum(it.qty)}</option>)}
+      </select>
+      <input className="w-full p-2 border rounded" type="number" value={qty} onChange={e => setQty(e.target.value)} min={1} />
+      <input className="w-full p-2 border rounded" placeholder="Note (optional)" value={note} onChange={e => setNote(e.target.value)} />
+      <button className="px-3 py-2 border rounded bg-green-600 text-white" type="submit">Record Sale</button>
+    </form>
+  )
+}
+
+function SalesTable({ sales, itemsMap, onDelete, onEdit }) {
+  return (
+    <div className="border rounded overflow-auto">
+      <table className="w-full table-auto text-sm">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="p-2">Date</th>
+            <th className="p-2">Item</th>
+            <th className="p-2">Qty</th>
+            <th className="p-2">Price</th>
+            <th className="p-2">Total</th>
+            <th className="p-2">Profit</th>
+            <th className="p-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sales.map(s => { const it = itemsMap[s.itemId] || { name: '(deleted item)' }; return (
+            <tr key={s.id} className="border-t">
+              <td className="p-2">{new Date(s.createdAt).toLocaleString()}</td>
+              <td className="p-2">{it.name}</td>
+              <td className="p-2">{s.qty}</td>
+              <td className="p-2">{s.price}</td>
+              <td className="p-2">{(s.qty * s.price).toLocaleString()}</td>
+              <td className="p-2">{(s.qty * (s.price - s.buying)).toLocaleString()}</td>
+              <td className="p-2 space-x-2">
+                <button className="px-2 py-1 border rounded" onClick={() => { const newQty = prompt('New qty', s.qty); if (newQty) onEdit(s.id, { qty: Number(newQty) }) }}>Edit</button>
+                <button className="px-2 py-1 border rounded text-red-600" onClick={() => onDelete(s.id)}>Delete</button>
+              </td>
+            </tr>
+          )})}
+          {sales.length === 0 && <tr><td colSpan={7} className="p-4 text-center text-gray-500">No sales yet</td></tr>}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+// Utilities
+function loadFromStorage(key) { try { const v = localStorage.getItem(key); if (!v) return null; return JSON.parse(v) } catch (err) { return null } }
+function saveToStorage(key, data) { try { localStorage.setItem(key, JSON.stringify(data)) } catch (err) {} }
+function cryptoId() { return Math.random().toString(36).slice(2,9) }
+function safeNum(n) { const x = Number(n); return Number.isFinite(x) ? x : 0 }
+function arrayToMap(arr) { const m = {}; (arr||[]).forEach(i => (m[i.id] = i)); return m }
+function addOneDay(d) { const nd = new Date(d); nd.setDate(nd.getDate() + 1); return nd }
+function sumSales(salesList) { let total = 0, profit = 0; for (const s of salesList) { total += (s.price||0) * (s.qty||0); profit += ((s.price||0) - (s.buying||0)) * (s.qty||0) } return { total, profit } }
+function promptEditItem(item) { const name = prompt('Name', item.name); if (name == null) return null; const qty = prompt('Quantity', item.qty); if (qty == null) return null; const buying = prompt('Buying price', item.buying); if (buying == null) return null; const selling = prompt('Selling price', item.selling); if (selling == null) return null; const location = prompt('Location', item.location||''); if (location == null) return null; return { name, qty: Number(qty), buying: Number(buying), selling: Number(selling), location } }
+function safeCell(v) { if (v == null) return ''; let s = String(v).replace(/\"/g, '"'); if (s.includes(',') || s.includes('\n')) s = `"${s.replace(/"/g, '""') }"`; return s }
+
+
+---
+
+README.md (quick install)
+
+# POS Vite App
+
+Install:
+
+npm install npm run dev
+
+Open http://localhost:5173
+
+
+---
+
+How to use
+
+1. Paste the files into a GitHub repo (preserve folder structure).\
+
+
+2. Run npm install then npm run dev.\
+
+
+3. The app stores data locally in localStorage. Use the Export backup button to download a JSON backup, and Import backup to restore.
+
+
+
+
+---
+
+If you want, I can now:
+
+generate the actual repo as a zip and provide a download link here, or
+
+push these files to a GitHub repo for you (you'd need to provide the repo URL or grant access), or
+
+directly insert your Page1-11 items into a seed JSON file and include import instructions.
+
+
+Tell me which next step you want.
