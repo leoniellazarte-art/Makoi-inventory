@@ -465,13 +465,24 @@ $('itemForm').addEventListener('submit', function(ev) {
   };
 
   const items = load(LS_ITEMS);
-  const existing = items.find(x => x.id === id);
+ const existing = items.find(x => x.id === id);
 
-  if (existing) {
+// CHECK NAME DUPLICATE
+const nameExists = items.find(x =>
+  x.name.toLowerCase() === obj.name.toLowerCase() && x.id !== id
+);
+
+if (nameExists) {
+  alert("Item name already exists! Please use a different name.");
+  return; // stop save
+}
+
+// save or update
+if (existing) {
     Object.assign(existing, obj);
-  } else {
+} else {
     items.push(obj);
-  }
+}
 
   save(LS_ITEMS, items);
 
