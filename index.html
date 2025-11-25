@@ -198,7 +198,45 @@ table th {
       </table>
     </div>
 
-  </section>
+  </section><!-- EXPENSE SECTION -->
+<section>
+  <h2>Expenses</h2>
+
+  <form id="expenseForm">
+    <label>Expense Name
+      <input type="text" id="expName" placeholder="e.g. Gasoline, Load, Snacks" required>
+    </label>
+
+    <label>Amount (₱)
+      <input type="number" id="expAmount" step="0.01" required>
+    </label>
+
+    <label>Category
+      <input type="text" id="expCategory" placeholder="e.g. Transportation, Utilities" required>
+    </label>
+
+    <label>Date
+      <input type="date" id="expDate" required>
+    </label>
+
+    <button type="submit">Add Expense</button>
+  </form>
+
+  <hr style="margin:12px 0">
+
+  <table aria-label="Expenses table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Amount</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="expenses"></tbody>
+  </table>
+</section>
 
   <!-- SALE SECTION (search-style selector) -->
   <section>
