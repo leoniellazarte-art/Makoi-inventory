@@ -583,12 +583,47 @@ document.addEventListener('click', function(e) {
     calcInventory();
     calcReports();
     return;
-  }
+  }// delete sale -> return stock
+if (e.target.classList.contains('deleteSale')) {
 
-  // delete sale -> return stock
-  if (e.target.classList.contains('delSale')) {
-    if (!confirm('Delete this sale? Stock will be returned.')) return;
+    if (!confirm('Are you sure you want to delete this sale?')) return;
+    if (!confirm('FINAL confirmation: This will restore the stock. Proceed?')) return;
+
     const id = e.target.dataset.id;
+    let sales = load(LS_SALES);
+    const sale = sales.find(s => s.id == id);
+    if (!sale) return;
+
+    let items = load(LS_ITEMS);
+    const it = items.find(i => i.name == sale.item);
+    if (it) {
+        it.qty = (parseInt(it.qty) || 0) + (parseInt(sale.qty) || 0);
+        save(LS_ITEMS, items);
+    }
+
+    sales = sales.filter(s => s.id != id);
+    save(LS_SALES, sales);
+
+    renderItems();
+    renderSales();
+    calcInventory();
+    calcReports();
+    return;
+}
+
+  // delete sale -> 
+    }
+              
+
+    sales = sales.filter(s => s.id != id);
+    save(LS_SALES, sales);
+
+    renderItems();
+    renderSales();
+    calcInventory();
+    calcReports();
+    return;
+}
     let sales = load(LS_SALES);
     const sale = sales.find(s => s.id === id);
     if (!sale) return;
