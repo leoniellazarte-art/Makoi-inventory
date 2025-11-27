@@ -1,823 +1,1018 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>POS - Motor Shop (Makoi)</title>
-
+  <meta charset="UTF-8" />
+  <title>Makoi Motor Shop POS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    /* ========== Global / Layout ========== */
-    :root{
-      --bg:#f7f8fb;
-      --card:#ffffff;
-      --muted:#666;
-      --primary:#0b79d0;
-      --danger:#d03b3b;
-      --ok:#28a745;
-      --border:#e6e9ef;
-      --radius:8px;
-      --gap:12px;
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
     }
-    *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-    html,body{height:100%;margin:0;background:var(--bg);color:#222}
-    header{background:var(--card);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
-    header h1{margin:0;font-size:18px}
-    .controls{display:flex;gap:8px;align-items:center}
-
-    .container{max-width:1200px;margin:16px auto;padding:0 14px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    @media(max-width:980px){.grid{grid-template-columns:1fr}}
-
-    .card{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:0 1px 3px rgba(15,20,30,0.03)}
-    h2{margin:0 0 10px 0;font-size:18px}
-    label{display:block;margin-bottom:8px;font-size:14px}
-    input[type="text"], input[type="number"], input[type="date"], select, textarea{
-      width:100%;padding:8px;margin-top:4px;border:1px solid var(--border);border-radius:6px;font-size:14px
+    body {
+      margin: 0;
+      background: #f5f5f5;
+      color: #222;
     }
-    button{cursor:pointer;padding:8px 12px;border-radius:8px;border:0;background:var(--primary);color:#fff}
-    button.secondary{background:#6c757d}
-    button.danger{background:var(--danger)}
-    button.ok{background:var(--ok)}
-
-    table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
-    thead th{background:#f1f5fa;padding:8px;border-bottom:1px solid var(--border);text-align:left}
-    tbody td{padding:8px;border-bottom:1px solid #f2f4f7}
-
-    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .small{width:110px}
-    .muted{color:var(--muted);font-size:13px}
-
-    /* HIDE items list by default */
-    #itemTableContainer{display:none}
-
-    /* suggestions */
-    .suggestBox{position:relative}
-    .suggestList{position:absolute;left:0;right:0;z-index:40;background:#fff;border:1px solid var(--border);border-radius:6px;max-height:260px;overflow:auto;box-shadow:0 6px 18px rgba(10,20,40,0.06);display:none}
-    .suggestItem{padding:10px;border-bottom:1px solid #f2f4f7;cursor:pointer}
-    .suggestItem:last-child{border-bottom:0}
-    .s-title{font-weight:700}
-    .s-meta{font-size:13px;color:#666;margin-top:6px}
-    .low{color:var(--danger);font-weight:700}
-    .info{margin-top:10px;padding:10px;border-radius:6px;background:#fbfdff;border:1px solid #eef4fb}
-
-    footer{margin:20px 0;text-align:center;color:var(--muted);font-size:13px}
+    .app {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    header .date-time {
+      font-size: 13px;
+      color: #666;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    .card h2 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .card small {
+      color: #777;
+      font-size: 12px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .stat-box {
+      background: #f5f7fb;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 13px;
+    }
+    .stat-box .label {
+      color: #555;
+      margin-bottom: 4px;
+    }
+    .stat-box .value {
+      font-weight: 600;
+      font-size: 15px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #d0d0d0;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 1px rgba(26, 115, 232, 0.2);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: #1a73e8;
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #222;
+    }
+    .btn-danger {
+      background: #e53935;
+      color: #fff;
+    }
+    .pill-toggle {
+      display: inline-flex;
+      background: #e9e9e9;
+      border-radius: 999px;
+      padding: 3px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+    .pill-toggle button {
+      flex: 1;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: transparent;
+      color: #555;
+      box-shadow: none;
+    }
+    .pill-toggle button.active {
+      background: #ffffff;
+      color: #1a73e8;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    th, td {
+      padding: 6px 4px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th {
+      font-weight: 600;
+      color: #555;
+    }
+    td.actions {
+      text-align: right;
+    }
+    .link-btn {
+      background: none;
+      border: none;
+      color: #1a73e8;
+      font-size: 12px;
+      padding: 0;
+      cursor: pointer;
+    }
+    .footer-note {
+      font-size: 11px;
+      color: #777;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+    @media (max-width: 600px) {
+      .app {
+        padding: 12px;
+      }
+    }
   </style>
 </head>
-
 <body>
-  <header>
-    <h1>POS - Motor Shop (Makoi)</h1>
-    <div class="controls">
-      <button id="exportBackup">Export Backup</button>
-      <input id="importFile" type="file" style="display:none" />
-      <button id="importBackup" class="secondary">Import Backup</button>
-      <button id="clearAll" class="danger">Clear ALL</button>
-    </div>
-  </header>
+  <div class="app">
+    <header>
+      <h1>Makoi Motor Shop POS</h1>
+      <div class="date-time" id="headerDate"></div>
+    </header>
 
-  <div class="container">
-    <!-- grid: left = items / right = sales + reports -->
-    <div class="grid">
-      <!-- LEFT: ITEMS -->
-      <section class="card" id="itemsCard">
-        <h2>Items</h2>
+    <!-- 1. ITEMS SECTION (ADD / EDIT) -->
+    <section class="card">
+      <h2>Items / Inventory</h2>
+      <small>Magdagdag o mag-edit ng item. Kapag same ang name, maa-update lang (hindi dodoble).</small>
 
-        <form id="itemForm">
-          <input type="hidden" id="itemId" value="">
-          <div class="row">
-            <div style="flex:1;min-width:180px">
-              <label>Item Name
-                <input id="name" type="text" placeholder="e.g. Spark Plug" required>
-              </label>
-            </div>
-
-            <div class="small">
-              <label>Buy (₱)
-                <input id="buy" type="number" step="0.01" placeholder="0.00" required>
-              </label>
-            </div>
-
-            <div class="small">
-              <label>Sell (₱)
-                <input id="sell" type="number" step="0.01" placeholder="0.00" required>
-              </label>
-            </div>
-
-            <div class="small">
-              <label>Qty
-                <input id="qty" type="number" step="1" value="0" required>
-              </label>
-            </div>
-
-            <div style="flex:1;min-width:140px">
-              <label>Location
-                <input id="loc" type="text" placeholder="e.g. Shelf A">
-              </label>
-            </div>
-          </div>
-
-          <div class="row" style="margin-top:8px">
-            <button type="submit">Save Item</button>
-            <button type="button" id="cancelItem" class="secondary">Cancel</button>
-          </div>
-        </form>
-
-        <hr style="margin:12px 0">
-
-        <label>Search Items (type first letter — list hidden until you type)</label>
-        <input id="search" type="text" placeholder="Type to search items (list hidden until you type)">
-
-        <div id="searchDetails" style="display:none;margin-top:8px" class="info"></div>
-
-        <!-- Hidden table: shows only when you type in search box -->
-        <div id="itemTableContainer" style="margin-top:10px">
-          <table aria-label="Items table">
-            <thead>
-              <tr><th>Name</th><th>Buy</th><th>Sell</th><th>Profit</th><th>Qty</th><th>Location</th><th>Actions</th></tr>
-            </thead>
-            <tbody id="items"></tbody>
-          </table>
+      <div class="row">
+        <div>
+          <label for="itemName">Item name</label>
+          <input id="itemName" type="text" placeholder="Hal. brake pad" />
         </div>
-      </section>
-
-      <!-- RIGHT COLUMN STARTS: SALES + EXPENSES -->
-      <div>
-        <!-- SALE SECTION -->
-        <section class="card" id="saleCard">
-          <h2>Record Sale (search-style)</h2>
-
-          <div class="row suggestBox" style="position:relative;max-width:720px">
-            <div style="flex:1">
-              <label>Search Item to Sell
-                <input id="saleSearch" type="text" placeholder="Type item name (first letter will show suggestions)" autocomplete="off">
-              </label>
-            </div>
-            <div style="width:110px">
-              <label>Qty
-                <input id="saleQty" type="number" min="1" value="1">
-              </label>
-            </div>
-            <div style="width:160px">
-              <label>Date
-                <input id="saleDate" type="date">
-              </label>
-            </div>
-          </div>
-
-          <div id="saleSuggestList" class="suggestList" role="listbox" aria-label="Sale suggestions"></div>
-
-          <input type="hidden" id="saleItemId" value="">
-
-          <div style="margin-top:8px">
-            <button id="addSale">Add Sale</button>
-          </div>
-
-          <hr style="margin:12px 0">
-
-          <h3>Sales</h3>
-          <table aria-label="Sales table">
-            <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Total</th><th>Profit</th><th>Actions</th></tr></thead>
-            <tbody id="sales"></tbody>
-          </table>
-        </section>
-
-        <!-- EXPENSE SECTION -->
-        <section class="card" id="expenseCard" style="margin-top:16px">
-          <h2>Expenses</h2>
-
-          <form id="expenseForm">
-            <div class="row">
-              <div style="flex:1">
-                <label>Expense Name
-                  <input id="expName" type="text" placeholder="e.g. Fuel, Snacks" required>
-                </label>
-              </div>
-
-              <div class="small">
-                <label>Amount (₱)
-                  <input id="expAmount" type="number" step="0.01" required>
-                </label>
-              </div>
-
-              <div style="width:160px">
-                <label>Category
-                  <input id="expCategory" type="text" placeholder="e.g. Fuel">
-                </label>
-              </div>
-
-              <div style="width:160px">
-                <label>Date
-                  <input id="expDate" type="date">
-                </label>
-              </div>
-            </div>
-
-            <div style="margin-top:8px">
-              <button type="submit">Add Expense</button>
-            </div>
-          </form>
-
-          <hr style="margin:12px 0">
-
-          <div id="expenses" aria-live="polite"> <!-- JS will render expense rows here --> </div>
-        </section>
-      </div> <!-- end right column -->
-      <script>
-/* ===============================================
-   CONSTANTS / HELPERS
-================================================ */
-const LS_ITEMS = "mk_items";
-const LS_SALES = "mk_sales";
-const LS_EXP   = "mk_exp";
-
-const $ = id => document.getElementById(id);
-const load = key => JSON.parse(localStorage.getItem(key) || "[]");
-const save = (key, value) => localStorage.setItem(key, JSON.stringify(value));
-const uid  = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-const fmt  = n => Number(n || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-
-/* ===============================================
-   ITEMS: ADD / EDIT / DUPLICATE CHECK
-================================================ */
-$("itemForm").addEventListener("submit", e => {
-  e.preventDefault();
-
-  const id = $("itemId").value || uid();
-  const item = {
-    id,
-    name: $("name").value.trim(),
-    buy:  parseFloat($("buy").value)||0,
-    sell: parseFloat($("sell").value)||0,
-    qty:  parseInt($("qty").value)||0,
-    loc:  $("loc").value.trim()
-  };
-
-  const items = load(LS_ITEMS);
-
-  // duplicate name check, ignore same id on edit
-  const dup = items.find(i => i.name.toLowerCase() === item.name.toLowerCase() && i.id !== id);
-  if (dup) {
-    alert("❗ Item name already exists. Choose another name.");
-    return;
-  }
-
-  // save or update
-  const exist = items.find(i => i.id === id);
-  if (exist) Object.assign(exist, item);
-  else items.push(item);
-
-  save(LS_ITEMS, items);
-  $("itemForm").reset();
-  $("itemId").value = "";
-
-  renderItems();
-  calcInventory();
-});
-
-/* Cancel edit */
-$("cancelItem").addEventListener("click", () => {
-  $("itemForm").reset();
-  $("itemId").value = "";
-});
-
-/* ===============================================
-   RENDER ITEMS TABLE
-================================================ */
-function renderItems() {
-  const items = load(LS_ITEMS);
-  const body = $("items");
-  body.innerHTML = "";
-
-  items.forEach(i => {
-    const tr = document.createElement("tr");
-    const profit = i.sell - i.buy;
-    const low = (i.qty < 5 ? "low" : "");
-
-    tr.innerHTML = `
-      <td>${i.name}</td>
-      <td>₱${fmt(i.buy)}</td>
-      <td>₱${fmt(i.sell)}</td>
-      <td>₱${fmt(profit)}</td>
-      <td class="${low}">${i.qty}</td>
-      <td>${i.loc}</td>
-      <td>
-        <button class="editItem" data-id="${i.id}">Edit</button>
-        <button class="delItem danger" data-id="${i.id}">Delete</button>
-      </td>
-    `;
-    body.appendChild(tr);
-  });
-}
-
-/* Edit / Delete Item */
-document.addEventListener("click", e => {
-
-  /* EDIT ITEM */
-  if (e.target.classList.contains("editItem")) {
-    const id = e.target.dataset.id;
-    const items = load(LS_ITEMS);
-    const it = items.find(x => x.id === id);
-    if (!it) return;
-
-    $("itemId").value = it.id;
-    $("name").value  = it.name;
-    $("buy").value   = it.buy;
-    $("sell").value  = it.sell;
-    $("qty").value   = it.qty;
-    $("loc").value   = it.loc;
-
-    window.scrollTo({top:0, behavior:"smooth"});
-  }
-
-  /* DELETE ITEM */
-  if (e.target.classList.contains("delItem")) {
-    if (!confirm("Delete this item?")) return;
-
-    const id = e.target.dataset.id;
-    let items = load(LS_ITEMS);
-    let sales = load(LS_SALES);
-
-    // delete item
-    items = items.filter(i => i.id !== id);
-
-    // delete ALL SALES THAT USED THIS ITEM
-    sales = sales.filter(s => s.itemId !== id);
-
-    save(LS_ITEMS, items);
-    save(LS_SALES, sales);
-
-    renderItems();
-    renderSales();
-    calcInventory();
-  }
-});
-        /* ===============================================
-   SALES SUGGESTIONS (first letter match)
-================================================ */
-$("saleSearch").addEventListener("input", e => {
-  const q = e.target.value.trim().toLowerCase();
-  const list = $("saleSuggestList");
-  const items = load(LS_ITEMS);
-
-  if (!q) {
-    list.style.display = "none";
-    return;
-  }
-
-  // startsWith matching
-  const match = items.filter(i => i.name.toLowerCase().startsWith(q));
-
-  if (match.length === 0) {
-    list.style.display = "none";
-    return;
-  }
-
-  list.innerHTML = "";
-  match.forEach(it => {
-    const div = document.createElement("div");
-    div.className = "suggestItem";
-    div.dataset.id = it.id;
-
-    div.innerHTML = `
-      <div class="s-title">${it.name}</div>
-      <div class="s-meta">
-        Buy: ₱${fmt(it.buy)} |
-        Sell: ₱${fmt(it.sell)} |
-        Profit: ₱${fmt(it.sell - it.buy)} |
-        Stock: ${it.qty}
+        <div>
+          <label for="itemQty">Quantity (stock)</label>
+          <input id="itemQty" type="number" min="0" value="0" />
+        </div>
       </div>
-    `;
-    list.appendChild(div);
-  });
 
-  list.style.display = "block";
-});
+      <div class="row">
+        <div>
+          <label for="itemBuy">Buying price (per pc)</label>
+          <input id="itemBuy" type="number" min="0" step="0.01" />
+        </div>
+        <div>
+          <label for="itemSell">Selling price (per pc)</label>
+          <input id="itemSell" type="number" min="0" step="0.01" />
+        </div>
+      </div>
 
-/* click suggestion */
-$("saleSuggestList").addEventListener("click", e => {
-  if (e.target.closest(".suggestItem")) {
-    const itemDiv = e.target.closest(".suggestItem");
-    const id = itemDiv.dataset.id;
+      <div class="row">
+        <div>
+          <label for="itemStorage">Storage</label>
+          <input id="itemStorage" type="text" placeholder="Hal. Cabinet A, Box 1" />
+        </div>
+      </div>
 
-    const items = load(LS_ITEMS);
-    const it = items.find(x => x.id === id);
-    if (!it) return;
+      <div class="btn-row">
+        <button class="btn-primary" id="btnSaveItem">Save item</button>
+        <button class="btn-secondary" id="btnResetItem">Reset</button>
+      </div>
 
-    $("saleItemId").value = it.id;
-    $("saleSearch").value = it.name;
-    $("saleQty").value = 1;
-    $("saleSuggestList").style.display = "none";
-  }
-});
+      <div class="grid" style="margin-top:12px;">
+        <div class="stat-box">
+          <div class="label">Total items</div>
+          <div class="value" id="statTotalItems">0</div>
+          <div class="label">Unique item names</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">Inventory cost (buy)</div>
+          <div class="value" id="statInvCost">₱0.00</div>
+          <div class="label">Sum of buy × stock</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">Inventory value (sell)</div>
+          <div class="value" id="statInvSell">₱0.00</div>
+          <div class="label">Sum of sell × stock</div>
+        </div>
+      </div>
+    </section>
 
-/* close suggestion when clicking outside */
-document.addEventListener("click", e => {
-  if (!e.target.closest("#saleSuggestList") && e.target.id !== "saleSearch") {
-    $("saleSuggestList").style.display = "none";
-  }
-});
+    <!-- 2. SEARCH SECTION -->
+    <section class="card">
+      <h2>Search item</h2>
+      <small>Hanapin ang item. Lalabas ang buying price, selling price, profit at storage.</small>
 
-/* ===============================================
-   ADD SALE
-================================================ */
-$("addSale").addEventListener("click", e => {
-  e.preventDefault();
+      <div class="row">
+        <div>
+          <label for="searchInput">Search</label>
+          <input id="searchInput" type="text" placeholder="Type item name or storage..." />
+        </div>
+      </div>
 
-  const itemId = $("saleItemId").value;
-  const qty = parseInt($("saleQty").value) || 1;
-  const date = $("saleDate").value || new Date().toISOString().slice(0, 10);
+      <table id="searchTable">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Buy</th>
+            <th>Sell</th>
+            <th>Profit/pc</th>
+            <th>Stock</th>
+            <th>Storage</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
 
-  if (!itemId) {
-    alert("Choose an item from suggestion list.");
-    return;
-  }
+    <!-- 3. SALES & PROFIT SECTION -->
+    <section class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+        <div>
+          <h2>Sales &amp; Profit</h2>
+          <small>Record sales, auto profit &amp; daily / all-time summary.</small>
+        </div>
+        <div>
+          <label for="saleDate">Date</label>
+          <input id="saleDate" type="date" />
+        </div>
+      </div>
 
-  const items = load(LS_ITEMS);
-  const it = items.find(x => x.id === itemId);
-  if (!it) return;
+      <div class="row" style="margin-top:8px;">
+        <div>
+          <label for="saleItemName">Select / search item</label>
+          <input id="saleItemName" list="itemsDatalist" placeholder="Type item name..." />
+          <datalist id="itemsDatalist"></datalist>
+        </div>
+        <div>
+          <label for="saleQty">Quantity (pcs)</label>
+          <input id="saleQty" type="number" min="1" value="1" />
+        </div>
+      </div>
 
-  if (it.qty < qty) {
-    if (!confirm("Stock is not enough. Allow negative stock?")) return;
-  }
+      <div class="row">
+        <div>
+          <label for="saleSell">Selling price (per pc)</label>
+          <input id="saleSell" type="number" min="0" step="0.01" />
+        </div>
+        <div>
+          <label for="saleBuy">Buying price (per pc)</label>
+          <input id="saleBuy" type="number" min="0" step="0.01" />
+        </div>
+      </div>
 
-  const sales = load(LS_SALES);
-  const profit = (it.sell - it.buy) * qty;
+      <div class="row">
+        <div>
+          <label for="saleTotal">Total amount</label>
+          <input id="saleTotal" type="number" readonly />
+        </div>
+        <div>
+          <label for="saleProfit">Profit for this sale</label>
+          <input id="saleProfit" type="number" readonly />
+        </div>
+      </div>
 
-  sales.push({
-    id: uid(),
-    itemId: it.id,
-    item: it.name,
-    qty,
-    total: it.sell * qty,
-    profit,
-    date
-  });
+      <div class="btn-row">
+        <button class="btn-primary" id="btnSaveSale">✅ Save sale</button>
+        <button class="btn-secondary" id="btnResetSale">⟳ Reset sale</button>
+        <button class="btn-danger" id="btnClearSales">🗑 Clear all sales</button>
+      </div>
 
-  // deduct stock
-  it.qty = (parseInt(it.qty) || 0) - qty;
+      <div class="pill-toggle">
+        <button id="tabToday" class="active">Today</button>
+        <button id="tabAllTime">All time</button>
+      </div>
 
-  save(LS_ITEMS, items);
-  save(LS_SALES, sales);
+      <div class="grid">
+        <div class="stat-box">
+          <div class="label" id="salesLabel">Today sales</div>
+          <div class="value" id="statSalesAmount">₱0.00</div>
+          <div class="label">Total amount of sales</div>
+        </div>
+        <div class="stat-box">
+          <div class="label" id="profitLabel">Today profit</div>
+          <div class="value" id="statSalesProfit">₱0.00</div>
+          <div class="label">Sales – cost (buy)</div>
+        </div>
+        <div class="stat-box">
+          <div class="label" id="expLabel">Recorded expenses</div>
+          <div class="value" id="statExpenses">₱0.00</div>
+          <div class="label">For net profit computation</div>
+        </div>
+        <div class="stat-box">
+          <div class="label" id="netLabel">Net profit</div>
+          <div class="value" id="statNetProfit">₱0.00</div>
+          <div class="label">Profit – expenses</div>
+        </div>
+      </div>
 
-  $("saleItemId").value = "";
-  $("saleSearch").value = "";
-  $("saleQty").value = 1;
+      <h3 style="margin-top:12px; font-size:14px;">Recent sales</h3>
+      <button class="link-btn" id="btnReloadToday">Use today date</button>
+      <table id="salesTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Total</th>
+            <th>Profit</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
 
-  renderItems();
-  renderSales();
-  calcInventory();
-  calcReports();
-});
+    <!-- 4. EXPENSES -->
+    <section class="card">
+      <h2>Expenses</h2>
+      <small>Automatic na binabawas sa profit ng sales (net profit).</small>
 
-/* ===============================================
-   RENDER SALES TABLE
-================================================ */
-function renderSales() {
-  const sales = load(LS_SALES);
-  const body = $("sales");
-  body.innerHTML = "";
+      <div class="row" style="margin-top:8px;">
+        <div>
+          <label for="expDesc">Description</label>
+          <input id="expDesc" type="text" placeholder="e.g. kuryente, renta, sweldo" />
+        </div>
+        <div>
+          <label for="expAmount">Amount</label>
+          <input id="expAmount" type="number" min="0" step="0.01" />
+        </div>
+      </div>
 
-  sales.forEach(s => {
-    const tr = document.createElement("tr");
+      <div class="row">
+        <div>
+          <label for="expDate">Date</label>
+          <input id="expDate" type="date" />
+        </div>
+      </div>
 
-    tr.innerHTML = `
-      <td>${s.date}</td>
-      <td>${s.item}</td>
-      <td>${s.qty}</td>
-      <td>₱${fmt(s.total)}</td>
-      <td>₱${fmt(s.profit)}</td>
-      <td><button class="deleteSale danger" data-id="${s.id}">Delete</button></td>
-    `;
+      <div class="btn-row">
+        <button class="btn-primary" id="btnSaveExpense">💵 Save expense</button>
+        <button class="btn-secondary" id="btnResetExpense">Reset</button>
+        <button class="btn-danger" id="btnClearExpenses">🗑 Clear all expenses</button>
+      </div>
 
-    body.appendChild(tr);
-  });
-}
+      <table id="expensesTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
 
-/* ===============================================
-   DELETE SALE (PER ITEM ONLY + DOUBLE CONFIRM)
-================================================ */
-document.addEventListener("click", e => {
-  if (e.target.classList.contains("deleteSale")) {
+    <!-- 5. BACKUP SECTION -->
+    <section class="card">
+      <h2>Backup &amp; Restore</h2>
+      <small>Para hindi mawala ang data mo.</small>
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn-primary" id="btnExport">⬇ Export backup (JSON)</button>
+        <label class="btn-secondary" style="cursor:pointer;">
+          ⬆ Import backup
+          <input id="importFile" type="file" accept="application/json" style="display:none;" />
+        </label>
+      </div>
+      <div class="footer-note">
+        Lahat ng data naka-save sa browser ng device na gamit mo. Kapag nagbago ka
+        ng phone / nag-clear ng data, mawawala rin (pero pwede mong i-restore gamit
+        ang na-export na backup file).
+      </div>
+    </section>
+  </div>
 
-    if (!confirm("Are you sure you want to delete this sale?")) return;
-    if (!confirm("FINAL confirmation: This will restore the stock of this sale only. Continue?")) return;
+  <script>
+    const STORAGE_KEY = "makoi_motor_shop_pos_v1";
 
-    const id = e.target.dataset.id;
-    let sales = load(LS_SALES);
-    const sale = sales.find(x => x.id === id);
-    if (!sale) return;
+    let state = {
+      items: [],
+      sales: [],
+      expenses: []
+    };
 
-    // restore stock
-    let items = load(LS_ITEMS);
-    const it = items.find(i => i.id === sale.itemId);
-    if (it) {
-      it.qty = (parseInt(it.qty) || 0) + (parseInt(sale.qty) || 0);
-      save(LS_ITEMS, items);
+    // Utility
+    function formatMoney(num) {
+      if (isNaN(num)) num = 0;
+      return "₱" + Number(num).toFixed(2);
     }
 
-    // delete specific sale only
-    sales = sales.filter(s => s.id !== id);
-    save(LS_SALES, sales);
+    function todayStr() {
+      return new Date().toISOString().slice(0, 10);
+    }
 
-    renderItems();
-    renderSales();
-    calcInventory();
-    calcReports();
-  }
-});
-        /* ===============================================
-   EXPENSES: ADD / RENDER / DELETE
-================================================ */
-$("expenseForm").addEventListener("submit", e => {
-  e.preventDefault();
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          state = Object.assign({ items: [], sales: [], expenses: [] }, parsed);
+        } catch (e) {
+          console.error("Failed to parse storage", e);
+        }
+      }
+    }
 
-  const name = $("expName").value.trim();
-  const amount = parseFloat($("expAmount").value) || 0;
-  const cat = $("expCategory").value.trim();
-  const date = $("expDate").value || new Date().toISOString().slice(0,10);
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
 
-  const ex = load(LS_EXP);
-  ex.push({
-    id: uid(),
-    name,
-    amount,
-    category: cat,
-    date
-  });
+    // DOM refs
+    const headerDate = document.getElementById("headerDate");
 
-  save(LS_EXP, ex);
-  $("expenseForm").reset();
+    const itemName = document.getElementById("itemName");
+    const itemQty = document.getElementById("itemQty");
+    const itemBuy = document.getElementById("itemBuy");
+    const itemSell = document.getElementById("itemSell");
+    const itemStorage = document.getElementById("itemStorage");
+    const statTotalItems = document.getElementById("statTotalItems");
+    const statInvCost = document.getElementById("statInvCost");
+    const statInvSell = document.getElementById("statInvSell");
+    const btnSaveItem = document.getElementById("btnSaveItem");
+    const btnResetItem = document.getElementById("btnResetItem");
 
-  renderExpenses();
-  calcReports();
-});
+    const searchInput = document.getElementById("searchInput");
+    const searchTableBody = document.querySelector("#searchTable tbody");
 
-function renderExpenses(){
-  const ex = load(LS_EXP);
-  const box = $("expenses");
-  box.innerHTML = "";
+    const saleDate = document.getElementById("saleDate");
+    const saleItemName = document.getElementById("saleItemName");
+    const saleQty = document.getElementById("saleQty");
+    const saleSell = document.getElementById("saleSell");
+    const saleBuy = document.getElementById("saleBuy");
+    const saleTotal = document.getElementById("saleTotal");
+    const saleProfit = document.getElementById("saleProfit");
+    const btnSaveSale = document.getElementById("btnSaveSale");
+    const btnResetSale = document.getElementById("btnResetSale");
+    const btnClearSales = document.getElementById("btnClearSales");
+    const btnReloadToday = document.getElementById("btnReloadToday");
+    const itemsDatalist = document.getElementById("itemsDatalist");
+    const salesTableBody = document.querySelector("#salesTable tbody");
 
-  if (!ex.length) {
-    box.innerHTML = `<div class="muted">No expenses recorded.</div>`;
-    return;
-  }
+    const tabToday = document.getElementById("tabToday");
+    const tabAllTime = document.getElementById("tabAllTime");
+    const statSalesAmount = document.getElementById("statSalesAmount");
+    const statSalesProfit = document.getElementById("statSalesProfit");
+    const statExpenses = document.getElementById("statExpenses");
+    const statNetProfit = document.getElementById("statNetProfit");
+    const salesLabel = document.getElementById("salesLabel");
+    const profitLabel = document.getElementById("profitLabel");
+    const expLabel = document.getElementById("expLabel");
+    const netLabel = document.getElementById("netLabel");
 
-  ex.forEach(e => {
-    const row = document.createElement("div");
-    row.className = "row";
+    const expDesc = document.getElementById("expDesc");
+    const expAmount = document.getElementById("expAmount");
+    const expDate = document.getElementById("expDate");
+    const btnSaveExpense = document.getElementById("btnSaveExpense");
+    const btnResetExpense = document.getElementById("btnResetExpense");
+    const btnClearExpenses = document.getElementById("btnClearExpenses");
+    const expensesTableBody = document.querySelector("#expensesTable tbody");
 
-    row.innerHTML = `
-      <div style="flex:1">${e.date} — ${e.name} — ₱${fmt(e.amount)}</div>
-      <button class="delExp danger" data-id="${e.id}">Delete</button>
-    `;
-    box.appendChild(row);
-  });
-}
+    const btnExport = document.getElementById("btnExport");
+    const importFile = document.getElementById("importFile");
 
-/* DELETE EXPENSE */
-document.addEventListener("click", e => {
-  if (e.target.classList.contains("delExp")) {
+    let summaryMode = "today"; // 'today' or 'all'
 
-    if (!confirm("Delete this expense?")) return;
+    // HEADER DATE
+    function renderHeaderDate() {
+      const now = new Date();
+      const opts = { month: "short", day: "numeric", year: "numeric" };
+      const dateStr = now.toLocaleDateString(undefined, opts);
+      const timeStr = now.toLocaleTimeString(undefined, {
+        hour: "numeric",
+        minute: "2-digit"
+      });
+      headerDate.textContent = dateStr + " • " + timeStr;
+    }
 
-    const id = e.target.dataset.id;
-    let ex = load(LS_EXP);
+    // ITEMS
+    function renderInventoryStats() {
+      const totalItems = state.items.length;
+      let invCost = 0;
+      let invSell = 0;
+      state.items.forEach((it) => {
+        const qty = Number(it.qty) || 0;
+        invCost += qty * (Number(it.buy) || 0);
+        invSell += qty * (Number(it.sell) || 0);
+      });
+      statTotalItems.textContent = String(totalItems);
+      statInvCost.textContent = formatMoney(invCost);
+      statInvSell.textContent = formatMoney(invSell);
+    }
 
-    ex = ex.filter(x => x.id !== id);
-    save(LS_EXP, ex);
+    function clearItemForm() {
+      itemName.value = "";
+      itemQty.value = "0";
+      itemBuy.value = "";
+      itemSell.value = "";
+      itemStorage.value = "";
+    }
 
-    renderExpenses();
-    calcReports();
-  }
-});
+    function upsertItem() {
+      const name = itemName.value.trim();
+      if (!name) {
+        alert("Item name is required.");
+        return;
+      }
+      const qty = Number(itemQty.value) || 0;
+      const buy = Number(itemBuy.value) || 0;
+      const sell = Number(itemSell.value) || 0;
+      const storage = itemStorage.value.trim();
 
-
-/* ===============================================
-   INVENTORY VALUE
-================================================ */
-function calcInventory(){
-  const items = load(LS_ITEMS);
-  let total = 0;
-
-  items.forEach(i => {
-    total += (parseFloat(i.buy) || 0) * (parseInt(i.qty) || 0);
-  });
-
-  $("invValue").textContent = "₱" + fmt(total);
-}
-
-
-/* ===============================================
-   REPORTS: TOTAL SALES, PROFIT, EXPENSES, NET
-================================================ */
-function calcReports(){
-  const sales = load(LS_SALES);
-  const exp   = load(LS_EXP);
-
-  let totalSales = 0, totalProfit = 0, totalExp = 0;
-
-  sales.forEach(s => {
-    totalSales += parseFloat(s.total) || 0;
-    totalProfit += parseFloat(s.profit) || 0;
-  });
-
-  exp.forEach(e => totalExp += parseFloat(e.amount) || 0);
-
-  const net = totalProfit - totalExp;
-
-  const sum = $("histSummary");
-  if (sum) {
-    sum.innerHTML = `
-      <div><strong>Total Sales:</strong> ₱${fmt(totalSales)}</div>
-      <div><strong>Total Profit (before expenses):</strong> ₱${fmt(totalProfit)}</div>
-      <div><strong>Total Expenses:</strong> ₱${fmt(totalExp)}</div>
-      <div><strong>Net Profit:</strong> ₱${fmt(net)}</div>
-    `;
-  }
-}
-
-
-/* ===============================================
-   SALES HISTORY FILTER
-================================================ */
-function monthOptions(){
-  const sel = $("histMonth");
-  const now = new Date();
-
-  for (let m = 0; m < 12; m++) {
-    const d = new Date(now.getFullYear(), m, 1);
-
-    const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    const txt = d.toLocaleString("default", {month:"long", year:"numeric"});
-
-    const opt = document.createElement("option");
-    opt.value = val;
-    opt.textContent = txt;
-    sel.appendChild(opt);
-  }
-}
-monthOptions();
-
-
-$("histFilter").addEventListener("click", () => {
-
-  let filtered = load(LS_SALES);
-
-  const sd = $("histDate").value;
-  const rf = $("histFrom").value;
-  const rt = $("histTo").value;
-  const month = $("histMonth").value;
-
-  if (sd) {
-    filtered = filtered.filter(s => s.date === sd);
-  }
-  else if (rf || rt) {
-    if (rf) filtered = filtered.filter(s => s.date >= rf);
-    if (rt) filtered = filtered.filter(s => s.date <= rt);
-  }
-  else if (month) {
-    filtered = filtered.filter(s => s.date.startsWith(month));
-  }
-
-  renderHistory(filtered);
-});
-
-$("histClear").addEventListener("click", () => {
-  $("histDate").value = "";
-  $("histFrom").value = "";
-  $("histTo").value = "";
-  $("histMonth").value = "";
-
-  $("histResults").innerHTML = "";
-  $("histSummary").innerHTML = "";
-});
-
-
-/* ===============================================
-   RENDER FILTERED HISTORY
-================================================ */
-function renderHistory(rows){
-  const body = $("histResults");
-  body.innerHTML = "";
-
-  let totalSales = 0;
-  let totalProfit = 0;
-
-  rows.forEach(s => {
-    totalSales += s.total;
-    totalProfit += s.profit;
-
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${s.date}</td>
-      <td>${s.item}</td>
-      <td>${s.qty}</td>
-      <td>₱${fmt(s.total)}</td>
-      <td>₱${fmt(s.profit)}</td>
-      <td><button class="deleteSale danger" data-id="${s.id}">Delete</button></td>
-    `;
-    body.appendChild(tr);
-  });
-
-  $("histSummary").innerHTML = `
-    <div><strong>Total Sales:</strong> ₱${fmt(totalSales)}</div>
-    <div><strong>Total Profit (before expenses):</strong> ₱${fmt(totalProfit)}</div>
-    <div><strong>Records:</strong> ${rows.length}</div>
-  `;
-                  }
-        /* ===============================================
-   BACKUP SYSTEM (EXPORT / IMPORT)
-================================================ */
-$("exportBackup").addEventListener("click", () => {
-  const data = {
-    items: load(LS_ITEMS),
-    sales: load(LS_SALES),
-    expenses: load(LS_EXP)
-  };
-
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
-  const url  = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "makoi-pos-backup.json";
-  a.click();
-
-  URL.revokeObjectURL(url);
-});
-
-
-$("importBackup").addEventListener("click", () => {
-  const file = $("importFile").files[0];
-
-  if (!file) {
-    alert("Please choose a backup file first.");
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-
-      if (data.items) save(LS_ITEMS, data.items);
-      if (data.sales) save(LS_SALES, data.sales);
-      if (data.expenses) save(LS_EXP, data.expenses);
-
+      const existing = state.items.find(
+        (it) => it.name.toLowerCase() === name.toLowerCase()
+      );
+      if (existing) {
+        // edit
+        existing.qty = qty;
+        existing.buy = buy;
+        existing.sell = sell;
+        existing.storage = storage;
+      } else {
+        state.items.push({
+          id: Date.now(),
+          name,
+          qty,
+          buy,
+          sell,
+          storage
+        });
+      }
+      saveState();
       renderAll();
-      alert("Backup successfully restored!");
-
-    } catch (err) {
-      alert("Invalid backup file.");
+      clearItemForm();
     }
-  };
 
-  reader.readAsText(file);
-});
+    // SEARCH
+    function renderSearchResults() {
+      const q = searchInput.value.trim().toLowerCase();
+      const rows = state.items.filter((it) => {
+        if (!q) return true;
+        return (
+          it.name.toLowerCase().includes(q) ||
+          (it.storage || "").toLowerCase().includes(q)
+        );
+      });
 
+      searchTableBody.innerHTML = "";
+      rows.forEach((it) => {
+        const tr = document.createElement("tr");
+        const profitPerPc = (Number(it.sell) || 0) - (Number(it.buy) || 0);
+        tr.innerHTML = `
+          <td>${it.name}</td>
+          <td>${formatMoney(it.buy)}</td>
+          <td>${formatMoney(it.sell)}</td>
+          <td>${formatMoney(profitPerPc)}</td>
+          <td>${it.qty}</td>
+          <td>${it.storage || ""}</td>
+        `;
+        searchTableBody.appendChild(tr);
+      });
+    }
 
-/* ===============================================
-   CLEAR ALL DATA
-================================================ */
-$("clearAll").addEventListener("click", () => {
-  if (!confirm("Are you sure you want to CLEAR ALL DATA?")) return;
-  if (!confirm("FINAL confirmation: This will remove ALL items, sales, and expenses. Continue?")) return;
+    function populateItemsDatalist() {
+      itemsDatalist.innerHTML = "";
+      state.items.forEach((it) => {
+        const opt = document.createElement("option");
+        opt.value = it.name;
+        itemsDatalist.appendChild(opt);
+      });
+    }
 
-  localStorage.removeItem(LS_ITEMS);
-  localStorage.removeItem(LS_SALES);
-  localStorage.removeItem(LS_EXP);
+    // SALES
+    function updateSaleComputed() {
+      const qty = Number(saleQty.value) || 0;
+      const sell = Number(saleSell.value) || 0;
+      const buy = Number(saleBuy.value) || 0;
+      const total = qty * sell;
+      const profit = qty * (sell - buy);
+      saleTotal.value = total ? total.toFixed(2) : "";
+      saleProfit.value = profit ? profit.toFixed(2) : "";
+    }
 
-  renderAll();
-  alert("All data cleared.");
-});
+    function onSaleItemSelected() {
+      const name = saleItemName.value.trim();
+      const it = state.items.find(
+        (x) => x.name.toLowerCase() === name.toLowerCase()
+      );
+      if (it) {
+        saleSell.value = it.sell;
+        saleBuy.value = it.buy;
+      }
+      updateSaleComputed();
+    }
 
+    function clearSaleForm() {
+      saleItemName.value = "";
+      saleQty.value = "1";
+      saleSell.value = "";
+      saleBuy.value = "";
+      saleTotal.value = "";
+      saleProfit.value = "";
+    }
 
-/* ===============================================
-   RENDER ALL SECTIONS
-================================================ */
-function renderAll(){
-  renderItems();
-  renderSales();
-  renderExpenses();
-  calcInventory();
-  calcReports();
-}
+    function saveSale() {
+      const name = saleItemName.value.trim();
+      if (!name) {
+        alert("Please choose item.");
+        return;
+      }
+      const item = state.items.find(
+        (it) => it.name.toLowerCase() === name.toLowerCase()
+      );
+      if (!item) {
+        alert("Item not found in inventory.");
+        return;
+      }
+      const qty = Number(saleQty.value) || 0;
+      if (qty <= 0) {
+        alert("Quantity must be greater than 0.");
+        return;
+      }
+      if (qty > item.qty) {
+        if (
+          !confirm(
+            "Stock is lower than quantity. Proceed anyway? (stock will become negative)"
+          )
+        ) {
+          return;
+        }
+      }
+      const sell = Number(saleSell.value) || 0;
+      const buy = Number(saleBuy.value) || 0;
+      const total = qty * sell;
+      const profit = qty * (sell - buy);
+      const date = saleDate.value || todayStr();
 
+      const sale = {
+        id: Date.now(),
+        date,
+        itemName: name,
+        qty,
+        sell,
+        buy,
+        total,
+        profit
+      };
+      state.sales.push(sale);
 
-/* ===============================================
-   INITIAL LOAD
-================================================ */
-document.addEventListener("DOMContentLoaded", () => {
+      // deduct from stock
+      item.qty = (Number(item.qty) || 0) - qty;
 
-  // auto-set default date fields
-  const today = new Date().toISOString().slice(0,10);
+      saveState();
+      renderAll();
+      clearSaleForm();
+    }
 
-  if ($("saleDate")) $("saleDate").value = today;
-  if ($("expDate")) $("expDate").value = today;
-  if ($("histDate")) $("histDate").value = today;
+    function deleteSale(id) {
+      const idx = state.sales.findIndex((s) => s.id === id);
+      if (idx === -1) return;
+      const sale = state.sales[idx];
+      const item = state.items.find(
+        (it) => it.name.toLowerCase() === sale.itemName.toLowerCase()
+      );
+      if (item) {
+        item.qty = (Number(item.qty) || 0) + Number(sale.qty || 0);
+      }
+      state.sales.splice(idx, 1);
+      saveState();
+      renderAll();
+    }
 
-  renderAll();
-});
-</script>
+    function renderSalesTable() {
+      const filterDate = summaryMode === "today" ? saleDate.value || todayStr() : null;
+      salesTableBody.innerHTML = "";
+      const rows = state.sales.filter((s) =>
+        filterDate ? s.date === filterDate : true
+      );
+      rows
+        .slice()
+        .sort((a, b) => b.id - a.id)
+        .forEach((s) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${s.date}</td>
+            <td>${s.itemName}</td>
+            <td>${s.qty}</td>
+            <td>${formatMoney(s.total)}</td>
+            <td>${formatMoney(s.profit)}</td>
+            <td class="actions">
+              <button class="link-btn" data-id="${s.id}">Delete</button>
+            </td>
+          `;
+          salesTableBody.appendChild(tr);
+        });
+
+      // attach handlers
+      salesTableBody.querySelectorAll("button[data-id]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (confirm("Are you sure?")) {
+            deleteSale(Number(btn.getAttribute("data-id")));
+          }
+        });
+      });
+    }
+
+    function renderSalesSummary() {
+      const filterDate = summaryMode === "today" ? saleDate.value || todayStr() : null;
+
+      let sumSales = 0;
+      let sumProfit = 0;
+      state.sales.forEach((s) => {
+        if (!filterDate || s.date === filterDate) {
+          sumSales += Number(s.total) || 0;
+          sumProfit += Number(s.profit) || 0;
+        }
+      });
+
+      let sumExpenses = 0;
+      state.expenses.forEach((e) => {
+        if (!filterDate || e.date === filterDate) {
+          sumExpenses += Number(e.amount) || 0;
+        }
+      });
+
+      statSalesAmount.textContent = formatMoney(sumSales);
+      statSalesProfit.textContent = formatMoney(sumProfit);
+      statExpenses.textContent = formatMoney(sumExpenses);
+      statNetProfit.textContent = formatMoney(sumProfit - sumExpenses);
+
+      if (summaryMode === "today") {
+        salesLabel.textContent = "Today sales";
+        profitLabel.textContent = "Today profit";
+        expLabel.textContent = "Today expenses";
+        netLabel.textContent = "Today net profit";
+      } else {
+        salesLabel.textContent = "All time sales";
+        profitLabel.textContent = "All time profit";
+        expLabel.textContent = "All time expenses";
+        netLabel.textContent = "All time net profit";
+      }
+    }
+
+    // EXPENSES
+    function clearExpenseForm() {
+      expDesc.value = "";
+      expAmount.value = "";
+    }
+
+    function saveExpense() {
+      const desc = expDesc.value.trim();
+      const amount = Number(expAmount.value) || 0;
+      const date = expDate.value || todayStr();
+      if (!desc) {
+        alert("Description is required.");
+        return;
+      }
+      if (amount <= 0) {
+        alert("Amount must be greater than 0.");
+        return;
+      }
+      state.expenses.push({
+        id: Date.now(),
+        date,
+        desc,
+        amount
+      });
+      saveState();
+      renderAll();
+      clearExpenseForm();
+    }
+
+    function deleteExpense(id) {
+      const idx = state.expenses.findIndex((e) => e.id === id);
+      if (idx === -1) return;
+      state.expenses.splice(idx, 1);
+      saveState();
+      renderAll();
+    }
+
+    function renderExpensesTable() {
+      expensesTableBody.innerHTML = "";
+      state.expenses
+        .slice()
+        .sort((a, b) => b.id - a.id)
+        .forEach((e) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${e.date}</td>
+            <td>${e.desc}</td>
+            <td>${formatMoney(e.amount)}</td>
+            <td class="actions">
+              <button class="link-btn" data-id="${e.id}">Delete</button>
+            </td>
+          `;
+          expensesTableBody.appendChild(tr);
+        });
+
+      expensesTableBody.querySelectorAll("button[data-id]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (confirm("Are you sure?")) {
+            deleteExpense(Number(btn.getAttribute("data-id")));
+          }
+        });
+      });
+    }
+
+    // BACKUP
+    function exportBackup() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], {
+        type: "application/json"
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const d = new Date();
+      const stamp = d.toISOString().replace(/[:.]/g, "-");
+      a.href = url;
+      a.download = `makoi-motor-shop-backup-${stamp}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function importBackup(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data || typeof data !== "object") {
+            throw new Error("Invalid file");
+          }
+          if (!confirm("Are you sure? (Current data will be replaced)")) {
+            return;
+          }
+          state = Object.assign({ items: [], sales: [], expenses: [] }, data);
+          saveState();
+          renderAll();
+          alert("Backup restored.");
+        } catch (err) {
+          alert("Invalid backup file.");
+          console.error(err);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // RENDER ALL
+    function renderAll() {
+      renderHeaderDate();
+      renderInventoryStats();
+      renderSearchResults();
+      populateItemsDatalist();
+      renderSalesTable();
+      renderSalesSummary();
+      renderExpensesTable();
+    }
+
+    // EVENTS
+    btnSaveItem.addEventListener("click", upsertItem);
+    btnResetItem.addEventListener("click", () => {
+      if (confirm("Are you sure?")) clearItemForm();
+    });
+
+    searchInput.addEventListener("input", renderSearchResults);
+
+    saleItemName.addEventListener("change", onSaleItemSelected);
+    saleItemName.addEventListener("input", onSaleItemSelected);
+    saleQty.addEventListener("input", updateSaleComputed);
+    saleSell.addEventListener("input", updateSaleComputed);
+    saleBuy.addEventListener("input", updateSaleComputed);
+
+    btnSaveSale.addEventListener("click", saveSale);
+    btnResetSale.addEventListener("click", () => {
+      if (confirm("Are you sure?")) clearSaleForm();
+    });
+    btnClearSales.addEventListener("click", () => {
+      if (!state.sales.length) return;
+      if (confirm("Are you sure?")) {
+        // rollback stocks
+        state.sales.forEach((s) => {
+          const item = state.items.find(
+            (it) => it.name.toLowerCase() === s.itemName.toLowerCase()
+          );
+          if (item) {
+            item.qty = (Number(item.qty) || 0) + Number(s.qty || 0);
+          }
+        });
+        state.sales = [];
+        saveState();
+        renderAll();
+      }
+    });
+
+    btnReloadToday.addEventListener("click", () => {
+      saleDate.value = todayStr();
+      summaryMode = "today";
+      tabToday.classList.add("active");
+      tabAllTime.classList.remove("active");
+      renderSalesTable();
+      renderSalesSummary();
+    });
+
+    tabToday.addEventListener("click", () => {
+      summaryMode = "today";
+      tabToday.classList.add("active");
+      tabAllTime.classList.remove("active");
+      renderSalesTable();
+      renderSalesSummary();
+    });
+
+    tabAllTime.addEventListener("click", () => {
+      summaryMode = "all";
+      tabAllTime.classList.add("active");
+      tabToday.classList.remove("active");
+      renderSalesTable();
+      renderSalesSummary();
+    });
+
+    saleDate.addEventListener("change", () => {
+      if (summaryMode === "today") {
+        renderSalesTable();
+        renderSalesSummary();
+      }
+    });
+
+    btnSaveExpense.addEventListener("click", saveExpense);
+    btnResetExpense.addEventListener("click", () => {
+      if (confirm("Are you sure?")) clearExpenseForm();
+    });
+    btnClearExpenses.addEventListener("click", () => {
+      if (!state.expenses.length) return;
+      if (confirm("Are you sure?")) {
+        state.expenses = [];
+        saveState();
+        renderAll();
+      }
+    });
+
+    btnExport.addEventListener("click", exportBackup);
+    importFile.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) importBackup(file);
+      e.target.value = "";
+    });
+
+    // INIT
+    loadState();
+    saleDate.value = todayStr();
+    expDate.value = todayStr();
+    renderAll();
+
+    // Update header time every minute (optional)
+    setInterval(renderHeaderDate, 60000);
+  </script>
 </body>
 </html>
